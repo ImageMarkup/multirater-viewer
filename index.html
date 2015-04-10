@@ -55,10 +55,10 @@
   <body>
  
 	
-	<div class="row"> <p>Before Ordering</p> 
+	<div class="row"> 
 		<div class="col-md-4" style="background-color: #dedef8; "> Image Info </div> 
 		<div class="col-md-8" style="background-color: #dedef8; ">
-			<span id="img_info"></span>
+			<span id="img_info"></span> 
 		</div>
 	</div><br> 
 
@@ -68,11 +68,14 @@
 		
 		<div class="col-md-4" >Image List <select id='image_list_dd'></select> </div>
 			<div class="col-md-8"> 
-				<span id="tile_toggle">Toggle Tile</span>  
+				<span id="tile_toggle">Toggle Tile
+					<a id="button" title="button">Tiles Off</a>
+
+				</span>  
 				<span id="tile_opacity">Tile Opacity</span>  
 
 
-				<button id="tile_button">A button element</button>
+				<button id="tile_button">Hide Tile Overlay</button>
 
 
 				<input type=checkbox name=red id=idred><label for=idred>Red</label></input>
@@ -84,12 +87,15 @@
 
 		<div class="row">
 		
-			<div class="col-md-4"> Rater List </div>
+			<div class="col-md-4"> 
+				<div id="slider"> </div>
+				<div id="rater_list"> </div>
+			</div>
 			<div class="col-md-8"> <img id="base_img" src='images/base_img/UDA2_pilot_030-p1c.png' class="mainimg"> 
 					<img id='tile_img' src='images/base_img/UDA2_pilot_030-tile-p1c.png' class="overlay_img">
 			</div>
 
-			<div id="slider"> </div>
+			
 		</div>
 
 
