@@ -24,7 +24,12 @@
 
 
     <style>
+    body
+    	{
 
+		border:5px;
+		padding:10px;
+    	}
 
 	.mainimg {
 	  width:600px;
@@ -48,6 +53,24 @@
 	  margin-right:5px;
 
 	}
+
+ 	.mirror_x {
+     -moz-transform: scale(-1, 1);
+     -webkit-transform: scale(-1, 1);
+     transform: scale(-1, 1);
+  	}
+
+ 	.mirror_y {
+     -moz-transform: scale(1, -1);
+     -webkit-transform: scale(1, -1);
+     transform: scale(1, -1);
+  	}
+
+	.mirror_xy {
+     -moz-transform: scale(-1, -1);
+     -webkit-transform: scale(-1, -1);
+     transform: scale(-1, -1);
+  	}
 	</style>
 
 
@@ -56,7 +79,7 @@
  
 	
 	<div class="row"> 
-		<div class="col-md-4" style="background-color: #dedef8; "> Image Info </div> 
+		<div class="col-md-4" style="background-color: #dedef8;  "> Image Info </div> 
 		<div class="col-md-8" style="background-color: #dedef8; ">
 			<span id="img_info"></span> 
 		</div>
@@ -66,7 +89,7 @@
 
 		<div class="row">
 		
-		<div class="col-md-4">
+		<div class="col-md-4" ">
 			Image List <select id='image_list_dd'></select> 
 			Feature List <input type=checkbox id='feature_list'></input>
 
@@ -74,7 +97,7 @@
 		</div>
 			<div class="col-md-8"> 
 				<span id="tile_toggle">Toggle Tile
-					<a id="button" title="button">Tiles Off</a>
+					<a id="button" title="button">ALL OVERLAYS OFF</a>
 
 				</span>  
 				<span id="tile_opacity">Tile Opacity</span>  
@@ -86,7 +109,7 @@
 				<span>Structure List: Net Atypical</span>
 
 
-						<p>Select the raters to overlay:</p>
+						
 						<div>
 						
 						</div>
@@ -105,22 +128,35 @@
 				<div id="slider"> </div>
 				<div id="rater_list" style="border:1px">
 						<!-- NEED TO ADD THESE DYNAMICALLY WITH A FOREACH FUNCTION -->
-						<input type=checkbox name=Ash id=show_Ash><label for=show_ash>Ash</label></input>
-						<input type=checkbox name=Rabinowitz id=show_Rabinowitz><label for=show_Rabinowitz>Rabinowitz</label></input>
-						<input type=checkbox name=Carrera id=show_Carrera><label for=show_Carrera>Carrera</label></input>
-						<input type=checkbox name=Braun id=show_Braun><label for=show_Braun>Braun</label></input>
+						<p>Select the raters to overlay please:</p>
+						<input type=checkbox name=Marghoob class="overlay_toggle" id=show_Marghoob><label for=show_Marghoob>Marghoob</label></input>
+						<input type=checkbox name=Rabinowitz class="overlay_toggle" id=show_Rabinowitz><label for=show_Rabinowitz>Rabinowitz</label></input>
+						<input type=checkbox name=Carrera class="overlay_toggle" id=show_Carrera><label for=show_Carrera>Carrera</label></input>
+						<input type=checkbox name=Braun class="overlay_toggle" id=show_Braun><label for=show_Braun>Braun</label></input>
 			
 
 				 </div>
+				<div id="rater_info">
+					<h1>Color Guide:</h1>
+					<h3>
+					 <div style="border:2px solid red">Marghoob: Red</div>
+					 <div style="border:2px solid green">Braun: Green</div>
+					 <div style="border:2px solid blue">Rabinowitz: Blue</div>
+					 <div style="border:2px solid yellow;width:auto">Carrera:Yellow</div>
+					 </h3>
+
+					 <h4>Notes: Overlaps will show up as a blend of the base colors for the rater; also note there are some cases where Marghoob=Rabinowitz; in some cases this is because of a data extraction bug I haven't fixed yet </h4>
+
+				</div>
 			</div>
-			<div class="col-md-8"> <img id="base_img" src='images/base_img/UDA2_pilot_030-p1c.png' class="mainimg"> 
-					<img id='tile_img' src='images/base_img/UDA2_pilot_030-tile-p1c.png' class="overlay_img">
+			<div class="col-md-8"> <img id="base_img" src='images/base_img/UDA2_pilot_016-p1c.png' class="mainimg"> 
+					<img id='tile_img' src='images/base_img/UDA2_pilot_016-tile-p1c.png' class="overlay_img">
 					<img id='Carrera_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Carrera_net_typ.png' class="overlay_img">
-					<img id='Ash_img' src='images/features_output_dir/net_atyp/UDA2_pilot_016_Ash_net_atyp.png' class="overlay_img">
+					<img id='Marghoob_img' src='images/features_output_dir/net_atyp/UDA2_pilot_016_Marghoob_net_atyp.png' class="overlay_img">
 					<img id='Braun_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Braun_net_typ.png' class="overlay_img">
 					<img id='Rabinowitz_img' src='images/features_output_dir/net_atyp/UDA2_pilot_016_Rabinowitz_net_atyp.png' class="overlay_img">
 			
-			<!--  These img tags should be added in runtime based on the rater list['Ash','Braun','Rabinowitz','Carrera'];  -->
+			<!--  These img tags should be added in runtime based on the rater list['Marghoob','Braun','Rabinowitz','Carrera'];  -->
 					
 			</div>
 
@@ -156,7 +192,12 @@
   	$(document).ready(function(){
   		console.log('data is loading?')
     	
+
+	$(":checkbox").prop('checked',true);//reset all checkboxes to be checked...
+
+
 		var $select = $('#image_list_dd');
+
  
     //request the JSON data and parse into the select element
     $.getJSON('json_data/img_list.json', function(data){
@@ -191,7 +232,7 @@
   					update_rater_overlays( $selected_image);
 
 				//	<img id='marchetti_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Carrera_net_typ.png' class="overlay_img">
-				//	<img id='ash_img' src='images/features_output_dir/net_atyp/UDA2_pilot_016_Rabinowitz_net_atyp.png' class="overlay_img">
+				//	<img id='Marghoob_img' src='images/features_output_dir/net_atyp/UDA2_pilot_016_Rabinowitz_net_atyp.png' class="overlay_img">
 
 
 
@@ -227,7 +268,7 @@
   			console.log("NEED TO update the overlay SRC ids as well");
   			//This will eventually need to reed the list or raters and update the sources for all of the raters that have been added
   			//ALSO need to add in something that populates the stats for the rater(s)
-  			raters = ['Ash','Braun','Rabinowitz','Carrera'];
+  			raters = ['Marghoob','Braun','Rabinowitz','Carrera'];
   			$.each(raters, function(index,value) { 
 
   					cur_feature = 'net_atyp'
@@ -243,6 +284,8 @@
   				console.log(index+value);
 
 
+					$(":checkbox").prop('checked',true);//reset all checkboxes to be checked...
+
   						});
 
   		}
@@ -250,6 +293,27 @@
 		$(".overlay_img").error(function(){
   							$(this).hide();
 							});		
+
+			//Try and add a function to all the toggle boxes to show/hide the image
+
+		$(".overlay_toggle").click( function() { 
+						console.log(this.id) ; 
+//						console.log(this.checked); 
+//						console.log(this.name);
+						rater_name = this.name;
+						rater_overlay = rater_name +'_img';
+
+						if (this.checked)
+							{
+								$("#"+rater_overlay).show();
+							}
+						else
+						{
+							$("#"+rater_overlay).hide();
+						}
+
+						   });
+
 
 
     </script>
