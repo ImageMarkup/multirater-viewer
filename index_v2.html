@@ -87,8 +87,8 @@
 
 		</div>
 			<div class="col-md-8"> 
-				<span id="tile_toggle">Toggle All Overlays
-				</span>  
+				<input type=checkbox id="tile_toggle"><label for="tile_toggle">Toggle Overlays</label>
+				
 				
 				<button id="tile_button">Toggle Tile Overlay</button>
 			
@@ -133,7 +133,7 @@
 				</div>
 			</div>
 			<div class="col-md-8"> <img id="base_img" src='images/base_img/UDA2_pilot_016-p1c.png' class="mainimg"> 
-					<img id='tile_img' src='images/base_img/UDA2_pilot_016-tile-p1c.png' class="overlay_img">
+					<img id='tile_img' src='images/base_img/UDA2_pilot_016-tile-p1c.png' class="superpixel_overlay_img">
 					<img id='Carrera_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Carrera_net_typ.png' class="overlay_img">
 					<img id='Marghoob_img' src='images/features_output_dir/net_atyp/UDA2_pilot_016_Marghoob_net_atyp.png' class="overlay_img">
 					<img id='Braun_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Braun_net_typ.png' class="overlay_img">
@@ -210,6 +210,7 @@
   					});
 
 	$("#tile_toggle").button ();
+	$("#tile_toggle").click( function(){ console.log('tiles toggled?')});
 
 //$( "#slider" ).slider({
 //	range: true,
@@ -301,6 +302,24 @@
 
 						   });
 
+
+						  $("#tile_toggle").click( function(){
+						  			
+								if(this.checked)	
+										{
+	  									$(".overlay_toggle").prop('checked',false);
+	  									$(".overlay_img").hide();
+	  									
+	  									//Also need to actually hide the overlays by class
+										}				
+									else{
+	  									$(".overlay_toggle").prop('checked',true);
+	  									$(".overlay_img").show();
+
+									}
+
+
+						  			});
 
 
     </script>
