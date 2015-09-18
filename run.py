@@ -7,6 +7,18 @@ app.debug = True
 def root():
     return app.send_static_file('index.html')
 
+@app.route('/index_v2.html')
+def dev_view():
+    return app.send_static_file('index_v2.html')
+
+
+@app.route('/simple_svg_viewer.html')
+def dev_view_svg():
+    return app.send_static_file('simple_svg_viewer.html')
+
+
+
+
 @app.route('/js/<path:path>')
 def send_js(path):
     return send_from_directory('js', path)
