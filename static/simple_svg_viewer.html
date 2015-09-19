@@ -310,6 +310,7 @@
     </script>
 
 <div id="svg_cont">
+<!-- 
 
 <svg id="main_svg" xmlns="http://www.w3.org/2000/svg" class="overlay_img" xmlns:xlink="http://www.w3.org/1999/xlink" widht="400" height="500" >
   <text x="10" y="35">Two passive squares:</text>
@@ -323,49 +324,20 @@
 
 </svg>
 </div>
-
+-->
 
 <script>
 //### Add this to an onload event
-$("#main_viewport").append( $("#main_svg") );
+//$("#main_viewport").append( $("#main_svg") );
 
-$("#main_svg").css("z-index",10000);
+//$("#main_svg").css("z-index",10000);
 
 
-$( "#rect1" ).hover(function() {
-  $( this ).fadeOut( 100 ); console.log(this.id);
-  $( this ).fadeIn( 500 );
-    });
 
 
 function svgEl(tagName) {
     return document.createElementNS("http://www.w3.org/2000/svg", tagName);
 }
-
-//$("#main_svg").append(svgEl('circle id="mycircle" cx="20" cy="50" r="40" stroke="black" stroke-width="2" fill="red" '));
-
-
-  
-// $(document).ready(function(){
-// $("svg").append('<circle cx="20" cy="50" r="40" stroke="black" stroke-width="2" fill="red"/>');
-//  $("#svg_cont").html($("#svg_cont").html());
-// });
- 
-// </script>
-//</head>
-//<body>
-// <div id="cont">
-//  <svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" width="200px" height="100px">
-//  </div>
-// </svg>
-//</body>
-
-
-</script>
-
-
-
-<script>
 
 function drawShape() {
 	var shape = this.id;
@@ -398,7 +370,21 @@ $(function() {
 		var xml = $('#svgbasics').svg('get').toSVG();
 		$('#svgexport').html(xml.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'));
 	});
+
+	$("#main_viewport").append(  $("#svgbasics"));
+	$("#svgbasics").addClass("overlay_img");
+	 $("svg").append('<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" id="mycircle" fill="blue"/>');
+	 $("#svgbasics").html($("#svgbasics").html());
+
+
+$( "#mycircle" ).hover(function() {
+  $( this ).fadeOut( 100 ); console.log(this.id);
+  $( this ).fadeIn( 500 );
+    });
+
+
 });
+
 function drawInitial(svg) {
 	svg.circle(75, 75, 50, {fill: 'none', stroke: 'red', strokeWidth: 3});
 	var g = svg.group({stroke: 'black', strokeWidth: 2});
@@ -412,7 +398,33 @@ function random(range) {
 	return Math.floor(Math.random() * range);
 }
 
+
+function add_a_grid( svgelement) {
+        current_grid_id = 0;
+  
+	 for (x = 0; x < 300; x+=20) {  
+    		for (y=0; y<300; y+=20) {
+			  console.log('x '+x+'y '+y ); 
+				current_grid_id++;
+		               svg_box = "<circle cx='"+x+"' cy='"+y+"' r='10' class='my_circle_class' stroke='blue' stroke-width='2' id='grid"+current_grid_id+"' fill='" + colours[random(9)] + "' opacity='0.2' > ";
+				$("svg").append(svg_box);
+
+	 $("#svgbasics").html($("#svgbasics").html());
+
+					}
+				     }
+/// Now that I've apended all of those elements to the SVG I need to reparse it
+//   $("svg").append('<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" id="mycircle" fill="' + colours[random(9)] + '" />');
+
+				  
+				}  ;
+
+
 </script>
+<!--  
+Some tips on working with SVG docs
+http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
+-->
 
 <div id="svgbasics"></div>
   <p><button id="rect">Add rectangle</button> <button id="line">Add line</button>
