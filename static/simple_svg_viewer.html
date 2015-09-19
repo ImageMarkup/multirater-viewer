@@ -9,15 +9,14 @@
 
     <!-- Bootstrap -->
     
-    
-
-
-	
 
   <script src="js/jquery-2.1.3.js"></script>
    <script src="js/bootstrap.js"></script>
 
   <script src="js/jquery-ui.js"></script>
+<script type="text/javascript" src="js/jquery.svg.js"></script>
+
+<link rel="stylesheet" type="text/css" href="css/jquery.svg.css">     
 
     	<link rel="stylesheet" href="css/jquery-ui.css">
     <link href="css/jquery-ui.theme.css" rel="stylesheet">
@@ -72,14 +71,15 @@
      -webkit-transform: scale(-1, -1);
      transform: scale(-1, -1);
   	}
+
+
+#svgbasics { width: 400px; height: 300px; border: 1px solid #484; }
+
 	</style>
 
 
   </head>
   <body>
- 
-	
-	
 
 		<div class="row">
 		
@@ -99,7 +99,6 @@
 						$("input").button ();
 						</script>
 			</div>
-
 
 		</div>
 
@@ -135,13 +134,15 @@
 
 				</div>
 			</div>
-			<div class="col-md-8"> <img id="base_img" src='images/base_img/UDA2_pilot_016-p1c.png' class="mainimg"> 
+			<div class="col-md-8"> 
+				<div id="main_viewport">
+                                        <img id="base_img" src='images/base_img/UDA2_pilot_016-p1c.png' class="mainimg"> 
 					<img id='tile_img' src='images/base_img/UDA2_pilot_016-tile-p1c.png' class="overlay_img">
 					<img id='Carrera_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Carrera_net_typ.png' class="overlay_img">
 					<img id='Marghoob_img' src='images/features_output_dir/net_atyp/UDA2_pilot_016_Marghoob_net_atyp.png' class="overlay_img">
 					<img id='Braun_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Braun_net_typ.png' class="overlay_img">
 					<img id='Rabinowitz_img' src='images/features_output_dir/net_atyp/UDA2_pilot_016_Rabinowitz_net_atyp.png' class="overlay_img">
-			
+				</div>
 			<!--  These img tags should be added in runtime based on the rater list['Marghoob','Braun','Rabinowitz','Carrera'];  -->
 					
 			</div>
@@ -308,13 +309,115 @@
 
     </script>
 
-<svg id="main_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="80">
+<div id="svg_cont">
+
+<svg id="main_svg" xmlns="http://www.w3.org/2000/svg" class="overlay_img" xmlns:xlink="http://www.w3.org/1999/xlink" widht="400" height="500" >
   <text x="10" y="35">Two passive squares:</text>
-  <rect id="rect1"  x="160" y="10"
-   width="60" height="60" fill="blue"/>
-  <rect id="rect2" x="230" y="10"   width="60" height="60" fill="green"/>
+  <g id="rectangles">
+
+  <rect id="rect1" class="geo_shapes"  x="160" y="10" opacity="1"  width="60" height="60" fill="blue"/>
+  <rect id="rect2" class="geo_shapes" x="230" y="10"   width="60" height="60" fill="green"/>
+  <rect id="rect3" class="geo_shapes" x="280" y="12"   width="60" height="60" fill="orange"/>
+
+   </g>
+
 </svg>
+</div>
+
+
+<script>
+//### Add this to an onload event
+$("#main_viewport").append( $("#main_svg") );
+
+$("#main_svg").css("z-index",10000);
+
+
+$( "#rect1" ).hover(function() {
+  $( this ).fadeOut( 100 ); console.log(this.id);
+  $( this ).fadeIn( 500 );
+    });
+
+
+function svgEl(tagName) {
+    return document.createElementNS("http://www.w3.org/2000/svg", tagName);
+}
+
+//$("#main_svg").append(svgEl('circle id="mycircle" cx="20" cy="50" r="40" stroke="black" stroke-width="2" fill="red" '));
+
 
   
+// $(document).ready(function(){
+// $("svg").append('<circle cx="20" cy="50" r="40" stroke="black" stroke-width="2" fill="red"/>');
+//  $("#svg_cont").html($("#svg_cont").html());
+// });
+ 
+// </script>
+//</head>
+//<body>
+// <div id="cont">
+//  <svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" width="200px" height="100px">
+//  </div>
+// </svg>
+//</body>
+
+
+</script>
+
+
+
+<script>
+
+function drawShape() {
+	var shape = this.id;
+	var svg = $('#svgbasics').svg('get');
+	if (shape == 'rect') {
+		svg.rect(random(300), random(200), random(100) + 100, random(100) + 100,
+			{fill: colours[random(9)], stroke: colours[random(9)], strokeWidth: random(5) + 1});
+	}
+	else if (shape == 'line') {
+		svg.line(random(400), random(300), random(400), random(300),
+			{stroke: colours[random(9)], strokeWidth: random(5) + 1});
+	}
+	else if (shape == 'circle') {
+		svg.circle(random(300) + 50, random(200) + 50, random(80) + 20,
+			{fill: colours[random(9)], stroke: colours[random(9)], strokeWidth: random(5) + 1});
+	}
+	else if (shape == 'ellipse') {
+		svg.ellipse(random(300) + 50, random(200) + 50, random(80) + 20, random(80) + 20,
+			{fill: colours[random(9)], stroke: colours[random(9)], strokeWidth: random(5) + 1});
+	}
+}
+
+$(function() {
+	$('#svgbasics').svg({onLoad: drawInitial});
+	$('#rect,#line,#circle,#ellipse').click(drawShape);
+	$('#clear').click(function() {
+		$('#svgbasics').svg('get').clear();
+	});
+	$('#export').click(function() {
+		var xml = $('#svgbasics').svg('get').toSVG();
+		$('#svgexport').html(xml.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+	});
+});
+function drawInitial(svg) {
+	svg.circle(75, 75, 50, {fill: 'none', stroke: 'red', strokeWidth: 3});
+	var g = svg.group({stroke: 'black', strokeWidth: 2});
+	svg.line(g, 15, 75, 135, 75);
+	svg.line(g, 75, 15, 75, 135);
+}
+
+var colours = ['purple', 'red', 'orange', 'yellow', 'lime', 'green', 'blue', 'navy', 'black'];
+
+function random(range) {
+	return Math.floor(Math.random() * range);
+}
+
+</script>
+
+<div id="svgbasics"></div>
+  <p><button id="rect">Add rectangle</button> <button id="line">Add line</button>
+	<button id="circle">Add circle</button> <button id="ellipse">Add ellipse</button>
+	<button id="clear">Clear</button> <button id="export">Export</button></p>
+<div id="svgexport"></div>
   </body>
 </html>
