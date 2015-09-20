@@ -41,9 +41,11 @@
 	}
 
 
+
+
 	.overlay_img {
 	  width:600px;
-
+          
 	  position:absolute;
 
 	  display:block;
@@ -73,7 +75,7 @@
   	}
 
 
-#svgbasics { width: 400px; height: 300px; border: 1px solid #484; }
+
 
 	</style>
 
@@ -323,14 +325,13 @@
    </g>
 
 </svg>
-</div>
 -->
+
+</div>
 
 <script>
 //### Add this to an onload event
-//$("#main_viewport").append( $("#main_svg") );
 
-//$("#main_svg").css("z-index",10000);
 
 
 
@@ -372,15 +373,21 @@ $(function() {
 	});
 
 	$("#main_viewport").append(  $("#svgbasics"));
-	$("#svgbasics").addClass("overlay_img");
+//	$("#svgbasics").addClass("overlay_img");
+// Need to add a class to the SVG itself, not the div, and more importantly I can't actually use the addclass function
+//have to add an attribute
+	$("svg").attr("class","overlay_img");
+
 	 $("svg").append('<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" id="mycircle" fill="blue"/>');
 	 $("#svgbasics").html($("#svgbasics").html());
+ 
 
+    add_a_grid('2');
 
-$( "#mycircle" ).hover(function() {
-  $( this ).fadeOut( 100 ); console.log(this.id);
-  $( this ).fadeIn( 500 );
-    });
+//$( "#mycircle" ).hover(function() {
+//  $( this ).fadeOut( 100 ); console.log(this.id);
+//  $( this ).fadeIn( 500 );
+//    });
 
 
 });
@@ -402,20 +409,19 @@ function random(range) {
 function add_a_grid( svgelement) {
         current_grid_id = 0;
   
-	 for (x = 0; x < 300; x+=20) {  
-    		for (y=0; y<300; y+=20) {
-			  console.log('x '+x+'y '+y ); 
+	 for (x = 25; x < 400; x+=25) {  
+    		for (y=25; y<400; y+=25) {
+			//  console.log('x '+x+'y '+y ); 
 				current_grid_id++;
-		               svg_box = "<circle cx='"+x+"' cy='"+y+"' r='10' class='my_circle_class' stroke='blue' stroke-width='2' id='grid"+current_grid_id+"' fill='" + colours[random(9)] + "' opacity='0.2' > ";
+		               svg_box = "<circle cx='"+x+"' cy='"+y+"' r='10' class='my_circle_class' stroke='blue' stroke-width='2' id='grid"+current_grid_id+"' fill='" + colours[random(9)] + "' opacity='0.1' > ";
 				$("svg").append(svg_box);
 
-	 $("#svgbasics").html($("#svgbasics").html());
 
 					}
 				     }
 /// Now that I've apended all of those elements to the SVG I need to reparse it
-//   $("svg").append('<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" id="mycircle" fill="' + colours[random(9)] + '" />');
-
+	 $("#svgbasics").html($("#svgbasics").html());
+         $(".my_circle_class").hover( function() {  console.log(this.id) } ) ;
 				  
 				}  ;
 
@@ -424,6 +430,9 @@ function add_a_grid( svgelement) {
 <!--  
 Some tips on working with SVG docs
 http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
+
+ #svgbasics { width: 600px; height: 300px; border: 1px solid #484; }
+
 -->
 
 <div id="svgbasics"></div>
