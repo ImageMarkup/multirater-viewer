@@ -23,6 +23,9 @@
 
 
     <style>
+
+#svgbasics { width: 600px; height: 100%; border: 1px solid #484; }
+
     body
     	{
 
@@ -136,7 +139,7 @@
 				</div>
 			</div>
 			<div class="col-md-8"> 
-				<div id="main_viewport">
+				<div id="main_viewport" width="800px"; height="100%">
                                         <img id="base_img" src='images/base_img/UDA2_pilot_016-p1c.png' class="mainimg"> 
 					<img id='tile_img' src='images/base_img/UDA2_pilot_016-tile-p1c.png' class="overlay_img">
 					<img id='Carrera_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Carrera_net_typ.png' class="overlay_img">
@@ -377,7 +380,7 @@ $(function() {
 //have to add an attribute
 	$("svg").attr("class","overlay_img");
 
-	 $("svg").append('<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" id="mycircle" fill="blue"/>');
+	// $("svg").append('<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" id="mycircle" fill="blue"/>');
 	 $("#svgbasics").html($("#svgbasics").html());
  
 
@@ -392,10 +395,10 @@ $(function() {
 });
 
 function drawInitial(svg) {
-	svg.circle(75, 75, 50, {fill: 'none', stroke: 'red', strokeWidth: 3});
-	var g = svg.group({stroke: 'black', strokeWidth: 2});
-	svg.line(g, 15, 75, 135, 75);
-	svg.line(g, 75, 15, 75, 135);
+	//svg.circle(75, 75, 50, {fill: 'none', stroke: 'red', strokeWidth: 3});
+	//var g = svg.group({stroke: 'black', strokeWidth: 2});
+	//svg.line(g, 15, 75, 135, 75);
+	//svg.line(g, 75, 15, 75, 135);
 }
 
 var colours = ['purple', 'red', 'orange', 'yellow', 'lime', 'green', 'blue', 'navy', 'black'];
@@ -414,8 +417,6 @@ function add_a_grid( svgelement) {
 				current_grid_id++;
 		               svg_box = "<circle cx='"+x+"' cy='"+y+"' r='10' class='my_circle_class' stroke='blue' stroke-width='2' id='grid"+current_grid_id+"' fill='" + colours[random(9)] + "' opacity='0.1' > ";
 				$("svg").append(svg_box);
-
-
 					}
 				     }
 /// Now that I've apended all of those elements to the SVG I need to reparse it
@@ -425,20 +426,6 @@ function add_a_grid( svgelement) {
 				}  ;
 
 
-var geojson = (function () {
-    var json = null;
-    $.ajax({
-        'async': false,
-        'global': false,
-        'url': "js/data.geojson",
-        'dataType': "json",
-        'success': function (data) {
-            json = data;
-        }
-    });
-    return json;
-})(); 
-
 
 var geodata = function () {  geo_array = [];
             $.ajax({
@@ -447,19 +434,54 @@ var geodata = function () {  geo_array = [];
                 'url': "data/data.geojson",
                 'dataType': "json",
                 'success': function (result) {
-                   $.each( data, function(i,contour) { geo_array.push( JSON.parse(contour) ) } );
+                   $.each( result, function(i,contour) { geo_array.push( JSON.parse(contour) ) } );
                 }
              });
             return geo_array;
         }(); 
 
 
+
+
+
+function contourdata_to_shape( contours, svg_element, x_offset, y_offset ) {
+	//console.log(coord_info); 
+
+	scale_factor = 1;
+
+	polygon_list = [];
+     
+//       x_offset = 800;
+ //      y_offset = 800;
+	$.each(contours, function(index,contour) 
+	{
+	 coord_info = contour.geometry.coordinates[0]; 
+
+	coord_string = ""; $.each(coord_info, function( k,v) { coord_string += `${(v[0]* scale_factor - x_offset) | 0 },${ ( v[1] * scale_factor-y_offset) | 0} `; } )
+	polygon_svg_str = `<polygon points="${coord_string}" style="fill:${colours[ random(9)]};stroke;purple;stroke-width:1;opacity:0.1" />`;
+
+
+	$("svg").append(polygon_svg_str);
+	polygon_list.push(polygon_svg_str);
+	}
+	);
+
+	
+         $("#svgbasics").html($("#svgbasics").html());
+	return polygon_list;
+	//);
+
+
+/// <polygon points="220,10 300,210 170,250 123,234" style="fill:lime;stroke:purple;stroke-width:1" />
+
+
+}
+
+
 </script>
 <!--  
 Some tips on working with SVG docs
 http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
-
- #svgbasics { width: 600px; height: 300px; border: 1px solid #484; }
 
 -->
 
