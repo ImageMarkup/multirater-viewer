@@ -8,8 +8,7 @@
     <title>ISIC MultiRater Viewer</title>
 
     <!-- Bootstrap -->
-    
-
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/geojson2svg/1.0.2/geojson2svg.js"></script>
   <script src="js/jquery-2.1.3.js"></script>
    <script src="js/bootstrap.js"></script>
 
@@ -424,6 +423,35 @@ function add_a_grid( svgelement) {
          $(".my_circle_class").hover( function() {  console.log(this.id) } ) ;
 				  
 				}  ;
+
+
+var geojson = (function () {
+    var json = null;
+    $.ajax({
+        'async': false,
+        'global': false,
+        'url': "js/data.geojson",
+        'dataType': "json",
+        'success': function (data) {
+            json = data;
+        }
+    });
+    return json;
+})(); 
+
+
+var geodata = function () {  geo_array = [];
+            $.ajax({
+                'async': false,
+                'global': false,
+                'url': "data/data.geojson",
+                'dataType': "json",
+                'success': function (result) {
+                   $.each( data, function(i,contour) { geo_array.push( JSON.parse(contour) ) } );
+                }
+             });
+            return geo_array;
+        }(); 
 
 
 </script>

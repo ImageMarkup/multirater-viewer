@@ -16,7 +16,9 @@ def dev_view():
 def dev_view_svg():
     return app.send_static_file('simple_svg_viewer.html')
 
-
+@app.route('/data/<path:path>')
+def send_datadir(path):
+    return send_from_directory('data', path)
 
 
 @app.route('/js/<path:path>')
