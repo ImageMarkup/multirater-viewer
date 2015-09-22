@@ -37,7 +37,7 @@
 	.overlay_img {
 	  position:absolute;
 
-	  display:block;
+//	  display:block;
 	  border:1px solid #666;
 	  padding:3px;
 	  margin-right:5px;
@@ -140,7 +140,6 @@
   		console.log('data is loading?')
     	
 
-//        $("#tile_opacity").slider( min:0, max:1  );
 
 	$(":checkbox").prop('checked',true);//reset all checkboxes to be checked...
 
@@ -195,10 +194,9 @@ $( "#slider" ).slider({
 	change: function( event, ui ) { 
 				cur_slider_value =  $(this).slider("option","value");
 				console.log(cur_slider_value);
-				$("svg").attr('opacity',cur_slider_value);
+				$(".tileClass").attr('opacity',cur_slider_value);
 					}
 });
-
 
 	$("#tile_button").button();
 
@@ -335,18 +333,18 @@ $(function() {
 
 	// $("svg").append('<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" id="mycircle" fill="blue"/>');
 //	 $("#svgbasics").html($("#svgbasics").html());  ### This line broke the dynamic add functionality... hmm
+
+mysvg = $("#svgbasics").svg('get');
+
+mysvg.image(0,0,'960','923','images/base_img/UDA2_pilot_060-p1c.png',{'opacity':1, 'position':'absolute'});
  
 contourdata_to_shape(geodata,'',0,0);
 
 
-//$( "#mycircle" ).hover(function() {
-//  $( this ).fadeOut( 100 ); console.log(this.id);
-//  $( this ).fadeIn( 500 );
-//    });
+$("body").keypress( function(event) { if ( event.keyCode ==116) { console.log('pressed t'); $('.tileClass').attr('opacity',0);     }   }   );
 
-id="tile${contour.properties.labelindex}"
 
-mysvg = $("#svgbasics").svg('get');
+
 });
 
 function drawInitial(svg) {
@@ -356,7 +354,7 @@ function drawInitial(svg) {
 	//svg.line(g, 75, 15, 75, 135);
 }
 
-var colours = ['purple', 'red', 'orange', 'yellow', 'lime', 'green', 'blue', 'navy', 'black'];
+var colours = ['purple', 'pink', 'orange', 'yellow', 'lime', 'green', 'blue', 'navy', 'black'];
 
 function random(range) {
 	return Math.floor(Math.random() * range);
@@ -399,7 +397,9 @@ function contourdata_to_shape( contours, svg_element, x_offset, y_offset ) {
 	coord_string = ""; $.each(coord_info, function( k,v) { coord_string += `${(v[0]* scale_factor - x_offset) | 0 },${ ( v[1] * scale_factor-y_offset) | 0} `; } )
 	polygon_svg_str = `<polygon points="${coord_string}" style="fill:${colours[ random(9)]};stroke;purple;stroke-width:1;opacity:0.5" id="tile${contour.properties.labelindex}" class="tileClass" />`;
 
-	mysvg.polygon( coord_info, { fill: colours[random(9)] , stroke: 'red', strokeWidth: 1, opacity:0.1, class:'tileClass', id:"tile${contour.properties.labelindex}" } )
+        labelindex = contour.properties.labelindex;
+
+	mysvg.polygon( coord_info, { fill: colours[ labelindex % 9] , stroke: 'red', strokeWidth: 1, opacity:0.1, class:'tileClass', id:'tile' +contour.properties.labelindex } )
 
 	polygon_list.push(polygon_svg_str);
 	}
