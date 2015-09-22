@@ -24,7 +24,7 @@
 
     <style>
 
-#svgbasics { width: 600px; height: 1000px; border: 1px solid #484; }
+#svgbasics { width: 1000px; height: 1000px; border: 2px solid #484; }
 
     body
     	{
@@ -33,46 +33,16 @@
 		padding:10px;
     	}
 
-	.mainimg {
-	  width:600px;
-	  position:absolute;
-	  border:1px solid #666;
-	  padding:3px;
-	  margin-right:5px;
-
-	}
-
 
 	.overlay_img {
-	  width:600px;
-          
 	  position:absolute;
 
 	  display:block;
 	  border:1px solid #666;
-
 	  padding:3px;
 	  margin-right:5px;
 
 	}
-
- 	.mirror_x {
-     -moz-transform: scale(-1, 1);
-     -webkit-transform: scale(-1, 1);
-     transform: scale(-1, 1);
-  	}
-
- 	.mirror_y {
-     -moz-transform: scale(1, -1);
-     -webkit-transform: scale(1, -1);
-     transform: scale(1, -1);
-  	}
-
-	.mirror_xy {
-     -moz-transform: scale(-1, -1);
-     -webkit-transform: scale(-1, -1);
-     transform: scale(-1, -1);
-  	}
 
 	</style>
 
@@ -134,10 +104,10 @@
 				</div>
 			</div>
 			<div class="col-md-8"> 
-				<div id="main_viewport" width="800px"; height="100%">
-                                        <img id="base_img" src='images/base_img/UDA2_pilot_016-p1c.png' class="mainimg"> 
+				<div id="main_viewport" width="800px"; height="1000px">
+<!--                                        <img id="base_img" src='images/base_img/UDA2_pilot_016-p1c.png' class="mainimg"> 
 					<img id='tile_img' src='images/base_img/UDA2_pilot_016-tile-p1c.png' class="overlay_img">
-<!--					<img id='Carrera_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Carrera_net_typ.png' class="overlay_img">
+					<img id='Carrera_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Carrera_net_typ.png' class="overlay_img">
 					<img id='Marghoob_img' src='images/features_output_dir/net_atyp/UDA2_pilot_016_Marghoob_net_atyp.png' class="overlay_img">
 					<img id='Braun_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Braun_net_typ.png' class="overlay_img">
 					<img id='Rabinowitz_img' src='images/features_output_dir/net_atyp/UDA2_pilot_016_Rabinowitz_net_atyp.png' class="overlay_img">
@@ -318,34 +288,11 @@ $( "#slider" ).slider({
 
     </script>
 
-<div id="svg_cont">
-<!-- 
-
-<svg id="main_svg" xmlns="http://www.w3.org/2000/svg" class="overlay_img" xmlns:xlink="http://www.w3.org/1999/xlink" widht="400" height="500" >
-  <text x="10" y="35">Two passive squares:</text>
-  <g id="rectangles">
-
-  <rect id="rect1" class="geo_shapes"  x="160" y="10" opacity="1"  width="60" height="60" fill="blue"/>
-  <rect id="rect2" class="geo_shapes" x="230" y="10"   width="60" height="60" fill="green"/>
-  <rect id="rect3" class="geo_shapes" x="280" y="12"   width="60" height="60" fill="orange"/>
-
-   </g>
-
-</svg>
--->
-
 </div>
-
 <script>
 //### Add this to an onload event
 
 
-
-
-
-function svgEl(tagName) {
-    return document.createElementNS("http://www.w3.org/2000/svg", tagName);
-}
 
 function drawShape() {
 	var shape = this.id;
@@ -374,6 +321,7 @@ $(function() {
 	$('#clear').click(function() {
 		$('#svgbasics').svg('get').clear();
 	});
+
 	$('#export').click(function() {
 		var xml = $('#svgbasics').svg('get').toSVG();
 		$('#svgexport').html(xml.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'));
@@ -386,9 +334,9 @@ $(function() {
 	$("svg").attr("class","overlay_img");
 
 	// $("svg").append('<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" id="mycircle" fill="blue"/>');
-	 $("#svgbasics").html($("#svgbasics").html());
+//	 $("#svgbasics").html($("#svgbasics").html());  ### This line broke the dynamic add functionality... hmm
  
-//contourdata_to_shape(geodata,'',0,0);
+contourdata_to_shape(geodata,'',0,0);
 
 
 //$( "#mycircle" ).hover(function() {
@@ -396,7 +344,9 @@ $(function() {
 //  $( this ).fadeIn( 500 );
 //    });
 
+id="tile${contour.properties.labelindex}"
 
+mysvg = $("#svgbasics").svg('get');
 });
 
 function drawInitial(svg) {
@@ -413,33 +363,21 @@ function random(range) {
 }
 
 
-function add_a_grid( svgelement) {
-        current_grid_id = 0;
-  
-	 for (x = 25; x < 400; x+=25) {  
-    		for (y=25; y<400; y+=25) {
-			//  console.log('x '+x+'y '+y ); 
-				current_grid_id++;
-		               svg_box = "<circle cx='"+x+"' cy='"+y+"' r='10' class='my_circle_class' stroke='blue' stroke-width='2' id='grid"+current_grid_id+"' fill='" + colours[random(9)] + "' opacity='0.1' > ";
-				$("svg").append(svg_box);
-					}
-				     }
-/// Now that I've apended all of those elements to the SVG I need to reparse it
-	 $("#svgbasics").html($("#svgbasics").html());
-         $(".my_circle_class").hover( function() {  console.log(this.id) } ) ;
-				  
-				}  ;
 
+var geodata = function () {  
 
+	mysvg = $("#svgbasics").svg('get')
 
-var geodata = function () {  geo_array = [];
+	geo_array = [];
             $.ajax({
                 'async': false,
                 'global': false,
                 'url': "data/data.geojson",
                 'dataType': "json",
                 'success': function (result) {
-                   $.each( result, function(i,contour) { geo_array.push( JSON.parse(contour) ) } );
+                   $.each( result, function(i,contour) { 
+			geo_array.push( JSON.parse(contour) ) 
+						} );
                 }
              });
 
@@ -452,8 +390,8 @@ function contourdata_to_shape( contours, svg_element, x_offset, y_offset ) {
 	scale_factor = 1;
 	polygon_list = [];
      
-//       x_offset = 800;
- //      y_offset = 800;
+	var mysvg = $("#svgbasics").svg('get');
+
 	$.each(contours, function(index,contour) 
 	{
 	 coord_info = contour.geometry.coordinates; 
@@ -461,21 +399,20 @@ function contourdata_to_shape( contours, svg_element, x_offset, y_offset ) {
 	coord_string = ""; $.each(coord_info, function( k,v) { coord_string += `${(v[0]* scale_factor - x_offset) | 0 },${ ( v[1] * scale_factor-y_offset) | 0} `; } )
 	polygon_svg_str = `<polygon points="${coord_string}" style="fill:${colours[ random(9)]};stroke;purple;stroke-width:1;opacity:0.5" id="tile${contour.properties.labelindex}" class="tileClass" />`;
 
+	mysvg.polygon( coord_info, { fill: colours[random(9)] , stroke: 'red', strokeWidth: 1, opacity:0.1, class:'tileClass', id:"tile${contour.properties.labelindex}" } )
 
-	$("svg").append(polygon_svg_str);
 	polygon_list.push(polygon_svg_str);
 	}
 	);
 
 	
-         $("#svgbasics").html($("#svgbasics").html());
+//         $("#svgbasics").html($("#svgbasics").html());
 
          //Need to add the below function to a callback function for above..
          $(".tileClass").hover( function() {  console.log(this.id) } ) ;
 
 	return polygon_list;
 	//);
-
 
 
 }
