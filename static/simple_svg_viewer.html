@@ -24,7 +24,7 @@
 
     <style>
 
-#svgbasics { width: 600px; height: 100%; border: 1px solid #484; }
+#svgbasics { width: 600px; height: 1000px; border: 1px solid #484; }
 
     body
     	{
@@ -41,8 +41,6 @@
 	  margin-right:5px;
 
 	}
-
-
 
 
 	.overlay_img {
@@ -76,11 +74,7 @@
      transform: scale(-1, -1);
   	}
 
-
-
-
 	</style>
-
 
   </head>
   <body>
@@ -121,6 +115,7 @@
 
 				 </div>
 				<div id="rater_info">
+					<div id="tile_opacity"></div>
 					<h1>Color Guide:</h1>
 					<h3>
 					 <div style="border:2px solid red">Marghoob: Red</div>
@@ -142,10 +137,11 @@
 				<div id="main_viewport" width="800px"; height="100%">
                                         <img id="base_img" src='images/base_img/UDA2_pilot_016-p1c.png' class="mainimg"> 
 					<img id='tile_img' src='images/base_img/UDA2_pilot_016-tile-p1c.png' class="overlay_img">
-					<img id='Carrera_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Carrera_net_typ.png' class="overlay_img">
+<!--					<img id='Carrera_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Carrera_net_typ.png' class="overlay_img">
 					<img id='Marghoob_img' src='images/features_output_dir/net_atyp/UDA2_pilot_016_Marghoob_net_atyp.png' class="overlay_img">
 					<img id='Braun_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Braun_net_typ.png' class="overlay_img">
 					<img id='Rabinowitz_img' src='images/features_output_dir/net_atyp/UDA2_pilot_016_Rabinowitz_net_atyp.png' class="overlay_img">
+-->
 				</div>
 			<!--  These img tags should be added in runtime based on the rater list['Marghoob','Braun','Rabinowitz','Carrera'];  -->
 					
@@ -173,6 +169,8 @@
   	$(document).ready(function(){
   		console.log('data is loading?')
     	
+
+//        $("#tile_opacity").slider( min:0, max:1  );
 
 	$(":checkbox").prop('checked',true);//reset all checkboxes to be checked...
 
@@ -219,10 +217,17 @@
 
 	$("#tile_toggle").button ();
 
-//$( "#slider" ).slider({
-//	range: true,
-//	values: [ 17, 67 ]
-//});
+$( "#slider" ).slider({
+	range: false,
+	max: 1,
+        min: 0,
+       step: 0.05,
+	change: function( event, ui ) { 
+				cur_slider_value =  $(this).slider("option","value");
+				console.log(cur_slider_value);
+				$("svg").attr('opacity',cur_slider_value);
+					}
+});
 
 
 	$("#tile_button").button();
@@ -383,8 +388,8 @@ $(function() {
 	// $("svg").append('<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" id="mycircle" fill="blue"/>');
 	 $("#svgbasics").html($("#svgbasics").html());
  
+//contourdata_to_shape(geodata,'',0,0);
 
-    add_a_grid('2');
 
 //$( "#mycircle" ).hover(function() {
 //  $( this ).fadeOut( 100 ); console.log(this.id);
@@ -437,28 +442,24 @@ var geodata = function () {  geo_array = [];
                    $.each( result, function(i,contour) { geo_array.push( JSON.parse(contour) ) } );
                 }
              });
+
             return geo_array;
         }(); 
 
-
-
-
+//need to add a callback function to this as well... hmm so want to load the geodata than push it to the SVG
 
 function contourdata_to_shape( contours, svg_element, x_offset, y_offset ) {
-	//console.log(coord_info); 
-
 	scale_factor = 1;
-
 	polygon_list = [];
      
 //       x_offset = 800;
  //      y_offset = 800;
 	$.each(contours, function(index,contour) 
 	{
-	 coord_info = contour.geometry.coordinates[0]; 
+	 coord_info = contour.geometry.coordinates; 
 
 	coord_string = ""; $.each(coord_info, function( k,v) { coord_string += `${(v[0]* scale_factor - x_offset) | 0 },${ ( v[1] * scale_factor-y_offset) | 0} `; } )
-	polygon_svg_str = `<polygon points="${coord_string}" style="fill:${colours[ random(9)]};stroke;purple;stroke-width:1;opacity:0.1" />`;
+	polygon_svg_str = `<polygon points="${coord_string}" style="fill:${colours[ random(9)]};stroke;purple;stroke-width:1;opacity:0.5" id="tile${contour.properties.labelindex}" class="tileClass" />`;
 
 
 	$("svg").append(polygon_svg_str);
@@ -468,11 +469,13 @@ function contourdata_to_shape( contours, svg_element, x_offset, y_offset ) {
 
 	
          $("#svgbasics").html($("#svgbasics").html());
+
+         //Need to add the below function to a callback function for above..
+         $(".tileClass").hover( function() {  console.log(this.id) } ) ;
+
 	return polygon_list;
 	//);
 
-
-/// <polygon points="220,10 300,210 170,250 123,234" style="fill:lime;stroke:purple;stroke-width:1" />
 
 
 }
