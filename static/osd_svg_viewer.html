@@ -77,8 +77,7 @@
 						<!-- NEED TO ADD THESE DYNAMICALLY WITH A FOREACH FUNCTION -->
 						<p>Select the raters to overlay please:</p>
 						<input type=checkbox name=Marghoob class="overlay_toggle" id=show_Marghoob><label for=show_Marghoob>Marghoob</label></input>
-						<input type=checkbox name=Rabinowitz class="overlay_toggle" id=show_Rabinowitz><label 
-for=show_Rabinowitz>Rabinowitz</label></input>
+						<input type=checkbox name=Rabinowitz class="overlay_toggle" id=show_Rabinowitz><label for=show_Rabinowitz>Rabinowitz</label></input>
 						<input type=checkbox name=Carrera class="overlay_toggle" id=show_Carrera><label for=show_Carrera>Carrera</label></input>
 						<input type=checkbox name=Braun class="overlay_toggle" id=show_Braun><label for=show_Braun>Braun</label></input>
 			
@@ -269,7 +268,7 @@ $( "#slider" ).slider({
 
   					$("#"+img_id).attr("src",rater_overlay_url); //actually update the rater overlay.. I need to add a check code
   																//that if the overlay doesn't actually exist 
-(e.g. no file written)
+		//(e.g. no file written)
   																//just make the img src equal to null
 
   					$("#"+img_id).show(); // I think I need to reset this flag each time... probably need to combine this with an error handler..
@@ -343,18 +342,16 @@ $(function() {
 		$('#svgexport').html(xml.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'));
 	});
 
-	$("#main_viewport").append( $("#svgbasics")); // $("#svgbasics").addClass("overlay_img"); // Need to add a class to the SVG itself, not the div, and more importantly I 
-can't actually use the addclass function //have to add an attribute
-	$("svg").attr("class","overlay_img");
+//	$("#main_viewport").append( $("#svgbasics")); // $("#svgbasics").addClass("overlay_img"); // Need to add a class to the SVG itself, not the div, and more importantly I can't actually use the addclass function //have to add an attribute
+//	$("svg").attr("class","overlay_img");
 
-	// $("svg").append('<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" id="mycircle" fill="blue"/>'); // $("#svgbasics").html($("#svgbasics").html()); ### 
-This line broke the dynamic add functionality... hmm
+	// $("svg").append('<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" id="mycircle" fill="blue"/>'); // $("#svgbasics").html($("#svgbasics").html()); ### This line broke the dynamic add functionality... hmm
 
-mysvg = $("#svgbasics").svg('get');
+//mysvg = $("#svgbasics").svg('get');
 
-mysvg.image(0,0,'960','923','images/base_img/UDA2_pilot_060-p1c.png',{'opacity':1, 'position':'absolute'});
+//mysvg.image(0,0,'960','923','images/base_img/UDA2_pilot_060-p1c.png',{'opacity':1, 'position':'absolute'});
  
-contourdata_to_shape(geodata,'',0,0);
+my_points = contourdata_to_shape(geodata,'',0,0);
 
 
 $("body").keypress( function(event) { if ( event.keyCode ==116) { console.log('pressed t'); $('.tileClass').attr('opacity',0); } } );
@@ -406,11 +403,17 @@ function contourdata_to_shape( contours, svg_element, x_offset, y_offset ) {
      
 	var mysvg = $("#svgbasics").svg('get');
 
+	x_scale_factor = 1.0/963.0;
+        y_scale_factor = 1.0/920.0;
+
 	$.each(contours, function(index,contour)
 	{
 	 coord_info = contour.geometry.coordinates;
 
-	coord_string = ""; $.each(coord_info, function( k,v) { coord_string += `${(v[0]* scale_factor - x_offset) | 0 },${ ( v[1] * scale_factor-y_offset) | 0} `; } )
+//	coord_string = ""; $.each(coord_info, function( k,v) { coord_string += `${(v[0]* scale_factor - x_offset) | 0 },${ ( v[1] * scale_factor-y_offset) | 0} `; } )
+	coord_string = ""; $.each(coord_info, function( k,v) { coord_string += `${(v[0]* x_scale_factor - x_offset)  },${ ( v[1] * y_scale_factor-y_offset) } `; } )
+// the |0 made them all integers
+
 	polygon_svg_str = `<polygon points="${coord_string}" style="fill:${colours[ random(9)]};stroke;purple;stroke-width:1;opacity:0.5" 
 id="tile${contour.properties.labelindex}" class="tileClass" />`;
 
@@ -419,7 +422,8 @@ id="tile${contour.properties.labelindex}" class="tileClass" />`;
 	mysvg.polygon( coord_info, { fill: colours[ labelindex % 9] , stroke: 'red', strokeWidth: 1, opacity:0.1, class:'tileClass', id:'tile' +contour.properties.labelindex } 
 )
 
-	polygon_list.push(polygon_svg_str);
+//	polygon_list.push(polygon_svg_str);
+	polygon_list.push(coord_string);
 	}
 	);
 
@@ -428,6 +432,7 @@ id="tile${contour.properties.labelindex}" class="tileClass" />`;
 
          //Need to add the below function to a callback function for above..
          $(".tileClass").hover( function() { console.log(this.id) } ) ;
+
 
 	return polygon_list;
 	//);
@@ -471,5 +476,18 @@ id="tile${contour.properties.labelindex}" class="tileClass" />`;
     points="800,150 900,180 900,240 800,270 700,240 700,180" /> </svg>
 
 
-<!-- tester.append($("#inline_svg_example") ) -->
+<script>
+// var d3Rect = d3.select(svg_layer.node()).append("rect")
+//                       .style('fill', '#f00')
+//                        .attr("cx", 0)
+//                        .attr("width", 0.5)
+//                        .attr("cy", 0)
+//                        .attr("height", 1.0);
+</script>
+
+<!-- tester.append($("#inline_svg_example") )
+
+https://www.dashingd3js.com/creating-svg-elements-based-on-data
+ -->
+
   </body> </html>
