@@ -114,9 +114,9 @@ src="/js/openseadragon.js"></script> <script src="/js/openseadragon-svg-overlay.
         tileSources: {
             type: 'legacy-image-pyramid',
             levels:[{
-		url: 'images/base_img/UDA2_pilot_016-p1c.png',
-                height: 960,
-                width: 923
+		url: 'images/base_img/UDA2_pilot_060-p1c.png',
+                height: 920,
+                width: 960
             }]
         }
     });
@@ -404,7 +404,7 @@ function contourdata_to_shape( contours, svg_element, x_offset, y_offset ) {
 	var mysvg = $("#svgbasics").svg('get');
 
 	x_scale_factor = 1.0/963.0;
-        y_scale_factor = 1.0/920.0;
+        y_scale_factor = 1.0/963.0;
 
 	$.each(contours, function(index,contour)
 	{
@@ -422,25 +422,26 @@ id="tile${contour.properties.labelindex}" class="tileClass" />`;
 	mysvg.polygon( coord_info, { fill: colours[ labelindex % 9] , stroke: 'red', strokeWidth: 1, opacity:0.1, class:'tileClass', id:'tile' +contour.properties.labelindex } 
 )
 
-//	polygon_list.push(polygon_svg_str);
-	polygon_list.push(coord_string);
+ //	polygon_list.push(polygon_svg_str);
+	polygon_list.push( { 'coords': coord_string, 'labelindex': contour.properties.labelindex});
 	}
 	);
 
-	
-// $("#svgbasics").html($("#svgbasics").html());
 
+//$.each( my_points, function( k, point_list) { d3.select(svg_layer.node()).append("polygon").attr("points",point_list).style('fill', function(d,i){return color(i)}).attr('opacity',0.5)  });
+	
          //Need to add the below function to a callback function for above..
          $(".tileClass").hover( function() { console.log(this.id) } ) ;
-
 
 	return polygon_list;
 	//);
 
 
 }
+var color = d3.scale.category20();
+//$.each( my_points, function( k, point_list) { d3.select(svg_layer.node()).append("polygon").attr("points",point_list.coords).style('fill', color( point_list.labelindex % 20) ).attr('opacity',0.5)  });
 
-
+$.each( my_points, function( k, point_list) { d3.select(svg_layer.node()).append("polygon").attr("points",point_list.coords).style('fill', color( point_list.labelindex % 20) ).attr('opacity',0.5)  .attr('class','tileClass')});
 </script> <!-- Some tips on working with SVG docs http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
 
 -->
@@ -452,29 +453,6 @@ id="tile${contour.properties.labelindex}" class="tileClass" />`;
 
 
 
-<svg id="inline_svg_example" width="200" height="200">
-
-<rect x="20" y="50" width="100" height="50"
-    fill="yellow" stroke="navy" stroke-width="5" /> <rect x="150" y="50" width="100" height="50" rx="10"
-    fill="green" /> <g transform="translate(270 80) rotate(-30)">
-  <rect x="0" y="0" width="100" height="500" rx="10"
-      fill="none" stroke="purple" stroke-width="3" /> </g> <circle cx="70" cy="220" r="50"
-    fill="red" stroke="blue" stroke-width="5" /> <g transform="translate(175 220)">
-  <ellipse rx="75" ry="50" fill="red" /> </g> <ellipse transform="translate(300 220) rotate(-30)"
-    rx="75" ry="50" fill="none" stroke="blue" stroke-width="10" /> <g stroke="green" >
-  <line x1="450" y1="120" x2="550" y2="20" stroke-width="5" />
-  <line x1="550" y1="120" x2="650" y2="20" stroke-width="10" />
-  <line x1="650" y1="120" x2="750" y2="20" stroke-width="15" />
-  <line x1="750" y1="120" x2="850" y2="20" stroke-width="20" />
-  <line x1="850" y1="120" x2="950" y2="20" stroke-width="25" /> </g> <polyline fill="none" stroke="blue" stroke-width="5"
-    points="450,250
-            475,250 475,220 500,220 500,250
-            525,250 525,200 550,200 550,250
-            575,250 575,180 600,180 600,250
-            625,250 625,160 650,160 650,250
-            675,250" /> <polygon fill="lime" stroke="blue" stroke-width="10"
-    points="800,150 900,180 900,240 800,270 700,240 700,180" /> </svg>
-
 
 <script>
 // var d3Rect = d3.select(svg_layer.node()).append("rect")
@@ -485,7 +463,6 @@ id="tile${contour.properties.labelindex}" class="tileClass" />`;
 //                        .attr("height", 1.0);
 </script>
 
-<!-- tester.append($("#inline_svg_example") )
 
 https://www.dashingd3js.com/creating-svg-elements-based-on-data
  -->
