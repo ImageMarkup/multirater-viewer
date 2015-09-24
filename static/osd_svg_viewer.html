@@ -20,48 +20,42 @@
     <link href="css/jquery-ui.theme.css" rel="stylesheet">
     <link href="css/bootstrap.css" rel="stylesheet">
 
-
-    <style>
-
-#svgbasics { width: 1000px; height: 1000px; border: 2px solid #484; }
-
+   <style>
     body
     	{
-
 		border:5px;
 		padding:10px;
     	}
 
-
 	.overlay_img {
 	  position:absolute;
-
-// display:block;
+	// display:block;
 	  border:1px solid #666;
 	  padding:3px;
 	  margin-right:5px;
-
 	}
-
 	</style>
 
-  </head>
+</head>
   <body>
 
+	<script>
+
+// this will / should be loaded from a script
+var raters = [ 'Marghoob','Rabinowitz','Carrera','Brain'   ];
+
+	</script>
+
+
 		<div class="row">
-		
 		<div class="col-md-4" ">
 				<h2>Image List <select id='image_list_dd'></select> </h2>
 			<div style="border:1px solid black;" id="feature_list_target">
 			</div>
-
 		</div>
 			<div class="col-md-8">
-				<span id="tile_toggle">Toggle All Overlays
-				</span>
-				
-				<button id="tile_button">Toggle Tile Overlay</button>
-			
+				<span id="tile_toggle">Toggle All Overlays</span>
+				<span><button id="tile_button">Toggle Tile Overlay</button></span>
 						<script>
 						$("input").button ();
 						</script>
@@ -93,14 +87,10 @@
 					 <div style="border:2px solid yellow;width:auto">Carrera:Yellow</div>
 					 </h3>
 
-					 <h4>Notes: Overlaps will show up as a blend of the base colors for the rater; also note there are some cases where Marghoob=Rabinowitz; 
-in some cases this is because of a data extraction bug I haven't fixed yet </h4>
-
+					 <h5>Notes: Overlaps will show up as a blend of the base colors for the rater; also note there are some cases where Marghoob=Rabinowitz; 
+in some cases this is because of a data extraction bug I haven't fixed yet </h5>
 					 <form>
- 
 </form>
- 
-
 				</div>
 			</div>
 			<div class="col-md-8">
@@ -156,13 +146,16 @@ svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
 
      var my_data = {};
   	$(document).ready(function(){
-  		console.log('data is loading?')
-    	
+//  		console.log('data is loading?')
+
+
+$.each(raters, function( n,v) { ; $("#rater_list").append(
+     `<input type='button' value="${v}" id="show_${v}" class="rater_buttons">`).button()}
+
+ );
 
 
 	$(":checkbox").prop('checked',true);//reset all checkboxes to be checked...
-
-
 		var $select = $('#image_list_dd');
 
  
@@ -175,7 +168,6 @@ svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
       //iterate over the data and append a select option
       	$.each(data, function(key, val){
       		  $select.append('<option id="' + val + '">' + val + '</option>'); });
-
 						      });
 
     //MANY many things to do
@@ -198,8 +190,6 @@ svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
   					//ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
   					update_rater_overlays( $selected_image);
 
-			
-
   					});
 
 	$("#tile_toggle").button ();
@@ -219,7 +209,8 @@ $( "#slider" ).slider({
 	$("#tile_button").button();
 
 	$("#tile_button").click( function() {
-					console.log('clicked it!!');
+	my_points = contourdata_to_shape(geodata,'',0,0);
+	$.each( my_points, function( k, point_list) { d3.select(svg_layer.node()).append("polygon").attr("points",point_list.coords).style('fill', color( point_list.labelindex % 20) ).attr('opacity',0.5)  .attr('class','tileClass')});
 					 	$('#tile_img').toggle();
 					
 						      }  );
@@ -309,56 +300,22 @@ $( "#slider" ).slider({
 
 
 
-function drawShape() {
-	var shape = this.id;
-	var svg = $('#svgbasics').svg('get');
-	if (shape == 'rect') {
-		svg.rect(random(300), random(200), random(100) + 100, random(100) + 100,
-			{fill: colours[random(9)], stroke: colours[random(9)], strokeWidth: random(5) + 1});
-	}
-	else if (shape == 'line') {
-		svg.line(random(400), random(300), random(400), random(300),
-			{stroke: colours[random(9)], strokeWidth: random(5) + 1});
-	}
-	else if (shape == 'circle') {
-		svg.circle(random(300) + 50, random(200) + 50, random(80) + 20,
-			{fill: colours[random(9)], stroke: colours[random(9)], strokeWidth: random(5) + 1});
-	}
-	else if (shape == 'ellipse') {
-		svg.ellipse(random(300) + 50, random(200) + 50, random(80) + 20, random(80) + 20,
-			{fill: colours[random(9)], stroke: colours[random(9)], strokeWidth: random(5) + 1});
-	}
-}
+
 
 $(function() {
-	$('#svgbasics').svg({onLoad: drawInitial});
-	$('#rect,#line,#circle,#ellipse').click(drawShape);
-	$('#clear').click(function() {
-		$('#svgbasics').svg('get').clear();
-	});
 
-	$('#export').click(function() {
-		var xml = $('#svgbasics').svg('get').toSVG();
-		$('#svgexport').html(xml.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'));
-	});
-
-//	$("#main_viewport").append( $("#svgbasics")); // $("#svgbasics").addClass("overlay_img"); // Need to add a class to the SVG itself, not the div, and more importantly I can't actually use the addclass function //have to add an attribute
-//	$("svg").attr("class","overlay_img");
-
-	// $("svg").append('<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" id="mycircle" fill="blue"/>'); // $("#svgbasics").html($("#svgbasics").html()); ### This line broke the dynamic add functionality... hmm
-
-//mysvg = $("#svgbasics").svg('get');
-
-//mysvg.image(0,0,'960','923','images/base_img/UDA2_pilot_060-p1c.png',{'opacity':1, 'position':'absolute'});
- 
-my_points = contourdata_to_shape(geodata,'',0,0);
-
-
-$("body").keypress( function(event) { if ( event.keyCode ==116) { console.log('pressed t'); $('.tileClass').attr('opacity',0); } } );
+$("body").keypress( function(event) { if ( event.keyCode ==116) { 
+				cur_opacity = $('.tileClass').attr('opacity');   
+				 cur_slider_value = $("#slider").slider("option","value");
+				var new_opacity = (cur_opacity == 0 ) ? cur_slider_value: 0;
+			$('.tileClass').attr('opacity',new_opacity); 
+				} } );
 
 
 
 });
+
+//$.each( my_points, function( k, point_list) { d3.select(svg_layer.node()).append("polygon").attr("points",point_list.coords).style('fill', color( point_list.labelindex % 20) ).attr('opacity',0.5)  .attr('class','tileClass')});
 
 function drawInitial(svg) {
 	//svg.circle(75, 75, 50, {fill: 'none', stroke: 'red', strokeWidth: 3});
@@ -377,8 +334,7 @@ function random(range) {
 
 var geodata = function () {
 
-	mysvg = $("#svgbasics").svg('get')
-
+	console.log('loading geo data');
 	geo_array = [];
             $.ajax({
                 'async': false,
@@ -386,9 +342,12 @@ var geodata = function () {
                 'url': "data/data.geojson",
                 'dataType': "json",
                 'success': function (result) {
+
                    $.each( result, function(i,contour) {
 			geo_array.push( JSON.parse(contour) )
 						} );
+			//GEO ARRAY IS NOW generated with contours... so can call another function to generate an SVG layer a well
+				contourdata_to_shape(geo_array,2,2,2);
                 }
              });
 
@@ -401,7 +360,6 @@ function contourdata_to_shape( contours, svg_element, x_offset, y_offset ) {
 	scale_factor = 1;
 	polygon_list = [];
      
-	var mysvg = $("#svgbasics").svg('get');
 
 	x_scale_factor = 1.0/963.0;
         y_scale_factor = 1.0/963.0;
@@ -419,8 +377,7 @@ id="tile${contour.properties.labelindex}" class="tileClass" />`;
 
         labelindex = contour.properties.labelindex;
 
-	mysvg.polygon( coord_info, { fill: colours[ labelindex % 9] , stroke: 'red', strokeWidth: 1, opacity:0.1, class:'tileClass', id:'tile' +contour.properties.labelindex } 
-)
+	//mysvg.polygon( coord_info, { fill: colours[ labelindex % 9] , stroke: 'red', strokeWidth: 1, opacity:0.1, class:'tileClass', id:'tile' +contour.properties.labelindex } )
 
  //	polygon_list.push(polygon_svg_str);
 	polygon_list.push( { 'coords': coord_string, 'labelindex': contour.properties.labelindex});
@@ -428,7 +385,6 @@ id="tile${contour.properties.labelindex}" class="tileClass" />`;
 	);
 
 
-//$.each( my_points, function( k, point_list) { d3.select(svg_layer.node()).append("polygon").attr("points",point_list).style('fill', function(d,i){return color(i)}).attr('opacity',0.5)  });
 	
          //Need to add the below function to a callback function for above..
          $(".tileClass").hover( function() { console.log(this.id) } ) ;
@@ -439,32 +395,34 @@ id="tile${contour.properties.labelindex}" class="tileClass" />`;
 
 }
 var color = d3.scale.category20();
-//$.each( my_points, function( k, point_list) { d3.select(svg_layer.node()).append("polygon").attr("points",point_list.coords).style('fill', color( point_list.labelindex % 20) ).attr('opacity',0.5)  });
 
-$.each( my_points, function( k, point_list) { d3.select(svg_layer.node()).append("polygon").attr("points",point_list.coords).style('fill', color( point_list.labelindex % 20) ).attr('opacity',0.5)  .attr('class','tileClass')});
-</script> <!-- Some tips on working with SVG docs http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
+
+/// Start adding some sample data..
+
+
+
+</script> 
+
+
+<!-- Some tips on working with SVG docs http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
 
 -->
 
-<div id="svgbasics"></div>
-  <p><button id="rect">Add rectangle</button> <button id="line">Add line</button>
-	<button id="circle">Add circle</button> <button id="ellipse">Add ellipse</button>
-	<button id="clear">Clear</button> <button id="export">Export</button></p> <div id="svgexport"></div>
-
-
-
-
-<script>
-// var d3Rect = d3.select(svg_layer.node()).append("rect")
-//                       .style('fill', '#f00')
-//                        .attr("cx", 0)
-//                        .attr("width", 0.5)
-//                        .attr("cy", 0)
-//                        .attr("height", 1.0);
-</script>
-
 
 https://www.dashingd3js.com/creating-svg-elements-based-on-data
+
+dg_viewer.viewport.maxZoomPixelRatio=5
+dg_viewer.viewport.minZoomPixelRatio=0.4
+Can play around with these
+
+
+$.each(raters, function( n,v) { ; $("#rater_list").append(
+     `<input type='button' value="${v}" id="show_${v}" class="rater_buttons">`).button()}
+
+ );
+
+
+$(".rater_buttons").click( function() { console.log(this.id) });
  -->
 
   </body> </html>
