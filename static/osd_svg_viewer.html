@@ -35,7 +35,6 @@
 	  margin-right:5px;
 	}
 	</style>
-
 </head>
   <body>
 
@@ -66,17 +65,12 @@ var raters = [ 'Marghoob','Rabinowitz','Carrera','Brain'   ];
 		<div class="row">
 		
 			<div class="col-md-4">
-				<div id="slider"> </div>
-				<div id="rater_list" style="border:1px">
-						<!-- NEED TO ADD THESE DYNAMICALLY WITH A FOREACH FUNCTION -->
-						<p>Select the raters to overlay please:</p>
-						<input type=checkbox name=Marghoob class="overlay_toggle" id=show_Marghoob><label for=show_Marghoob>Marghoob</label></input>
-						<input type=checkbox name=Rabinowitz class="overlay_toggle" id=show_Rabinowitz><label for=show_Rabinowitz>Rabinowitz</label></input>
-						<input type=checkbox name=Carrera class="overlay_toggle" id=show_Carrera><label for=show_Carrera>Carrera</label></input>
-						<input type=checkbox name=Braun class="overlay_toggle" id=show_Braun><label for=show_Braun>Braun</label></input>
-			
+				<span><p>Select the raters to overlay please:</p></span>
 
-				 </div>
+				<div id="toggle_raters_div" style="border:1px;width:400px" > </div>
+
+				<div id="slider"> </div>
+
 				<div id="rater_info">
 					<div id="tile_opacity"></div>
 					<h1>Color Guide:</h1>
@@ -137,6 +131,13 @@ svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
 
     <script>
 
+
+	function color_some_tiles(rater,feature)
+		{
+		//given a feature and a rater and an image ID I should color the respective tiles on the super pixel image
+		console.log("should be painting "+feature+"for "+rater);
+		}
+
     //Probably a cleaner way than making these global variables... Discsuss with Brian on refactoring
     var active_image = '';
     var current_feature = "net_typ";
@@ -149,10 +150,17 @@ svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
 //  		console.log('data is loading?')
 
 
-$.each(raters, function( n,v) { ; $("#rater_list").append(
-     `<input type='button' value="${v}" id="show_${v}" class="rater_buttons">`).button()}
+$.each(raters, function( n,v) { ; $("#toggle_raters_div").append(
+     `<input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons"><label for="show_${v}">${v}</label></input>   `   ).button()}
+		 );
+//Now add an event handler for each button
 
- );
+$('.overlay_toggle').click( function() { 
+			//	console.log(this.id);
+			//So I need to check the state of the button to either draw or clear a given tile(s) colors for a rater..
+				color_some_tiles(this.id,"thefeatureIwanttolookat");
+
+					});
 
 
 	$(":checkbox").prop('checked',true);//reset all checkboxes to be checked...
@@ -315,7 +323,6 @@ $("body").keypress( function(event) { if ( event.keyCode ==116) {
 
 });
 
-//$.each( my_points, function( k, point_list) { d3.select(svg_layer.node()).append("polygon").attr("points",point_list.coords).style('fill', color( point_list.labelindex % 20) ).attr('opacity',0.5)  .attr('class','tileClass')});
 
 function drawInitial(svg) {
 	//svg.circle(75, 75, 50, {fill: 'none', stroke: 'red', strokeWidth: 3});
@@ -416,10 +423,6 @@ dg_viewer.viewport.minZoomPixelRatio=0.4
 Can play around with these
 
 
-$.each(raters, function( n,v) { ; $("#rater_list").append(
-     `<input type='button' value="${v}" id="show_${v}" class="rater_buttons">`).button()}
-
- );
 
 
 $(".rater_buttons").click( function() { console.log(this.id) });
