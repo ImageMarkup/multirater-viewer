@@ -41,16 +41,14 @@
 	<script>
 
 // this will / should be loaded from a script
-var raters = [ 'Marghoob','Rabinowitz','Carrera','Brain'   ];
+var raters = [ 'Marghoob','Rabinowitz','Carrera','Brian'   ];
 
 	</script>
 
 
 		<div class="row">
-		<div class="col-md-4" ">
-				<h2>Image List <select id='image_list_dd'></select> </h2>
-			<div style="border:1px solid black;" id="feature_list_target">
-			</div>
+		<div class="col-md-4" >
+				<h3>Image List <select id='image_list_dd'></select> </h3>
 		</div>
 			<div class="col-md-8">
 				<span id="tile_toggle">Toggle All Overlays</span>
@@ -58,6 +56,8 @@ var raters = [ 'Marghoob','Rabinowitz','Carrera','Brain'   ];
 						<script>
 						$("input").button ();
 						</script>
+			<span style="border:1px solid black;" id="feature_list_target"></span>
+
 			</div>
 
 		</div>
@@ -73,18 +73,16 @@ var raters = [ 'Marghoob','Rabinowitz','Carrera','Brain'   ];
 
 				<div id="rater_info">
 					<div id="tile_opacity"></div>
-					<h1>Color Guide:</h1>
-					<h3>
-					 <div style="border:2px solid red">Marghoob: Red</div>
-					 <div style="border:2px solid green">Braun: Green</div>
-					 <div style="border:2px solid blue">Rabinowitz: Blue</div>
-					 <div style="border:2px solid yellow;width:auto">Carrera:Yellow</div>
-					 </h3>
+					<h3>Color Guide:</h3>
+					<h4>
 
+					<span id="displayed_data_info">
+					<ul id="rater_color_list">
+					</ul>	
+					 </span>
 					 <h5>Notes: Overlaps will show up as a blend of the base colors for the rater; also note there are some cases where Marghoob=Rabinowitz; 
 in some cases this is because of a data extraction bug I haven't fixed yet </h5>
-					 <form>
-</form>
+
 				</div>
 			</div>
 			<div class="col-md-8">
@@ -136,6 +134,8 @@ svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
 		{
 		//given a feature and a rater and an image ID I should color the respective tiles on the super pixel image
 		console.log("should be painting "+feature+"for "+rater);
+
+//	$("#tile219").css('fill','green');
 		}
 
     //Probably a cleaner way than making these global variables... Discsuss with Brian on refactoring
@@ -178,6 +178,14 @@ $('.overlay_toggle').click( function() {
       		  $select.append('<option id="' + val + '">' + val + '</option>'); });
 						      });
 
+
+
+$.each(raters,function(n,v) { console.log(n,v);   
+         $("#rater_color_list").append(`<li><span style="color:${colours[n]}">${v}</span></li>`  )                     
+
+ })
+
+
     //MANY many things to do
     // add a toggle button so I can turn on/off the tile/overlay
     // add a slider that actually works lnked to the opacity of the slider image
@@ -218,7 +226,7 @@ $( "#slider" ).slider({
 
 	$("#tile_button").click( function() {
 	my_points = contourdata_to_shape(geodata,'',0,0);
-	$.each( my_points, function( k, point_list) { d3.select(svg_layer.node()).append("polygon").attr("points",point_list.coords).style('fill', color( point_list.labelindex % 20) ).attr('opacity',0.5)  .attr('class','tileClass')});
+	$.each( my_points, function( k, point_list) { d3.select(svg_layer.node()).append("polygon").attr("points",point_list.coords).style('fill', color( point_list.labelindex % 20) ).attr('opacity',0.5)  .attr('class','tileClass').attr('id','tile'+point_list.labelindex)});
 					 	$('#tile_img').toggle();
 					
 						      }  );
