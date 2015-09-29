@@ -1,0 +1,434 @@
+<!DOCTYPE html5>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>ISIC MultiRater Viewer</title>
+
+    <!-- Bootstrap -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/geojson2svg/1.0.2/geojson2svg.js"></script>
+  <script src="js/jquery-2.1.3.js"></script>
+   <script src="js/bootstrap.js"></script>
+
+  <script src="js/jquery-ui.js"></script>
+<script type="text/javascript" src="js/jquery.svg.js"></script>
+
+<link rel="stylesheet" type="text/css" href="css/jquery.svg.css">     
+
+    	<link rel="stylesheet" href="css/jquery-ui.css">
+    <link href="css/jquery-ui.theme.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+
+    <style>
+
+#svgbasics { width: 1000px; height: 1000px; border: 2px solid #484; }
+
+    body
+    	{
+
+		border:5px;
+		padding:10px;
+    	}
+
+
+	.overlay_img {
+	  position:absolute;
+
+//	  display:block;
+	  border:1px solid #666;
+	  padding:3px;
+	  margin-right:5px;
+
+	}
+
+	</style>
+
+  </head>
+  <body>
+
+		<div class="row">
+		
+		<div class="col-md-4" ">
+				<h2>Image List <select id='image_list_dd'></select> </h2>
+			<div style="border:1px solid black;" id="feature_list_target">
+			</div>
+
+		</div>
+			<div class="col-md-8"> 
+				<span id="tile_toggle">Toggle All Overlays
+				</span>  
+				
+				<button id="tile_button">Toggle Tile Overlay</button>
+			
+						<script>
+						$("input").button ();
+						</script>
+			</div>
+
+		</div>
+
+		<div class="row">
+		
+			<div class="col-md-4"> 
+				<div id="slider"> </div>
+				<div id="rater_list" style="border:1px">
+						<!-- NEED TO ADD THESE DYNAMICALLY WITH A FOREACH FUNCTION -->
+						<p>Select the raters to overlay please:</p>
+						<input type=checkbox name=Marghoob class="overlay_toggle" id=show_Marghoob><label for=show_Marghoob>Marghoob</label></input>
+						<input type=checkbox name=Rabinowitz class="overlay_toggle" id=show_Rabinowitz><label for=show_Rabinowitz>Rabinowitz</label></input>
+						<input type=checkbox name=Carrera class="overlay_toggle" id=show_Carrera><label for=show_Carrera>Carrera</label></input>
+						<input type=checkbox name=Braun class="overlay_toggle" id=show_Braun><label for=show_Braun>Braun</label></input>
+			
+
+				 </div>
+				<div id="rater_info">
+					<div id="tile_opacity"></div>
+					<h1>Color Guide:</h1>
+					<h3>
+					 <div style="border:2px solid red">Marghoob: Red</div>
+					 <div style="border:2px solid green">Braun: Green</div>
+					 <div style="border:2px solid blue">Rabinowitz: Blue</div>
+					 <div style="border:2px solid yellow;width:auto">Carrera:Yellow</div>
+					 </h3>
+
+					 <h4>Notes: Overlaps will show up as a blend of the base colors for the rater; also note there are some cases where Marghoob=Rabinowitz; in some cases this is because of a data extraction bug I haven't fixed yet </h4>
+
+					 <form>
+ 
+</form>
+ 
+
+				</div>
+			</div>
+			<div class="col-md-8"> 
+				<div id="main_viewport" width="800px"; height="1000px">
+<!--                                        <img id="base_img" src='images/base_img/UDA2_pilot_016-p1c.png' class="mainimg"> 
+					<img id='tile_img' src='images/base_img/UDA2_pilot_016-tile-p1c.png' class="overlay_img">
+					<img id='Carrera_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Carrera_net_typ.png' class="overlay_img">
+					<img id='Marghoob_img' src='images/features_output_dir/net_atyp/UDA2_pilot_016_Marghoob_net_atyp.png' class="overlay_img">
+					<img id='Braun_img' src='images/features_output_dir/net_typ/UDA2_pilot_016_Braun_net_typ.png' class="overlay_img">
+					<img id='Rabinowitz_img' src='images/features_output_dir/net_atyp/UDA2_pilot_016_Rabinowitz_net_atyp.png' class="overlay_img">
+-->
+				</div>
+			<!--  These img tags should be added in runtime based on the rater list['Marghoob','Braun','Rabinowitz','Carrera'];  -->
+					
+			</div>
+
+			
+		</div>
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+ 
+
+    <script>
+
+    //Probably a cleaner way than making these global variables... Discsuss with Brian on refactoring
+    var active_image = '';
+    var current_feature = "net_typ";
+
+    var annotated_feature_list = ['net_typ','net_atyp','str_chrys'];
+    var feature_overlay_basedir = 'images/features_output_dir/';
+
+     var my_data = {};
+  	$(document).ready(function(){
+  		console.log('data is loading?')
+    	
+
+
+	$(":checkbox").prop('checked',true);//reset all checkboxes to be checked...
+
+
+		var $select = $('#image_list_dd');
+
+ 
+    //request the JSON data and parse into the select element
+    $.getJSON('json_data/img_list.json', function(data){
+      //clear the current content of the select
+      	$select.html('');
+ 		my_data = data.responseJSON;
+ 		console.log('meh?')
+      //iterate over the data and append a select option
+      	$.each(data, function(key, val){
+      		  $select.append('<option id="' + val + '">' + val + '</option>');    });
+
+						      });
+
+    //MANY many things to do
+    // add a toggle button so I can turn on/off the tile/overlay
+    // add a slider that actually works lnked to the opacity of the slider image
+    // long term add the ability to shift the color of the base image
+    
+
+  	// Add event handler for changing the image
+  	$select.change( function() { 
+
+  					console.log(this.value)
+  					//Need to change the image source based on the new image I just added in the toggle, will also push the text
+  					// to a DIV so it's obvious what Image I am looking at
+  					$selected_image = this.value;
+  					full_img_url = 'images/base_img/' + $selected_image + '-p1c.png';
+  					console.log(full_img_url);
+  					$("#base_img").attr("src",full_img_url);
+
+  					//ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
+  					update_rater_overlays( $selected_image);
+
+			
+
+
+  					});
+
+	$("#tile_toggle").button ();
+
+$( "#slider" ).slider({
+	range: false,
+	max: 1,
+        min: 0,
+       step: 0.05,
+	change: function( event, ui ) { 
+				cur_slider_value =  $(this).slider("option","value");
+				console.log(cur_slider_value);
+				$(".tileClass").attr('opacity',cur_slider_value);
+					}
+});
+
+	$("#tile_button").button();
+
+	$("#tile_button").click( function() { 
+					console.log('clicked it!!');
+					 	$('#tile_img').toggle();
+					
+						      }  );
+
+    	
+		//Adding RADIO Buttons to allow me to select features
+		
+		flt = $("#feature_list_target");
+
+		$.each(annotated_feature_list, function(v,k) { 
+				console.log(v,k);
+				console.log('adding radio buttons');
+
+				var rb = '<input type="radio" name=rb_feature_set id="feat_'+k+'" value="'+k+'" /><label for="feat_'+k+'">'+k+'</label>'
+				var radioBtn = $(rb);
+				flt.append(radioBtn);
+								});
+					//now that the buttons are apended I can turn it into a button set
+					flt.buttonset();
+					//Now add an onclick handler for this..
+					$('#feature_list_target input[type=radio]').change(function() {
+     					console.log(this.value);  
+						})
+
+    	});
+
+
+
+  	$("#idred").button().click( function(event) { console.log(event)}  )
+
+
+  	$('#tile_img').toggle();
+
+  	function update_rater_overlays ( selected_base_image)
+  		{
+  			console.log("NEED TO update the overlay SRC ids as well");
+  			//This will eventually need to reed the list or raters and update the sources for all of the raters that have been added
+  			//ALSO need to add in something that populates the stats for the rater(s)
+  			raters = ['Marghoob','Braun','Rabinowitz','Carrera'];
+  			$.each(raters, function(index,value) { 
+
+  					cur_feature = 'net_atyp'
+  					rater_overlay_url = feature_overlay_basedir + cur_feature + '/' + selected_base_image+'_' + value + '_' + cur_feature +'.png';
+  					console.log(rater_overlay_url);
+  					img_id = value+'_img';  // this is the actual ID I used when I created the image tag
+
+  					$("#"+img_id).attr("src",rater_overlay_url); //actually update the rater overlay.. I need to add a check code
+  																//that if the overlay doesn't actually exist (e.g. no file written)
+  																//just make the img src equal to null
+
+  					$("#"+img_id).show(); // I think I need to reset this flag each time... probably need to combine this with an error handler..
+  				console.log(index+value);
+
+					$(":checkbox").prop('checked',true);//reset all checkboxes to be checked...
+
+  						});
+
+  		}
+  			//ADDING A CLASS HANDLER FOR ALL OVERLAYS SO THEY ARE HIDDEN IF IT CAN'T FIND THE IMAGE
+		$(".overlay_img").error(function(){
+  							$(this).hide();
+							});		
+
+			//Try and add a function to all the toggle boxes to show/hide the image
+
+		$(".overlay_toggle").click( function() { 
+						rater_name = this.name;
+						rater_overlay = rater_name +'_img';
+
+						if (this.checked)
+							{
+								$("#"+rater_overlay).show();
+							}
+						else
+						{
+							$("#"+rater_overlay).hide();
+						}
+
+						   });
+
+
+
+    </script>
+
+</div>
+<script>
+//### Add this to an onload event
+
+
+
+function drawShape() {
+	var shape = this.id;
+	var svg = $('#svgbasics').svg('get');
+	if (shape == 'rect') {
+		svg.rect(random(300), random(200), random(100) + 100, random(100) + 100,
+			{fill: colours[random(9)], stroke: colours[random(9)], strokeWidth: random(5) + 1});
+	}
+	else if (shape == 'line') {
+		svg.line(random(400), random(300), random(400), random(300),
+			{stroke: colours[random(9)], strokeWidth: random(5) + 1});
+	}
+	else if (shape == 'circle') {
+		svg.circle(random(300) + 50, random(200) + 50, random(80) + 20,
+			{fill: colours[random(9)], stroke: colours[random(9)], strokeWidth: random(5) + 1});
+	}
+	else if (shape == 'ellipse') {
+		svg.ellipse(random(300) + 50, random(200) + 50, random(80) + 20, random(80) + 20,
+			{fill: colours[random(9)], stroke: colours[random(9)], strokeWidth: random(5) + 1});
+	}
+}
+
+$(function() {
+	$('#svgbasics').svg({onLoad: drawInitial});
+	$('#rect,#line,#circle,#ellipse').click(drawShape);
+	$('#clear').click(function() {
+		$('#svgbasics').svg('get').clear();
+	});
+
+	$('#export').click(function() {
+		var xml = $('#svgbasics').svg('get').toSVG();
+		$('#svgexport').html(xml.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+	});
+
+	$("#main_viewport").append(  $("#svgbasics"));
+//	$("#svgbasics").addClass("overlay_img");
+// Need to add a class to the SVG itself, not the div, and more importantly I can't actually use the addclass function
+//have to add an attribute
+	$("svg").attr("class","overlay_img");
+
+	// $("svg").append('<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" id="mycircle" fill="blue"/>');
+//	 $("#svgbasics").html($("#svgbasics").html());  ### This line broke the dynamic add functionality... hmm
+
+mysvg = $("#svgbasics").svg('get');
+
+mysvg.image(0,0,'960','923','images/base_img/UDA2_pilot_060-p1c.png',{'opacity':1, 'position':'absolute'});
+ 
+contourdata_to_shape(geodata,'',0,0);
+
+
+$("body").keypress( function(event) { if ( event.keyCode ==116) { console.log('pressed t'); $('.tileClass').attr('opacity',0);     }   }   );
+
+
+
+});
+
+function drawInitial(svg) {
+	//svg.circle(75, 75, 50, {fill: 'none', stroke: 'red', strokeWidth: 3});
+	//var g = svg.group({stroke: 'black', strokeWidth: 2});
+	//svg.line(g, 15, 75, 135, 75);
+	//svg.line(g, 75, 15, 75, 135);
+}
+
+var colours = ['purple', 'pink', 'orange', 'yellow', 'lime', 'green', 'blue', 'navy', 'black'];
+
+function random(range) {
+	return Math.floor(Math.random() * range);
+}
+
+
+
+var geodata = function () {  
+
+	mysvg = $("#svgbasics").svg('get')
+
+	geo_array = [];
+            $.ajax({
+                'async': false,
+                'global': false,
+                'url': "data/data.geojson",
+                'dataType': "json",
+                'success': function (result) {
+                   $.each( result, function(i,contour) { 
+			geo_array.push( JSON.parse(contour) ) 
+						} );
+                }
+             });
+
+            return geo_array;
+        }(); 
+
+//need to add a callback function to this as well... hmm so want to load the geodata than push it to the SVG
+
+function contourdata_to_shape( contours, svg_element, x_offset, y_offset ) {
+	scale_factor = 1;
+	polygon_list = [];
+     
+	var mysvg = $("#svgbasics").svg('get');
+
+	$.each(contours, function(index,contour) 
+	{
+	 coord_info = contour.geometry.coordinates; 
+
+	coord_string = ""; $.each(coord_info, function( k,v) { coord_string += `${(v[0]* scale_factor - x_offset) | 0 },${ ( v[1] * scale_factor-y_offset) | 0} `; } )
+	polygon_svg_str = `<polygon points="${coord_string}" style="fill:${colours[ random(9)]};stroke;purple;stroke-width:1;opacity:0.5" id="tile${contour.properties.labelindex}" class="tileClass" />`;
+
+        labelindex = contour.properties.labelindex;
+
+	mysvg.polygon( coord_info, { fill: colours[ labelindex % 9] , stroke: 'red', strokeWidth: 1, opacity:0.1, class:'tileClass', id:'tile' +contour.properties.labelindex } )
+
+	polygon_list.push(polygon_svg_str);
+	}
+	);
+
+	
+//         $("#svgbasics").html($("#svgbasics").html());
+
+         //Need to add the below function to a callback function for above..
+         $(".tileClass").hover( function() {  console.log(this.id) } ) ;
+
+	return polygon_list;
+	//);
+
+
+}
+
+
+</script>
+<!--  
+Some tips on working with SVG docs
+http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
+boo = $.getJSON( 'api/TileInfo',function(data) { console.log('request is done I think???'); console.log(data); myStuff= data;})
+-->
+
+<div id="svgbasics"></div>
+  <p><button id="rect">Add rectangle</button> <button id="line">Add line</button>
+	<button id="circle">Add circle</button> <button id="ellipse">Add ellipse</button>
+	<button id="clear">Clear</button> <button id="export">Export</button></p>
+<div id="svgexport"></div>
+  </body>
+</html>

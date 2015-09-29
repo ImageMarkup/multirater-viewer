@@ -11,7 +11,9 @@
   <script src="js/jquery-2.1.3.js"></script>
    <script src="js/bootstrap.js"></script> <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 
-  <script src="js/jquery-ui.js"></script> <script type="text/javascript" src="js/jquery.svg.js"></script>
+  <script src="js/jquery-ui.js"></script>
+ <script type="text/javascript" src="js/jquery.svg.js"></script>
+<script src="/js/openseadragon.js"></script> <script src="/js/openseadragon-svg-overlay.js"></script>
 
 <link rel="stylesheet" type="text/css" href="css/jquery.svg.css">
 
@@ -35,17 +37,9 @@
 	}
 	</style> </head>
   <body>
-
-	<script>
-
-// this will / should be loaded from a script var raters = [ 'Marghoob','Rabinowitz','Carrera','Brian' ];
-
-	</script>
-
-
 		<div class="row">
 		<div class="col-md-4" >
-				<h3>Image List <select id='image_list_dd'></select> </h3>
+			<h3>Image List <select id='image_list_dd'></select> </h3>
 		</div>
 			<div class="col-md-8">
 				<span id="tile_toggle">Toggle All Overlays</span>
@@ -54,20 +48,15 @@
 						$("input").button ();
 						</script>
 			<span style="border:1px solid black;" id="feature_list_target"></span>
-
 			</div>
-
 		</div>
 
 		<div class="row">
-		
 			<div class="col-md-4">
 				<span><p>Select the raters to overlay please:</p></span>
 
 				<div id="toggle_raters_div" style="border:1px;width:400px" > </div>
-
 				<div id="slider"> </div>
-
 				<div id="rater_info">
 					<div id="tile_opacity"></div>
 					<h3>Color Guide:</h3>
@@ -77,16 +66,12 @@
 					<ul id="rater_color_list">
 					</ul>
 					 </span>
-					 <h5>Notes: Overlaps will show up as a blend of the base colors for the rater; also note there are some cases where Marghoob=Rabinowitz; 
-in some cases this is because of a data extraction bug I haven't fixed yet </h5>
 
 			<div id="tile_info_stats"></div>
-	
 				</div>
 			</div>
 			<div class="col-md-8">
-				<div id="openseadragon1" style="width: 800px; height: 600px; border: 1px solid blue" class="openseadragon"></div> <script 
-src="/js/openseadragon.js"></script> <script src="/js/openseadragon-svg-overlay.js"></script>
+				<div id="openseadragon1" style="width: 800px; height: 600px; border: 1px solid blue" class="openseadragon"></div> 
 
 <script type="text/javascript"> var dg_viewer = OpenSeadragon({
         id: "openseadragon1",
@@ -104,10 +89,8 @@ src="/js/openseadragon.js"></script> <script src="/js/openseadragon-svg-overlay.
 
 svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
 
+
 </script>
-
-
-			
 		</div>
 
 
@@ -119,6 +102,7 @@ svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
     <script>
   			raters = ['Marghoob','Braun','Rabinowitz','Carrera'];
 
+	var image_info_list  = {};
 
 var superpixel_markup_info = { 'net_typ': { 'Marghoob' : [120,123,124,155,123,111,119] ,
 				 "Braun": [1,2,3,4,5,6,7,8,9],
@@ -190,19 +174,22 @@ $('.overlay_toggle').click( function() {
 
  
     //request the JSON data and parse into the select element
-    $.getJSON('json_data/img_list.json', function(data){
-      //clear the current content of the select
-      	$select.html('');
- 		my_data = data.responseJSON;
+	console.log('hi dave');
+    $.getJSON('data/image_info.json', function(data){
+          $("#image_list_dd").empty();
+                my_data = data.responseJSON;
       //iterate over the data and append a select option
-      	$.each(data, function(key, val){
-      		  $select.append('<option id="' + val + '">' + val + '</option>'); });
-						      });
+        $.each(data, function(key, val){
+                  $("#image_list_dd").append('<option id="' + val.image_name + '">' + val.image_name + '</option>'); 
+                       //console.log(key,val);
+		image_info_list[val.image_name] = val;
+			});
+                                              });
+
 
 
 		//Adding a list to identify which rater goes with which color-- probably need a new color scheme at some point
 		$.each(raters,function(n,v) { $("#rater_color_list").append(`<li><span style="color:${colours[n]}">${v}</span></li>` ) });
-
 
     //MANY many things to do
     // add a toggle button so I can turn on/off the tile/overlay
@@ -213,17 +200,24 @@ $('.overlay_toggle').click( function() {
   	// Add event handler for changing the image
   	$select.change( function() {
 
-  					console.log(this.value)
+				//##This needs to clear as well as update information and change the viewer
   					//Need to change the image source based on the new image I just added in the toggle, will also push the text
   					// to a DIV so it's obvious what Image I am looking at
   					$selected_image = this.value;
-  					full_img_url = 'images/base_img/' + $selected_image + '-p1c.png';
-  					console.log(full_img_url);
-  					$("#base_img").attr("src",full_img_url);
-
+  					console.log( image_info_list[this.value].filename_url);
+								
+					selected_image_filename_url = image_info_list[this.value].filename_url;
   					//ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
-  					update_rater_overlays( $selected_image);
+					//dg_viewer
+  					new_tile_source = {  'type': 'legacy-image-pyramid', levels:[{
+							'url': selected_image_filename_url,
+							'height': image_info_list[this.value].img_height,
+							'width': image_info_list[this.value].img_width,
+							}]
+							   }
 
+					update_rater_overlays( $selected_image);
+					dg_viewer.open(new_tile_source);
   					});
 
 	$("#tile_toggle").button().click( function() { console.log(this.id+'was pressed')
@@ -402,12 +396,8 @@ function contourdata_to_shape( contours, svg_element, x_offset, y_offset ) {
 	coord_string = ""; $.each(coord_info, function( k,v) { coord_string += `${(v[0]* x_scale_factor - x_offset) },${ ( v[1] * y_scale_factor-y_offset) } `; } ) // the |0 made them all integers
 
 	polygon_svg_str = `<polygon points="${coord_string}" style="fill:${colours[ random(9)]};stroke;purple;stroke-width:1;opacity:0.5" id="tile${contour.properties.labelindex}" class="tileClass" />`;
-
         labelindex = contour.properties.labelindex;
 
-	//mysvg.polygon( coord_info, { fill: colours[ labelindex % 9] , stroke: 'red', strokeWidth: 1, opacity:0.1, class:'tileClass', id:'tile' +contour.properties.labelindex } )
-
- //	polygon_list.push(polygon_svg_str);
 	polygon_list.push( { 'coords': coord_string, 'labelindex': contour.properties.labelindex});
 	}
 	);
@@ -473,6 +463,32 @@ $.each( myStuff, function(tileID,rater_data) {
 
                })
  boo = $.getJSON( 'api/TileInfo',function(data) {  myStuff= data;})
+
+
+
+$.each( myStuff, function(tileID,rater_data) {  
+            ///I am now iteration over each tile in the selected Image...
+              
+                   tileAnnotated= false;
+                   raters_for_tile = [];
+                     
+                   $.each(rater_data, function(r,v) {
+                         if (v != "0.0")    {
+//                                    console.log(r,v,tileID);
+                                       tileAnnotated=true;
+                                       raters_for_tile.push(r);  
+                                             }
+                                                               
+                                 })
+                        if (tileAnnotated) {
+                                 //Now that I know the tile has been annotated, I need to render the results
+                                           console.log(raters_for_tile,tileID);
+                                   color_to_paint = 'blue'
+                                   $("#tile"+tileID).css('fill',color_to_paint);
+                                          }
+
+
+               })
 
 */
 </script>
