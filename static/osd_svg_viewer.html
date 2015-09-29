@@ -449,7 +449,32 @@ function mark_superpixels( sp_info ) {
 
 };
 
- 
+
+/*	
+$.each( myStuff, function(tileID,rater_data) {  
+            ///I am now iteration over each tile in the selected Image...
+              
+                   tileAnnotated= false;
+                   raters_for_tile = [];
+                     
+                   $.each(rater_data, function(r,v) {
+                         if (v != "0.0")    {
+//                                    console.log(r,v,tileID);
+                                       tileAnnotated=true;
+                                       raters_for_tile.push(r);  
+                                             }
+                                                               
+                                 })
+                        if (tileAnnotated) {
+                                 //Now that I know the tile has been annotated, I need to render the results
+                                           console.log(raters_for_tile,tileID);
+                                          }
+
+
+               })
+ boo = $.getJSON( 'api/TileInfo',function(data) {  myStuff= data;})
+
+*/
 </script>
 
 
