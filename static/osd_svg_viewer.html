@@ -83,7 +83,8 @@
                 <span id="displayed_data_info">
                       <ul id="rater_color_list"></ul>
            </span>
-                <div id="tile_info_stats"></div>
+                <div id="feature_info_stats" class="h1 lead"></div>
+                <div id="tile_info_stats" class="h1 lead"></div>
             </div>
         </div>
         <div class="col-md-8">
@@ -117,7 +118,7 @@
         //need to add in the current_feature
 
         num_superpixels = Object.keys(superpixel_markup_info[current_feature]).length;
-        console.log(num_superpixels)
+       // console.log(num_superpixels)
         $("#tile_info_stats").empty(); /// clear the current DIV before I start putting stats in it..
         $("#tile_info_stats").append(num_superpixels.toString() + ' superpixels are in this image');
         //This code is very sensitive to on load events...
@@ -160,9 +161,27 @@
               });
 
        
+      $(".tileClass").hover(function() {
+                console.log(this.id);
+                pixnum = (this.id).substring(4);
+                $("#tile_info_stats").empty(); /// clear the current DIV before I start putting stats in it..
+              $("#tile_info_stats").append(num_superpixels.toString() + ' superpixels are in this image');
+              $("#tile_info_stats").append("<br>You are hovering on sp: "+this.id);
+              
+
+              tile_num = this.id.substring(4) ; //need to turn the tileID which actually is tile234 or similar into only the number part.. so skip the first 4 chars
+              //Determine who marked up this file
+              pix_raters = superpixel_markup_info[current_feature][tile_num];
+              //remember this may contain ALL raters who assessed this feature, so need to make sure there's not a "0.0" there which means that rater
+              //didn't actually mark that specific superpixel with the given feature
+              rft = []
+              $.each(pix_raters, function(k,v) { if ( v != '0.0') {rft.push(k); } })
+              console.log(rft);
+              $("#tile_info_stats").append("<br>Raters: "+JSON.stringify(rft));
 
 
-        //     };
+            });
+
         };
 
 
@@ -281,6 +300,17 @@
             $('#feature_list_target input[type=radio]').change(function() {
                 console.log(this.value);
                 current_feature = this.value;
+
+                $("#feature_info_stats").empty();
+                //ALSO ADDI N SOME STATS TO INDICATE HOW MANY TILES WERE MARKED FOR THIS FEATURE...
+                cfd = superpixel_markup_info[current_feature]; //Current Feature data
+                if ( ! cfd) { $("#feature_info_stats").append("NO EXAMPLES FOR  feature"+current_feature);  }
+                else {
+
+                      $("#feature_info_stats").append("SOME EXAMPLES  feature"+current_feature); 
+
+                      }
+
                 new_mark_superpixels();
 
             })
