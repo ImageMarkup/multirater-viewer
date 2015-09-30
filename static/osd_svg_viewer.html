@@ -49,6 +49,7 @@
     var annotated_feature_list = ['net_typ', 'net_atyp', 'str_chrys'];
     var feature_overlay_basedir = 'images/features_output_dir/';
 
+    var new_geodata;
     var my_data = {};
     </script>
 </head>
@@ -115,11 +116,7 @@
                 //I think I am going to structure this to paint all tiles for all the raters...
             }
 
-            //Probably a cleaner way than making these global variables... Discsuss with Brian on refactoring
-
-
             $(document).ready(function() {
-
 
                 $.each(raters, function(n, v) {;
                     $("#toggle_raters_div").append(
@@ -131,13 +128,10 @@
                     //  console.log(this.id);
                     //So I need to check the state of the button to either draw or clear a given tile(s) colors for a rater..
                     color_some_tiles(this.id, "thefeatureIwanttolookat");
-
                 });
-
 
                 $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
                 var $select = $('#image_list_dd');
-
 
                 //request the JSON data and parse into the select element
                 //THIS Loads the Image List
@@ -147,7 +141,6 @@
                     //iterate over the data and append a select option
                     $.each(data, function(key, val) {
                         $("#image_list_dd").append('<option id="' + val.image_name + '">' + val.image_name + '</option>');
-                        //console.log(key,val);
                         image_info_list[val.image_name] = val;
                     });
                 });
@@ -157,17 +150,13 @@
                     $("#rater_color_list").append(`<li><span style="color:${colours[n]}">${v}</span></li>`)
                 });
 
-
-
                 // Add event handler for changing the image
                 $select.change(function() {
-
                     //##This needs to clear as well as update information and change the viewer
                     //Need to change the image source based on the new image I just added in the toggle, will also push the text
                     // to a DIV so it's obvious what Image I am looking at
                     $selected_image = this.value;
                     console.log(image_info_list[this.value].filename_url);
-
                     selected_image_filename_url = image_info_list[this.value].filename_url;
                     //ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
                     new_tile_source = {
@@ -210,24 +199,20 @@
                 $("#tile_button").button();
 
                 $("#tile_button").click(function() {
-                    my_points = contourdata_to_shape(geodata, '', 0, 0);
+                    ///This is a hack with the levels[0].width, this only works for legacy tile sources and should be a global parameter
+                    my_points = contourdata_to_shape(new_geodata, dg_viewer.tileSources.levels[0].width);
                     $.each(my_points, function(k, point_list) {
                         d3.select(svg_layer.node()).append("polygon").attr("points", point_list.coords).style('fill', color(point_list.labelindex % 20)).attr('opacity', 0.5).attr('class', 'tileClass').attr('id', 'tile' + point_list.labelindex)
                     });
                     $('#tile_img').toggle();
-
                 });
-
 
                 //Adding RADIO Buttons to allow me to select features
 
                 flt = $("#feature_list_target");
-
                 $.each(annotated_feature_list, function(v, k) {
-                    //console.log(v,k);
                     //console.log('adding radio buttons');
-
-                    var rb = '<input type="radio" name=rb_feature_set id="feat_' + k + '" value="' + k + '" /><label for="feat_' + k + '">' + k + '</label>'
+                    var rb = '<input type="radio" name=rb_feature_set id="feat_' + k + '" value="' + k + '" /><label for="feat_' + k + '">' + k + '<label>'
                     var radioBtn = $(rb);
                     flt.append(radioBtn);
                 });
@@ -237,7 +222,6 @@
                 $('#feature_list_target input[type=radio]').change(function() {
                     console.log(this.value);
                 })
-
             });
 
 
@@ -258,9 +242,14 @@
                 $(this).hide();
             });
 
+
+
+            //COME HERE LATER--- ADD SOME FUNCTION THAT RUNS ON DOCUMENT COMPLETION THAT LOADS THE IMAGE FOR THE VIEWER AND 
+            //THE PROPER OVERLAY
+
             //Try and add a function to all the toggle boxes to show/hide the image
 
-            // $(".overlay_toggle").click( function() {
+          // $(".overlay_toggle").click( function() {
             //         rater_name = this.name;
             //         // if (this.checked)
             //         //   {
@@ -271,9 +260,6 @@
             //         //   $("#"+rater_overlay).hide();
             //         // }
             //            });
-        </script>
-    </div>
-    <script>
     //### Add this to an onload event
 
     $(function() {
@@ -287,9 +273,6 @@
             }
         });
     });
-
-
-
 
     var geodata = function() {
 
@@ -306,7 +289,7 @@
                     geo_array.push(JSON.parse(contour))
                 });
                 //GEO ARRAY IS NOW generated with contours... so can call another function to generate an SVG layer a well
-                contourdata_to_shape(geo_array, 2, 2, 2);
+                contourdata_to_shape(geo_array);
             }
         });
 
@@ -315,20 +298,21 @@
 
     //need to add a callback function to this as well... hmm so want to load the geodata than push it to the SVG
 
-    function contourdata_to_shape(contours, svg_element, x_offset, y_offset) {
+    function contourdata_to_shape(contours, img_width) {
         scale_factor = 1;
         polygon_list = [];
 
         //NEED TO UPDATE THIS WITH THE ACTUAL IMAGE HEIGHT/WIDTH OF THE OVERLAY!! CRAP
-        x_scale_factor = 1.0 / 963.0;
-        y_scale_factor = 1.0 / 963.0;
+
+        x_scale_factor = 1.0 / img_width;
+        y_scale_factor = 1.0 / img_width;
 
         $.each(contours, function(index, contour) {
             coord_info = contour.geometry.coordinates;
 
             coord_string = "";
             $.each(coord_info, function(k, v) {
-                    coord_string += `${(v[0]* x_scale_factor - x_offset) },${ ( v[1] * y_scale_factor-y_offset) } `;
+                    coord_string += `${(v[0]* x_scale_factor ) },${ ( v[1] * y_scale_factor) } `;
                 }) // the |0 made them all integers
 
             polygon_svg_str = `<polygon points="${coord_string}" style="fill:${colours[ random(9)]};stroke;purple;stroke-width:1;opacity:0.5" id="tile${contour.properties.labelindex}" class="tileClass" />`;
@@ -377,34 +361,11 @@
     };
 
 
-    /* $.each( myStuff, function(tileID,rater_data) {
-                ///I am now iteration over each tile in the selected Image...
-                  
-                       tileAnnotated= false;
-                       raters_for_tile = [];
-                       $.each(rater_data, function(r,v) {
-                             if (v != "0.0") { // console.log(r,v,tileID);
-                                           tileAnnotated=true;
-                                           raters_for_tile.push(r);
-                                                 }
-                                                                   
-                                     })
-                            if (tileAnnotated) {
-                                     //Now that I know the tile has been annotated, I need to render the results
-                                               console.log(raters_for_tile,tileID);
-                                              }
-
-
-                   })
-
-
-
-
-    */
+    
     </script>
     <!-- Some tips on working with SVG docs http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
 
--->
+
     https://www.dashingd3js.com/creating-svg-elements-based-on-data dg_viewer.viewport.maxZoomPixelRatio=5 dg_viewer.viewport.minZoomPixelRatio=0.4 Can play around with these $(".rater_buttons").click( function() { console.log(this.id) }); -->
     <script>
     function loadSVGTileData(imageName) {
@@ -414,9 +375,7 @@
         img_height = image_info_list[imageName].img_height;
         img_width = image_info_list[imageName].img_width;
 
-
-
-        var new_geodata = function() {
+        new_geodata = function() {
             console.log('loading new geo data');
             geo_array = [];
             $.ajax({
@@ -428,7 +387,7 @@
                     $.each(result, function(i, contour) {
                         geo_array.push(JSON.parse(contour))
                     });
-                    //GEO ARRAY IS NOW generated with contours... so can call another function to generate an SVG layer a well // contourdata_to_shape(geo_array,2,2,2);
+                    //GEO ARRAY IS NOW generated with contours... so can call another function to generate an SVG layer a well // 
                 }
             });
 
@@ -437,13 +396,12 @@
         $(".tileClass").css('fill', 'none')
 
         svg_layer = dg_viewer.svgOverlay();
-        my_points = contourdata_to_shape(new_geodata, '', 0, 0);
+        my_points = contourdata_to_shape(new_geodata, img_width);
 
         //This generates the pretty multicolor tile image
         $.each(my_points, function(k, point_list) {
             d3.select(svg_layer.node()).append("polygon").attr("points", point_list.coords).style('fill', color(point_list.labelindex % 20)).attr('opacity', 0.5).attr('class', 'tileClass').attr('id', 'tile' + point_list.labelindex)
         });
-
 
 
     }
