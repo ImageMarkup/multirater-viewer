@@ -102,309 +102,292 @@
             svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
             </script>
         </div>
-        <script>
-        raters = ['Marghoob', 'Braun', 'Rabinowitz', 'Carrera'];
-
-        function new_mark_superpixels(sp_info) {
-            $(".tileClass").css('fill', 'none');
-                    };
-
-            function color_some_tiles(rater, feature) {
-                //given a feature and a rater and an image ID I should color the respective tiles on the super pixel image
-                console.log("should be painting " + feature + "for " + rater);
-                new_mark_superpixels(); // loadSVGTileData(imageName);
-                //I think I am going to structure this to paint all tiles for all the raters...
-            }
-
-            $(document).ready(function() {
-
-                $.each(raters, function(n, v) {;
-                    $("#toggle_raters_div").append(
-                        `<input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons"><label for="show_${v}">${v}</label></input> `
-                    ).button()
-                }); //Now add an event handler for each button
-
-                $('.overlay_toggle').click(function() {
-                    //  console.log(this.id);
-                    //So I need to check the state of the button to either draw or clear a given tile(s) colors for a rater..
-                    color_some_tiles(this.id, "thefeatureIwanttolookat");
-                });
-
-                $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
-                var $select = $('#image_list_dd');
-
-                //request the JSON data and parse into the select element
-                //THIS Loads the Image List
-                $.getJSON('data/image_info.json', function(data) {
-                    $("#image_list_dd").empty();
-                    my_data = data.responseJSON;
-                    //iterate over the data and append a select option
-                    $.each(data, function(key, val) {
-                        $("#image_list_dd").append('<option id="' + val.image_name + '">' + val.image_name + '</option>');
-                        image_info_list[val.image_name] = val;
-                    });
-                });
-
-                //Adding a list to identify which rater goes with which color-- probably need a new color scheme at some point
-                $.each(raters, function(n, v) {
-                    $("#rater_color_list").append(`<li><span style="color:${colours[n]}">${v}</span></li>`)
-                });
-
-                // Add event handler for changing the image
-                $select.change(function() {
-                    //##This needs to clear as well as update information and change the viewer
-                    //Need to change the image source based on the new image I just added in the toggle, will also push the text
-                    // to a DIV so it's obvious what Image I am looking at
-                    $selected_image = this.value;
-                    console.log(image_info_list[this.value].filename_url);
-                    selected_image_filename_url = image_info_list[this.value].filename_url;
-                    //ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
-                    new_tile_source = {
-                        'type': 'legacy-image-pyramid',
-                        levels: [{
-                            'url': selected_image_filename_url,
-                            'height': image_info_list[this.value].img_height,
-                            'width': image_info_list[this.value].img_width,
-                        }]
-                    }
-                    update_rater_overlays($selected_image);
-                    dg_viewer.open(new_tile_source);
-
-                    //Now that the new image is loaded, should next load the actual markup data for this image
-                    //I should call this function when I select an image...
-                    $.getJSON('api/TileInfo', function(data) {
-                        superpixel_markup_info = data;
-                    })
-
-                });
-
-                $("#tile_toggle").button().click(function() {
-                    console.log(this.id + 'was pressed')
-                    $(".tileClass").css('fill', 'none')
-                });
-
-                $("#slider").slider({
-                    range: false,
-                    max: 1,
-                    min: 0,
-                    value: 0.5,
-                    step: 0.05,
-                    change: function(event, ui) {
-                        cur_slider_value = $(this).slider("option", "value");
-                        console.log(cur_slider_value);
-                        $(".tileClass").attr('opacity', cur_slider_value);
-                    }
-                });
-
-                $("#tile_button").button();
-
-                $("#tile_button").click(function() {
-                    ///This is a hack with the levels[0].width, this only works for legacy tile sources and should be a global parameter
-                    my_points = contourdata_to_shape(new_geodata, dg_viewer.tileSources.levels[0].width);
-                    $.each(my_points, function(k, point_list) {
-                        d3.select(svg_layer.node()).append("polygon").attr("points", point_list.coords).style('fill', color(point_list.labelindex % 20)).attr('opacity', 0.5).attr('class', 'tileClass').attr('id', 'tile' + point_list.labelindex)
-                    });
-                    $('#tile_img').toggle();
-                });
-
-                //Adding RADIO Buttons to allow me to select features
-
-                flt = $("#feature_list_target");
-                $.each(annotated_feature_list, function(v, k) {
-                    //console.log('adding radio buttons');
-                    var rb = '<input type="radio" name=rb_feature_set id="feat_' + k + '" value="' + k + '" /><label for="feat_' + k + '">' + k + '<label>'
-                    var radioBtn = $(rb);
-                    flt.append(radioBtn);
-                });
-                //now that the buttons are apended I can turn it into a button set
-                flt.buttonset();
-                //Now add an onclick handler for this..
-                $('#feature_list_target input[type=radio]').change(function() {
-                    console.log(this.value);
-                })
-            });
-
-
-            $('#tile_img').toggle();
-
-            function update_rater_overlays(imageName) {
-                console.log("NEED TO update the overlay SRC ids as well" + imageName);
-                //This will eventually need to reed the list or raters and update the sources for all of the raters that have been added
-                //ALSO need to add in something that populates the stats for the rater(s)
-                loadSVGTileData(imageName);
-
-                //NEED TO GRAB THE OVERLAY FOR THIS IMAGE
-                $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
-
-            }
-            //ADDING A CLASS HANDLER FOR ALL OVERLAYS SO THEY ARE HIDDEN IF IT CAN'T FIND THE IMAGE
-            $(".overlay_img").error(function() {
-                $(this).hide();
-            });
-
-
-
-            //COME HERE LATER--- ADD SOME FUNCTION THAT RUNS ON DOCUMENT COMPLETION THAT LOADS THE IMAGE FOR THE VIEWER AND 
-            //THE PROPER OVERLAY
-
-            //Try and add a function to all the toggle boxes to show/hide the image
-
-          // $(".overlay_toggle").click( function() {
-            //         rater_name = this.name;
-            //         // if (this.checked)
-            //         //   {
-            //         //     $("#"+rater_overlay).show();
-            //         //   }
-            //         // else
-            //         // {
-            //         //   $("#"+rater_overlay).hide();
-            //         // }
-            //            });
-    //### Add this to an onload event
-
-    $(function() {
-        //Adding keyboard listnered to toggle the tiles on/off if I press the letter t (for toggle)
-        $("body").keypress(function(event) {
-            if (event.keyCode == 116) {
-                cur_opacity = $('.tileClass').attr('opacity');
-                cur_slider_value = $("#slider").slider("option", "value");
-                var new_opacity = (cur_opacity == 0) ? cur_slider_value : 0;
-                $('.tileClass').attr('opacity', new_opacity);
-            }
-        });
-    });
-
-    var geodata = function() {
-
-        console.log('loading geo data');
-        geo_array = [];
-        $.ajax({
-            'async': false,
-            'global': false,
-            'url': "data/data.geojson",
-            'dataType': "json",
-            'success': function(result) {
-
-                $.each(result, function(i, contour) {
-                    geo_array.push(JSON.parse(contour))
-                });
-                //GEO ARRAY IS NOW generated with contours... so can call another function to generate an SVG layer a well
-                contourdata_to_shape(geo_array);
-            }
-        });
-
-        return geo_array;
-    }();
-
-    //need to add a callback function to this as well... hmm so want to load the geodata than push it to the SVG
-
-    function contourdata_to_shape(contours, img_width) {
-        scale_factor = 1;
-        polygon_list = [];
-
-        //NEED TO UPDATE THIS WITH THE ACTUAL IMAGE HEIGHT/WIDTH OF THE OVERLAY!! CRAP
-
-        x_scale_factor = 1.0 / img_width;
-        y_scale_factor = 1.0 / img_width;
-
-        $.each(contours, function(index, contour) {
-            coord_info = contour.geometry.coordinates;
-
-            coord_string = "";
-            $.each(coord_info, function(k, v) {
-                    coord_string += `${(v[0]* x_scale_factor ) },${ ( v[1] * y_scale_factor) } `;
-                }) // the |0 made them all integers
-
-            polygon_svg_str = `<polygon points="${coord_string}" style="fill:${colours[ random(9)]};stroke;purple;stroke-width:1;opacity:0.5" id="tile${contour.properties.labelindex}" class="tileClass" />`;
-            labelindex = contour.properties.labelindex;
-
-            polygon_list.push({
-                'coords': coord_string,
-                'labelindex': contour.properties.labelindex
-            });
-        });
-
-        //Need to add the below function to a callback function for above..
-        $(".tileClass").hover(function() {
-            console.log(this.id)
-        });
-
-        return polygon_list;
-
-    }
-
-
-    /// Start adding some sample data..
-
-    function mark_superpixels(sp_info) {
-        $(".tileClass").css('fill', 'none');
-        //First determine active raters, also need to know number of totla superpixels I think to make this easier...
-        //Need to get the jquery Data as well I guess
-        raters_to_paint = ['Marghoob', 'Rabinowitz']
-        raters_to_paint = raters;
-
-
-        $.each(raters_to_paint, function(n, rater) {
-            console.log(rater);
-            color_to_paint = colours[random(9)];
-            //Need to get the tile markup data for this
-
-            sp_for_rater = superpixel_markup_info.net_typ[rater];
-            console.log(sp_for_rater);
-            //now iterate through the superpixels and color the appropriate tiles
-            $.each(sp_for_rater, function(n, tileID) {
-                $("#tile" + tileID).css('fill', color_to_paint);
-                console.log(tileID + 'is being painted');
-            });
-        });
-
-    };
-
-
-    
-    </script>
-    <!-- Some tips on working with SVG docs http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
-
-
-    https://www.dashingd3js.com/creating-svg-elements-based-on-data dg_viewer.viewport.maxZoomPixelRatio=5 dg_viewer.viewport.minZoomPixelRatio=0.4 Can play around with these $(".rater_buttons").click( function() { console.log(this.id) }); -->
+    </div>
     <script>
-    function loadSVGTileData(imageName) {
+    raters = ['Marghoob', 'Braun', 'Rabinowitz', 'Carrera'];
 
-        console.log('need to load svg data for' + imageName);
-        SVG_file = image_info_list[imageName].superpixel_svg;
-        img_height = image_info_list[imageName].img_height;
-        img_width = image_info_list[imageName].img_width;
+    function new_mark_superpixels(sp_info) {
+        $(".tileClass").css('fill', 'none');
 
-        new_geodata = function() {
-            console.log('loading new geo data');
-            geo_array = [];
-            $.ajax({
-                'async': false,
-                'global': false,
-                'url': SVG_file,
-                'dataType': "json",
-                'success': function(result) {
-                    $.each(result, function(i, contour) {
-                        geo_array.push(JSON.parse(contour))
-                    });
-                    //GEO ARRAY IS NOW generated with contours... so can call another function to generate an SVG layer a well // 
+        num_superpixels = Object.keys(superpixel_markup_info).length;
+        console.log(num_superpixels)
+        $("#tile_info_stats").empty(); /// clear the current DIV before I start putting stats in it..
+        $("#tile_info_stats").append(num_superpixels.toString() + ' superpixels are in this image');
+        //This code is very sensitive to on load events...
+        $.each(superpixel_markup_info, function(tileID, rater_data) {
+        //         ///I am now iteration over each tile in the selected Image...
+                 tileAnnotated = false;
+                 raters_for_tile = [];
+
+                //So because of the way we store the data, I need to iterate through each superpixel and determine which rater(s) marked it up.. then color things
+                 $.each(rater_data, function(r, v) {
+                     if (v != "0.0") {
+//                        console.log(r,v,tileID);
+                         tileAnnotated = true;
+                         raters_for_tile.push(r);
+                     }
+                 });
+
+                            if (tileAnnotated) {
+                     //Now that I know the tile has been annotated, I need to render the results
+                     console.log(raters_for_tile, tileID);
+                        
+                        if (raters_for_tile.length == 1)
+                            {
+                              //In this case the tile is colored for the individual rater.... otherwise it's a color palette
+                        $("#tile"+tileID).css('fill','green');
+
+                            }
+                        else{
+                        $("#tile"+tileID).css('fill','blue');
+                          }
+
+                 }
+
+              });
+
+       
+
+
+        //     };
+        };
+
+
+        function color_some_tiles(rater, feature) {
+            //given a feature and a rater and an image ID I should color the respective tiles on the super pixel image
+            console.log("should be painting " + feature + "for " + rater);
+            new_mark_superpixels(); // loadSVGTileData(imageName);
+            //I think I am going to structure this to paint all tiles for all the raters...
+        }
+
+        $(document).ready(function() {
+
+            $.each(raters, function(n, v) {;
+                $("#toggle_raters_div").append(
+                    `<input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons"><label for="show_${v}">${v}</label></input> `
+                ).button()
+            }); //Now add an event handler for each button
+
+            $('.overlay_toggle').click(function() {
+                //  console.log(this.id);
+                //So I need to check the state of the button to either draw or clear a given tile(s) colors for a rater..
+                color_some_tiles(this.id, "thefeatureIwanttolookat");
+            });
+
+            $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
+            var $select = $('#image_list_dd');
+
+            //request the JSON data and parse into the select element
+            //THIS Loads the Image List
+            $.getJSON('data/image_info.json', function(data) {
+                $("#image_list_dd").empty();
+                my_data = data.responseJSON;
+                //iterate over the data and append a select option
+                $.each(data, function(key, val) {
+                    $("#image_list_dd").append('<option id="' + val.image_name + '">' + val.image_name + '</option>');
+                    image_info_list[val.image_name] = val;
+                });
+            });
+
+            //Adding a list to identify which rater goes with which color-- probably need a new color scheme at some point
+            $.each(raters, function(n, v) {
+                $("#rater_color_list").append(`<li><span style="color:${colours[n]}">${v}</span></li>`)
+            });
+
+            // Add event handler for changing the image
+            $select.change(function() {
+                //##This needs to clear as well as update information and change the viewer
+                //Need to change the image source based on the new image I just added in the toggle, will also push the text
+                // to a DIV so it's obvious what Image I am looking at
+                $selected_image = this.value;
+                console.log(image_info_list[this.value].filename_url);
+                selected_image_filename_url = image_info_list[this.value].filename_url;
+                //ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
+                new_tile_source = {
+                    'type': 'legacy-image-pyramid',
+                    levels: [{
+                        'url': selected_image_filename_url,
+                        'height': image_info_list[this.value].img_height,
+                        'width': image_info_list[this.value].img_width,
+                    }]
+                }
+                update_rater_overlays($selected_image);
+                dg_viewer.open(new_tile_source);
+
+                //Now that the new image is loaded, should next load the actual markup data for this image
+                //I should call this function when I select an image...
+                $.getJSON('api/TileInfo/' + $selected_image, function(data) {
+                    superpixel_markup_info = data;
+                })
+
+            });
+
+            $("#tile_toggle").button().click(function() {
+                console.log(this.id + 'was pressed')
+                $(".tileClass").css('fill', 'none')
+            });
+
+            $("#slider").slider({
+                range: false,
+                max: 1,
+                min: 0,
+                value: 0.5,
+                step: 0.05,
+                change: function(event, ui) {
+                    cur_slider_value = $(this).slider("option", "value");
+                    console.log(cur_slider_value);
+                    $(".tileClass").attr('opacity', cur_slider_value);
                 }
             });
 
-            return geo_array;
-        }();
-        $(".tileClass").css('fill', 'none')
+            $("#tile_button").button();
 
-        svg_layer = dg_viewer.svgOverlay();
-        my_points = contourdata_to_shape(new_geodata, img_width);
+            $("#tile_button").click(function() {
+                ///This is a hack with the levels[0].width, this only works for legacy tile sources and should be a global parameter
+                my_points = contourdata_to_shape(new_geodata, dg_viewer.tileSources.levels[0].width);
+                $.each(my_points, function(k, point_list) {
+                    d3.select(svg_layer.node()).append("polygon").attr("points", point_list.coords).style('fill', color(point_list.labelindex % 20)).attr('opacity', 0.5).attr('class', 'tileClass').attr('id', 'tile' + point_list.labelindex)
+                });
+                $('#tile_img').toggle();
+            });
 
-        //This generates the pretty multicolor tile image
-        $.each(my_points, function(k, point_list) {
-            d3.select(svg_layer.node()).append("polygon").attr("points", point_list.coords).style('fill', color(point_list.labelindex % 20)).attr('opacity', 0.5).attr('class', 'tileClass').attr('id', 'tile' + point_list.labelindex)
+            //Adding RADIO Buttons to allow me to select features
+
+            flt = $("#feature_list_target");
+            $.each(annotated_feature_list, function(v, k) {
+                //console.log('adding radio buttons');
+                var rb = '<input type="radio" name=rb_feature_set id="feat_' + k + '" value="' + k + '" /><label for="feat_' + k + '">' + k + '<label>'
+                var radioBtn = $(rb);
+                flt.append(radioBtn);
+            });
+            //now that the buttons are apended I can turn it into a button set
+            flt.buttonset();
+            //Now add an onclick handler for this..
+            $('#feature_list_target input[type=radio]').change(function() {
+                console.log(this.value);
+            })
         });
 
 
-    }
+        $('#tile_img').toggle();
+
+        function update_rater_overlays(imageName) {
+            console.log("NEED TO update the overlay SRC ids as well" + imageName);
+            //This will eventually need to reed the list or raters and update the sources for all of the raters that have been added
+            //ALSO need to add in something that populates the stats for the rater(s)
+            loadSVGTileData(imageName);
+
+            //NEED TO GRAB THE OVERLAY FOR THIS IMAGE
+            $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
+
+        }
+        //ADDING A CLASS HANDLER FOR ALL OVERLAYS SO THEY ARE HIDDEN IF IT CAN'T FIND THE IMAGE
+        $(".overlay_img").error(function() {
+            $(this).hide();
+        });
+
+
+
+        //COME HERE LATER--- ADD SOME FUNCTION THAT RUNS ON DOCUMENT COMPLETION THAT LOADS THE IMAGE FOR THE VIEWER AND 
+        //THE PROPER OVERLAY
+
+        $(function() {
+            //Adding keyboard listnered to toggle the tiles on/off if I press the letter t (for toggle)
+            $("body").keypress(function(event) {
+                if (event.keyCode == 116) {
+                    cur_opacity = $('.tileClass').attr('opacity');
+                    cur_slider_value = $("#slider").slider("option", "value");
+                    var new_opacity = (cur_opacity == 0) ? cur_slider_value : 0;
+                    $('.tileClass').attr('opacity', new_opacity);
+                }
+            });
+        });
+
+
+        //need to add a callback function to this as well... hmm so want to load the geodata than push it to the SVG
+
+        function contourdata_to_shape(contours, img_width) {
+            scale_factor = 1;
+            polygon_list = [];
+
+            //Openseadragon uses the image width for bo the x and y scale factor... probably should rename this pixel factor
+            x_scale_factor = 1.0 / img_width;
+            y_scale_factor = 1.0 / img_width;
+
+            $.each(contours, function(index, contour) {
+                coord_info = contour.geometry.coordinates;
+
+                coord_string = "";
+                $.each(coord_info, function(k, v) {
+                        coord_string += `${(v[0]* x_scale_factor ) },${ ( v[1] * y_scale_factor) } `;
+                    }) // the |0 made them all integers
+
+                polygon_svg_str = `<polygon points="${coord_string}" style="fill:${colours[ random(9)]};stroke;purple;stroke-width:1;opacity:0.5" id="tile${contour.properties.labelindex}" class="tileClass" />`;
+                labelindex = contour.properties.labelindex;
+
+                polygon_list.push({
+                    'coords': coord_string,
+                    'labelindex': contour.properties.labelindex
+                });
+            });
+
+            //Need to add the below function to a callback function for above..
+            $(".tileClass").hover(function() {
+                console.log(this.id)
+            });
+
+            return polygon_list;
+
+        }
+
+
+        //<!-- Some tips on working with SVG docs http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
+
+
+        //ttps://www.dashingd3js.com/creating-svg-elements-based-on-data dg_viewer.viewport.maxZoomPixelRatio=5 dg_viewer.viewport.minZoomPixelRatio=0.4 Can play //around with these $(".rater_buttons").click( function() { console.log(this.id) }); -->
+        function loadSVGTileData(imageName) {
+
+            console.log('need to load svg data for' + imageName);
+            SVG_file = image_info_list[imageName].superpixel_svg;
+            img_height = image_info_list[imageName].img_height;
+            img_width = image_info_list[imageName].img_width;
+
+            new_geodata = function() {
+                console.log('loading new geo data');
+                geo_array = [];
+                $.ajax({
+                    'async': false,
+                    'global': false,
+                    'url': SVG_file,
+                    'dataType': "json",
+                    'success': function(result) {
+                        $.each(result, function(i, contour) {
+                            geo_array.push(JSON.parse(contour))
+                        });
+                        //GEO ARRAY IS NOW generated with contours... so can call another function to generate an SVG layer a well // 
+                    }
+                });
+
+                return geo_array;
+            }();
+            $(".tileClass").css('fill', 'none')
+
+            svg_layer = dg_viewer.svgOverlay();
+            my_points = contourdata_to_shape(new_geodata, img_width);
+
+            //This generates the pretty multicolor tile image
+            $.each(my_points, function(k, point_list) {
+                d3.select(svg_layer.node()).append("polygon").attr("points", point_list.coords).style('fill', color(point_list.labelindex % 20)).attr('opacity', 0.5).attr('class', 'tileClass').attr('id', 'tile' + point_list.labelindex)
+            });
+
+
+        }
+
+        function update_tile_stats() {
+            //This gets called when I select a new feature or image and displays information about the number of tiles that have the feature
+
+
+        }
     </script>
 </body>
 

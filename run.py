@@ -88,6 +88,16 @@ def TileAPI():
     tileData =  get_MarkupData_for_ImageFeature( tile_db, cur_image,'net_atyp')
     return jsonify(**tileData)
 
+
+
+@app.route('/api/TileInfo/<string:imageName>')
+def TileInfo_for_image( imageName):
+    tileData =  get_MarkupData_for_ImageFeature( tile_db, imageName,'net_atyp')
+    return jsonify(**tileData)
+
+
+
+
 ### There's cleatly a better way to do this... i don't want to install nginx on my machine right now though
 
 #@app.route('/images/features_output_dir/<path:path>')
