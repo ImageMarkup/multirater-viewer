@@ -41,6 +41,10 @@
         return Math.floor(Math.random() * range);
     }
     var colours = ['purple', 'pink', 'orange', 'yellow', 'lime', 'green', 'blue', 'navy', 'black'];
+
+    var color_heatmap = ['blue','blue','yellow','orange','red'];
+
+
     var image_info_list = {};
     var superpixel_markup_info = {}; //Stores the marked up data for each tile and rater
     var active_image = '';
@@ -104,17 +108,20 @@
         </div>
     </div>
     <script>
-    raters = ['Marghoob', 'Braun', 'Rabinowitz', 'Carrera'];
+    //raters = ['Marghoob', 'Braun', 'Rabinowitz', 'Carrera'];
+    raters = ['braunr','haroldr','carrerac','marghooa'];
 
     function new_mark_superpixels(sp_info) {
         $(".tileClass").css('fill', 'none');
 
-        num_superpixels = Object.keys(superpixel_markup_info).length;
+        //need to add in the current_feature
+
+        num_superpixels = Object.keys(superpixel_markup_info[current_feature]).length;
         console.log(num_superpixels)
         $("#tile_info_stats").empty(); /// clear the current DIV before I start putting stats in it..
         $("#tile_info_stats").append(num_superpixels.toString() + ' superpixels are in this image');
         //This code is very sensitive to on load events...
-        $.each(superpixel_markup_info, function(tileID, rater_data) {
+        $.each(superpixel_markup_info[current_feature], function(tileID, rater_data) {
         //         ///I am now iteration over each tile in the selected Image...
                  tileAnnotated = false;
                  raters_for_tile = [];
@@ -135,11 +142,17 @@
                         if (raters_for_tile.length == 1)
                             {
                               //In this case the tile is colored for the individual rater.... otherwise it's a color palette
-                        $("#tile"+tileID).css('fill','green');
+                            //Currently I am going 
+                            //var a = fruits.indexOf("Apple");
+                            rater_index = raters.indexOf(raters_for_tile[0])
+                            console.log(raters_for_tile,rater_index)
+
+                        $("#tile"+tileID).css('fill',colours[rater_index]);
 
                             }
                         else{
-                        $("#tile"+tileID).css('fill','blue');
+
+                        $("#tile"+tileID).css('fill',color_heatmap[raters_for_tile.length]);
                           }
 
                  }
@@ -216,7 +229,9 @@
 
                 //Now that the new image is loaded, should next load the actual markup data for this image
                 //I should call this function when I select an image...
-                $.getJSON('api/TileInfo/' + $selected_image, function(data) {
+
+                //Need to refactor this.... ill be calling this too often
+                $.getJSON('api/TileInfo/ALL/' + $selected_image , function(data) {
                     superpixel_markup_info = data;
                 })
 
@@ -265,6 +280,9 @@
             //Now add an onclick handler for this..
             $('#feature_list_target input[type=radio]').change(function() {
                 console.log(this.value);
+                current_feature = this.value;
+                new_mark_superpixels();
+
             })
         });
 
