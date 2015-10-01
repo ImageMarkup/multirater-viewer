@@ -35,7 +35,7 @@
     </style>
     <script>
     //Putting Various Helper functions up here
-    var color = d3.scale.category20();
+    var color20 = d3.scale.category20();
 
     function random(range) {
         return Math.floor(Math.random() * range);
@@ -65,7 +65,7 @@
         </div>
         <div class="col-md-8">
             <span id="tile_toggle">Toggle All Overlays</span>
-            <span><button id="tile_button">Toggle Tile Overlay</button></span>
+            <span><button id="tile_button">Show All Superpixels</button></span>
             <script>
             $("input").button();
             </script>
@@ -219,11 +219,14 @@
                     $("#image_list_dd").append('<option id="' + val.image_name + '">' + val.image_name + '</option>');
                     image_info_list[val.image_name] = val;
                 });
+                //Maybe add functionality here to update_current_image.... this event needs to run when I load stuff which I don't think it is..
+
             });
 
             //Adding a list to identify which rater goes with which color-- probably need a new color scheme at some point
             $.each(raters, function(n, v) {
-                $("#rater_color_list").append(`<li><span style="color:${colours[n]}">${v}</span></li>`)
+                $("#rater_color_list").append(`<li><span style="color:${colours[n]}">${v}</span></li>`);
+                //$<input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons"><label for="show_${v}">${v}</label></input> 
             });
 
             // Add event handler for changing the image
@@ -278,11 +281,12 @@
 
             $("#tile_button").click(function() {
                 ///This is a hack with the levels[0].width, this only works for legacy tile sources and should be a global parameter
-                my_points = contourdata_to_shape(new_geodata, dg_viewer.tileSources.levels[0].width);
-                $.each(my_points, function(k, point_list) {
-                    d3.select(svg_layer.node()).append("polygon").attr("points", point_list.coords).style('fill', color(point_list.labelindex % 20)).attr('opacity', 0.5).attr('class', 'tileClass').attr('id', 'tile' + point_list.labelindex)
-                });
-                $('#tile_img').toggle();
+                //my_points = contourdata_to_shape(new_geodata, dg_viewer.tileSources.levels[0].width);
+                //$.each(my_points, function(k, point_list) {
+ //                   d3.select(svg_layer.node()).append("polygon").attr("points", point_list.coords).style('fill', color(point_list.labelindex % 20)).attr('opacity', 0.5).attr('class', 'tileClass').attr('id', 'tile' + point_list.labelindex)
+   //             });
+     //           $('#tile_img').toggle();
+                    show_all_tiles();
             });
 
             //Adding RADIO Buttons to allow me to select features
@@ -418,14 +422,20 @@
 
                 return geo_array;
             }();
-            $(".tileClass").css('fill', 'none')
+            
 
-            svg_layer = dg_viewer.svgOverlay();
+            //  This will iterate through all the tiles and color them a different color to show the tile overlays
+            $(".tileClass").remove();
+            //$(".tileClass").css('fill', 'none')
+
+            //$(".tileClass").remove()  May be cleaner to remove them??
+
+            //svg_layer = dg_viewer.svgOverlay();
             my_points = contourdata_to_shape(new_geodata, img_width);
 
             //This generates the pretty multicolor tile image
             $.each(my_points, function(k, point_list) {
-                d3.select(svg_layer.node()).append("polygon").attr("points", point_list.coords).style('fill', color(point_list.labelindex % 20)).attr('opacity', 0.5).attr('class', 'tileClass').attr('id', 'tile' + point_list.labelindex)
+                d3.select(svg_layer.node()).append("polygon").attr("points", point_list.coords).style('fill', 'none').attr('opacity', 0.5).attr('class', 'tileClass').attr('id', 'tile' + point_list.labelindex)
             });
 
 
@@ -436,6 +446,14 @@
 
 
         }
+
+        function show_all_tiles() {
+              //This will iterate through all the tiles and color them a different color to show the tile overlays
+              //s$(".tileClass").remove()
+              $(".tileClass").css( 'fill', function() { pixnum = this.id.substring(4); console.log( pixnum ); return color20( (pixnum %20 ))  } ); 
+              }
+
+
     </script>
 </body>
 
