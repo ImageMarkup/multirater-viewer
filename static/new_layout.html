@@ -3,19 +3,19 @@
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<meta charset="utf-8">
-		<title>2 column Google maps, foursquare (outer scroll)</title>
-		<meta name="generator" content="Bootply" />
+		<title>ISIC MultiRater Viewer</title>
+    <meta name="generator" content="Bootply" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<link href="css/bootstrap.min.css" rel="stylesheet">
-		<!--[if lt IE 9]>
-			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
+		
 		<link href="css/styles.css" rel="stylesheet">
+    <script src="js/multirater.js"></script>  
+
 	</head>
 	<body>
 <!-- begin template -->
 <div class="navbar navbar-custom navbar-fixed-top">
- <div class="navbar-header"><a class="navbar-brand" href="#">Brand</a>
+ <div class="navbar-header"><a class="navbar-brand" href="#">ISIC Archive</a>
       <a class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -53,7 +53,7 @@
 <div id="map-canvas"></div>
 <div class="container-fluid" id="main">
   <div class="row">
-  	<div class="col-xs-8" id="left">
+  	<div class="col-xs-3" id="left">
     
       <h2>Bootstrap Google Maps Demo</h2>
       
@@ -93,20 +93,10 @@
       <hr>
       <!-- /item list -->
       
-      <p>
-      <a href="http://www.bootply.com/render/129229">Demo</a> | <a href="http://bootply.com/129229">Source Code</a>
-      </p>
-      
-      <hr> 
         
-      <p>
-      <a href="http://bootply.com" target="_ext" class="center-block btn btn-primary">More Bootstrap Snippets on Bootply</a>
-      </p>
-        
-      <hr>      
 
     </div>
-    <div class="col-xs-4"><!--map-canvas will be postioned here--></div>
+    <div class="col-xs-9"><div id="openseadragon1" style="width: 100%; height: 600px; border: 1px solid blue" class="openseadragon"></div><!--map-canvas will be postioned here--></div>
     
   </div>
 </div>
@@ -116,4 +106,286 @@
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 	</body>
+</html>
+
+
+<!DOCTYPE html5>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+   
+    <!-- Bootstrap -->
+    <script src="js/jquery-2.1.3.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/d3.v3.min.js" charset="utf-8"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script type="text/javascript" src="js/jquery.svg.js"></script>
+    <script src="/js/openseadragon.js"></script>
+    <script src="/js/openseadragon-svg-overlay.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery.svg.css">
+    <link rel="stylesheet" href="css/jquery-ui.css">
+    <link href="css/jquery-ui.theme.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    
+    <script>
+    //Putting Various Helper functions up here
+    var color20 = d3.scale.category20();
+
+    
+    var colours = ['purple', 'pink', 'orange', 'yellow', 'lime', 'green', 'blue', 'navy', 'black'];
+
+    var color_heatmap = ['blue','blue','yellow','orange','red'];
+
+
+    var image_info_list = {};
+    var superpixel_markup_info = {}; //Stores the marked up data for each tile and rater
+    var active_image = '';
+    var current_feature = "net_typ";
+
+    var annotated_feature_list = ['net_typ', 'net_atyp', 'str_chrys'];
+    var feature_overlay_basedir = 'images/features_output_dir/';
+
+    var new_geodata;
+    var my_data = {};
+    </script>
+</head>
+
+<body>
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Image List <select id='image_list_dd'></select> </h3>
+        </div>
+        <div class="col-md-8">
+            <span id="tile_toggle">Toggle All Overlays</span>
+            <span><button id="tile_button">Show All Superpixels</button></span>
+            <script>
+            $("input").button();
+            </script>
+            <span style="border:1px solid black;" id="feature_list_target"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            
+            <!-- <div id="toggle_raters_div" style="border:1px;width:400px"> </div>-->
+            
+            <div class="h4">Overlay Opacity: </div><div id="slider" width="300px !important"></div>
+            <span><p>Please select the raters to overlay</p></span>
+            <div id="rater_info">
+                <div id="tile_opacity"></div>
+                <h3>Color Guide:</h3>
+                <span id="displayed_data_info" class="h1 lead">
+                      <ul id="rater_color_list"></ul>
+           </span>
+                <div id="feature_info_stats" class="h1 lead"></div>
+                <div id="tile_info_stats" class="h1 lead"></div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            
+            <script type="text/javascript">
+            var dg_viewer = OpenSeadragon({
+                id: "openseadragon1",
+                prefixUrl: "/images/openseadragon-bin-2.0.0/images/",
+                showNavigator: true,
+                tileSources: {
+                    type: 'legacy-image-pyramid',
+                    levels: [{
+                        url: 'images/base_img/UDA2_pilot_060-p1c.png',
+                        height: 920,
+                        width: 960
+                    }]
+                }
+            });
+
+            svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
+            </script>
+        </div>
+    </div>
+    <script>
+    raters = ['braunr','haroldr','carrerac','marghooa'];
+
+
+
+
+        function color_some_tiles(rater, feature) {
+            //given a feature and a rater and an image ID I should color the respective tiles on the super pixel image
+            console.log("should be painting " + feature + "for " + rater);
+            new_mark_superpixels(); // loadSVGTileData(imageName);
+            //I think I am going to structure this to paint all tiles for all the raters...
+        }
+
+        $(document).ready(function() {
+
+          
+            var $select = $('#image_list_dd');
+
+            //request the JSON data and parse into the select element
+            //THIS Loads the Image List
+            $.getJSON('data/image_info.json', function(data) {
+                $("#image_list_dd").empty();
+                my_data = data.responseJSON;
+                //iterate over the data and append a select option
+                $.each(data, function(key, val) {
+                    $("#image_list_dd").append('<option id="' + val.image_name + '">' + val.image_name + '</option>');
+                    image_info_list[val.image_name] = val;
+                });
+                //Maybe add functionality here to update_current_image.... this event needs to run when I load stuff which I don't think it is..
+
+            });
+
+            //Adding a list to identify which rater goes with which color-- probably need a new color scheme at some point
+            $.each(raters, function(n, v) {
+                //$("#rater_color_list").append(`<li><span style="color:${colours[n]}">${v}</span></li>`);
+                $("#rater_color_list").append(
+                    `<input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons "><label for="show_${v}" style="color:${colours[n]}">${v}</label></input><br>`);
+                //$<input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons"><label for="show_${v}">${v}</label></input> 
+            });
+            $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
+             $('.overlay_toggle').click(function() {
+                //  console.log(this.id);
+                //So I need to check the state of the button to either draw or clear a given tile(s) colors for a rater..
+                color_some_tiles(this.id, "thefeatureIwanttolookat");
+            });
+
+            // Add event handler for changing the image
+            $select.change(function() {
+                //##This needs to clear as well as update information and change the viewer
+                //Need to change the image source based on the new image I just added in the toggle, will also push the text
+                // to a DIV so it's obvious what Image I am looking at
+                $selected_image = this.value;
+                console.log(image_info_list[this.value].filename_url);
+                selected_image_filename_url = image_info_list[this.value].filename_url;
+                //ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
+                new_tile_source = {
+                    'type': 'legacy-image-pyramid',
+                    levels: [{
+                        'url': selected_image_filename_url,
+                        'height': image_info_list[this.value].img_height,
+                        'width': image_info_list[this.value].img_width,
+                    }]
+                }
+                update_rater_overlays($selected_image);
+                dg_viewer.open(new_tile_source);
+
+                //Now that the new image is loaded, should next load the actual markup data for this image
+                //I should call this function when I select an image...
+
+                //Need to refactor this.... ill be calling this too often
+                $.getJSON('api/TileInfo/ALL/' + $selected_image , function(data) {
+                    superpixel_markup_info = data;
+                })
+
+            });
+
+            $("#tile_toggle").button().click(function() {
+                console.log(this.id + 'was pressed')
+                $(".tileClass").css('fill', 'none')
+            });
+
+            $("#slider").slider({
+                range: false,
+                max: 1,
+                min: 0,
+                value: 0.8,
+                step: 0.05,
+                change: function(event, ui) {
+                    cur_slider_value = $(this).slider("option", "value");
+                    console.log(cur_slider_value);
+                    $(".tileClass").attr('opacity', cur_slider_value);
+                }
+            });
+
+            $("#tile_button").button();
+            $("#tile_button").click(function() {show_all_tiles();          });
+
+            //Adding RADIO Buttons to allow me to select features
+
+            flt = $("#feature_list_target");
+            $.each(annotated_feature_list, function(v, k) {
+                //console.log('adding radio buttons');
+                var rb = '<input type="radio" name=rb_feature_set id="feat_' + k + '" value="' + k + '" /><label for="feat_' + k + '">' + k + '<label>'
+                var radioBtn = $(rb);
+                flt.append(radioBtn);
+            });
+            //now that the buttons are apended I can turn it into a button set
+            flt.buttonset();
+            //Now add an onclick handler for this..
+            $('#feature_list_target input[type=radio]').change(function() {
+                console.log(this.value);
+                current_feature = this.value;
+
+                $("#feature_info_stats").empty();
+                //ALSO ADDI N SOME STATS TO INDICATE HOW MANY TILES WERE MARKED FOR THIS FEATURE...
+                cfd = superpixel_markup_info[current_feature]; //Current Feature data
+                if ( ! cfd) { $("#feature_info_stats").append("NO EXAMPLES FOR  feature"+current_feature);  }
+                else {
+
+                      $("#feature_info_stats").append("SOME EXAMPLES  feature"+current_feature); 
+
+                      }
+
+                new_mark_superpixels();
+
+            })
+        });
+
+
+        $('#tile_img').toggle();
+
+        function update_rater_overlays(imageName) {
+            console.log("NEED TO update the overlay SRC ids as well" + imageName);
+            //This will eventually need to reed the list or raters and update the sources for all of the raters that have been added
+            //ALSO need to add in something that populates the stats for the rater(s)
+            loadSVGTileData(imageName);
+
+            //NEED TO GRAB THE OVERLAY FOR THIS IMAGE
+            $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
+
+        }
+        //ADDING A CLASS HANDLER FOR ALL OVERLAYS SO THEY ARE HIDDEN IF IT CAN'T FIND THE IMAGE
+        $(".overlay_img").error(function() {
+            $(this).hide();
+        });
+
+
+
+        //COME HERE LATER--- ADD SOME FUNCTION THAT RUNS ON DOCUMENT COMPLETION THAT LOADS THE IMAGE FOR THE VIEWER AND 
+        //THE PROPER OVERLAY
+
+        $(function() {
+            //Adding keyboard listnered to toggle the tiles on/off if I press the letter t (for toggle)
+            $("body").keypress(function(event) {
+                if (event.keyCode == 116) {
+                    cur_opacity = $('.tileClass').attr('opacity');
+                    cur_slider_value = $("#slider").slider("option", "value");
+                    var new_opacity = (cur_opacity == 0) ? cur_slider_value : 0;
+                    $('.tileClass').attr('opacity', new_opacity);
+                }
+            });
+        });
+
+
+        //need to add a callback function to this as well... hmm so want to load the geodata than push it to the SVG
+        //<!-- Some tips on working with SVG docs http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
+
+
+        //ttps://www.dashingd3js.com/creating-svg-elements-based-on-data dg_viewer.viewport.maxZoomPixelRatio=5 dg_viewer.viewport.minZoomPixelRatio=0.4 Can play //around with these $(".rater_buttons").click( function() { console.log(this.id) }); -->
+
+
+      
+        function show_all_tiles() {
+              //This will iterate through all the tiles and color them a different color to show the tile overlays
+              //s$(".tileClass").remove()
+              $(".tileClass").css( 'fill', function() { pixnum = this.id.substring(4); console.log( pixnum ); return color20( (pixnum %20 ))  } ); 
+              }
+
+
+    </script>
+</body>
+
 </html>
