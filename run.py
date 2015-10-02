@@ -26,6 +26,10 @@ def dev_view_svg():
 def dev_view_osd_svg():
     return app.send_static_file('osd_svg_viewer.html')
 
+@app.route('/new_layout.html')
+def dev_view_newlayout():
+    return app.send_static_file('new_layout.html')
+
 
 @app.route('/data/<path:path>')
 def send_datadir(path):
