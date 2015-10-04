@@ -71,8 +71,8 @@
                     <li><a href="#about">About</a></li>
                 </ul>
                 <span class="right-side-button"> 
-                <button  id="tile_toggle" class="btn btn-default navbar-btn navbar-right">Toggle All Overlays</button>
-                <button id="tile_button" class="btn btn-default navbar-btn navbar-right">Show Superpixels</button>
+                <button  id="tile_toggle" class="btn btn-default navbar-btn btn-sm navbar-right">Hide Overlays</button>
+                <button id="tile_button" class="btn btn-default navbar-btn btn-sm navbar-right">Show superpixels</button>
                 </span>
             </div>
         </nav>
@@ -294,6 +294,12 @@ $(document).ready(function() {
         new_mark_superpixels();
 
     })
+
+
+        show_all_tiles();
+       new_mark_superpixels();
+
+    //end of READY function
 });
 
 
