@@ -7,7 +7,9 @@
     <title>ISIC MultiRater Viewer</title>
     <meta name="generator" content="Bootply" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="/css/bootstrap-slider.css" rel="stylesheet">
+
     <link href="css/styles.css" rel="stylesheet">
     <link rel="stylesheet" href="css/jquery-ui.css">
     <link href="css/jquery-ui.theme.css" rel="stylesheet">
@@ -25,7 +27,7 @@
 <script src="js/jquery.svg.js"></script>
 <script src="js/openseadragon.js"></script>
 <script src="js/openseadragon-svg-overlay.js"></script>
-
+<script src="js/bootstrap-slider.js"></script>
     <style>
     .right-side-button {
         float: right;
@@ -44,6 +46,16 @@
     .slider-selection {
         background: #BABABA;
     }
+
+    #opacity_slider .slider-selection {
+    background: #BABABA;
+    }
+
+    .rtr {
+    padding: 10px;
+    margin: 10px;
+    }
+
     </style>
 </head>
 
@@ -71,9 +83,10 @@
                 <h3>Image List <select id='image_list_dd'></select> </h3>
                 <!-- item list -->
                 <div class="panel panel-default">
-                    <div class="panel-heading"><a href="">Overlay Opacity</a></div>
+                    <span>Overlay Opacity: <input id="opacity_slider" data-slider-id='op_slider' type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.05" data-slider-value="0.5"/></span>
                 </div>
-                <div id="slider" width="300px !important"></div>
+                <!-- <div id="slider" width="300px !important"></div> -->
+
                 <div class="panel panel-default">
                     <div class="panel-heading"><a href="">Please select the raters to overlay</a></div>
                     <div id="rater_info">
@@ -108,7 +121,7 @@
 var color20 = d3.scale.category20();
 
 
-var colours = ['purple', 'pink', 'orange', 'yellow', 'lime', 'green', 'blue', 'navy', 'black'];
+var colours = ['purple', 'blue','green  ','navy','green', 'navy','blue', 'pink', 'orange', 'yellow', 'lime', 'green', 'blue', 'navy', 'black'];
 
 var color_heatmap = ['blue', 'blue', 'yellow', 'orange', 'red'];
 
@@ -118,8 +131,7 @@ var superpixel_markup_info = {}; //Stores the marked up data for each tile and r
 var active_image = '';
 var current_feature = "net_typ";
 
-var annotated_feature_list = ['net_typ', 'net_atyp', 'str_chrys'];
-var feature_overlay_basedir = 'images/features_output_dir/';
+var annotated_feature_list = ['net_typ', 'net_atyp', 'str_chrys']; //will load these frim a file
 
 var new_geodata;
 var my_data = {};
@@ -143,13 +155,29 @@ svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
 
 raters = ['braunr', 'haroldr', 'carrerac', 'marghooa'];
 
-
+var OpacitySlider ;
 
 
 
 
 $(document).ready(function() {
 
+
+
+    OpacitySlider = $('#opacity_slider').bootstrapSlider({
+    formatter: function(value) {
+        return 'Current value: ' + value;
+    }
+        });
+     
+    OpacitySlider.change( function(val) {
+
+                        new_slider_value = val.value.newValue;
+                        console.log('new slider value is'+new_slider_value)
+                          $(".tileClass").attr('opacity', new_slider_value);
+
+                        })    ;
+    //Should be able to set the change function in the slider constructor.. not sure f the syntax
 
     var $select = $('#image_list_dd');
 
@@ -171,7 +199,7 @@ $(document).ready(function() {
     $.each(raters, function(n, v) {
         //$("#rater_color_list").append(`<li><span style="color:${colours[n]}">${v}</span></li>`);
         $("#rater_color_list").append(
-            `<input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons "><label for="show_${v}" style="color:${colours[n]}">${v}</label></input><br>`);
+            `<span class="btn btn-default "><input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons "><label for="show_${v}" style="color:${colours[n]}">${v}</label></input></span>`);
         //$<input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons"><label for="show_${v}">${v}</label></input> 
     });
     $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
@@ -206,6 +234,9 @@ $(document).ready(function() {
         //Need to refactor this.... ill be calling this too often
         $.getJSON('api/TileInfo/ALL/' + $selected_image, function(data) {
             superpixel_markup_info = data;
+
+            //Also add in something to actual  lly display this..
+                  new_mark_superpixels();
         })
 
     });
@@ -215,21 +246,7 @@ $(document).ready(function() {
         $(".tileClass").css('fill', 'none')
     });
 
-    $("#slider").slider({
-        range: false,
-        max: 1,
-        min: 0,
-        value: 0.8,
-        step: 0.05,
-        change: function(event, ui) {
-            cur_slider_value = $(this).slider("option", "value");
-            console.log(cur_slider_value);
-            $(".tileClass").attr('opacity', cur_slider_value);
-        },
-        formatter: function(value) {
-            return 'Current opacity ' + value;
-        }
-    });
+
 
     $("#tile_button").button();
     $("#tile_button").click(function() {
@@ -266,7 +283,9 @@ $(document).ready(function() {
 
     //So I need to check the state of the button to either draw or clear a given tile(s) colors for a rater..
             // cur_opacity = $('.tileClass').attr('opacity');
-                 cur_slider_value = $("#slider").slider("option", "value");
+                 //cur_slider_value = $("#slider").slider("option", "value");
+
+                 cur_slider_value = OpacitySlider.val();
             //     var new_opacity = (cur_opacity == 0) ? cur_slider_value : 0;
                  $('.tileClass').attr('opacity', cur_slider_value);
 
@@ -290,10 +309,6 @@ function update_rater_overlays(imageName) {
     $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
 
 }
-//ADDING A CLASS HANDLER FOR ALL OVERLAYS SO THEY ARE HIDDEN IF IT CAN'T FIND THE IMAGE
-$(".overlay_img").error(function() {
-    $(this).hide();
-});
 
 
 
@@ -305,7 +320,9 @@ $(function() {
     $("body").keypress(function(event) {
         if (event.keyCode == 116) {
             cur_opacity = $('.tileClass').attr('opacity');
-            cur_slider_value = $("#slider").slider("option", "value");
+            //cur_slider_value = $("#slider").slider("option", "value");
+
+            cur_slider_value= OpacitySlider.val();
             var new_opacity = (cur_opacity == 0) ? cur_slider_value : 0;
             $('.tileClass').attr('opacity', new_opacity);
         }
@@ -315,8 +332,6 @@ $(function() {
 
 //need to add a callback function to this as well... hmm so want to load the geodata than push it to the SVG
 //<!-- Some tips on working with SVG docs http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
-
-
 //ttps://www.dashingd3js.com/creating-svg-elements-based-on-data dg_viewer.viewport.maxZoomPixelRatio=5 dg_viewer.viewport.minZoomPixelRatio=0.4 Can play //around with these $(".rater_buttons").click( function() { console.log(this.id) }); -->
 </script>
 </body>
