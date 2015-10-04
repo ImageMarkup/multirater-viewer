@@ -94,7 +94,7 @@
                         <span id="displayed_data_info" class="h5">
                       <ul id="rater_color_list"></ul>
            </span>
-                        <div id="feature_info_stats" class="h1 lead"></div>
+                        <div id="feature_info_stats" class="h4 lead"></div>
                         <div id="tile_info_stats" class="h1 lead"></div>
                     </div>
                 </div>
@@ -273,10 +273,10 @@ $(document).ready(function() {
         //ALSO ADDI N SOME STATS TO INDICATE HOW MANY TILES WERE MARKED FOR THIS FEATURE...
         cfd = superpixel_markup_info[current_feature]; //Current Feature data
         if (!cfd) {
-            $("#feature_info_stats").append("NO EXAMPLES FOR  feature" + current_feature);
+            $("#feature_info_stats").append("Feature "+current_feature + " NOT in this image");
         } else {
 
-            $("#feature_info_stats").append("SOME EXAMPLES  feature" + current_feature);
+            $("#feature_info_stats").append("Feature" + current_feature+ " present");
 
         }
 

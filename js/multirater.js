@@ -58,7 +58,7 @@ function loadSVGTileData(imageName) {
 
        // console.log(num_superpixels)
         $("#tile_info_stats").empty(); /// clear the current DIV before I start putting stats in it..
-        $("#tile_info_stats").append(num_superpixels.toString() + ' superpixels are in this image');
+//        $("#tile_info_stats").append(num_superpixels.toString() + ' superpixels are in this image');
         //This code is very sensitive to on load events...
         $.each(superpixel_markup_info[current_feature], function(tileID, rater_data) {
         //         ///I am now iteration over each tile in the selected Image...
@@ -103,7 +103,7 @@ function loadSVGTileData(imageName) {
                 console.log(this.id);
                 pixnum = (this.id).substring(4);
                 $("#tile_info_stats").empty(); /// clear the current DIV before I start putting stats in it..
-              $("#tile_info_stats").append(num_superpixels.toString() + ' superpixels are in this image');
+//              $("#tile_info_stats").append(num_superpixels.toString() + ' superpixels are in this image');
               $("#tile_info_stats").append("<br>You are hovering on sp: "+this.id);
               
 
