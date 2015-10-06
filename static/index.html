@@ -56,26 +56,21 @@
 
 <body>
     <!-- begin template -->
-    
-        <nav class="navbar navbar-custom navbar-fixed-top " role="navigation">
-
-
-
-            <div class="navbar navbar-fixed-top navbar-left   ">
-                <a class="navbar-brand" href="#">ISIC MultiRater Viewer</a>
-                <ul class="nav navbar-nav">
-                    <li><a href="http://isic-archive.com">Home</a></li>
-                    <li><a href="#">About</a></li>
-                </ul>
-            </div>
-            <!-- Need to cleanup class assignment for these buttons... this seems redundant -->
-            <div class="navbar-right navbar navbar-fixed-top right-side-button ">
-                <span class="navbar-right right-side-button navbar-btn btn-sm">Overlay Opacity: <input id="opacity_slider" data-slider-id='op_slider' type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.05" data-slider-value="0.5"/></span>
-                <button id="tile_toggle" class="btn btn-default navbar-right navbar-btn btn-sm ">Hide Overlays</button>
-                <button id="tile_button" class="btn  btn-default navbar-right  navbar-btn btn-sm ">Show superpixels</button>
-            </div>
-        </nav>
-    
+    <nav class="navbar navbar-custom navbar-fixed-top " role="navigation">
+        <div class="navbar navbar-fixed-top navbar-left   ">
+            <a class="navbar-brand" href="#">ISIC MultiRater Viewer</a>
+            <ul class="nav navbar-nav">
+                <li><a href="http://isic-archive.com">Home</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+        </div>
+        <!-- Need to cleanup class assignment for these buttons... this seems redundant -->
+        <div class="navbar-right navbar navbar-fixed-top right-side-button ">
+            <span class="navbar-right right-side-button navbar-btn btn-sm">Overlay Opacity: <input id="opacity_slider" data-slider-id='op_slider' type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.05" data-slider-value="0.5"/></span>
+            <button id="tile_toggle" class="btn btn-default navbar-right navbar-btn btn-sm ">Hide Overlays</button>
+            <button id="tile_button" class="btn  btn-default navbar-right  navbar-btn btn-sm ">Show superpixels</button>
+        </div>
+    </nav>
     <div class="container-fluid" id="main">
         <div class="row">
             <div class="col-xs-4" id="left">
@@ -97,14 +92,8 @@
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading"><a href="">Feature Selector</a></div>
-                    <div id="feature_btns" class="btn-group" data-toggle="buttons" ></div>
-
-
+                    <div id="feature_btns" class="btn-group" data-toggle="buttons"></div>
                 </div>
-
-            
-              
-              
             </div>
             <div class="col-xs-8">
                 <div id="openseadragon1" style="width: 100%; height: 600px; border: 1px solid blue" class="openseadragon"></div>
@@ -131,7 +120,11 @@ var superpixel_markup_info = {}; //Stores the marked up data for each tile and r
 var active_image = '';
 var current_feature = "net_typ";
 
-var annotated_feature_list = ['net_typ', 'net_atyp', 'str_chrys']; //will load these frim a file
+var annotated_feature_list = ['net_typ', 'net_atyp', 'str_chrys','net_targ','ves_serp','ves_clods']; //will load these frim a file
+
+
+//c_lbrown,c_dbrown,c_white,c_gray,c_blue,c_black,c_red,c_bluegray,c_bluewhite,net_typ,net_atyp,net_pseudo,net_neg,net_targ,str_strless,str_hypo_areas,str_reg_blotch,str_irreg_blotch,str_bluewhite,str_bluegraygran,str_scar,str_peribrown,str_bluegraydots,str_streaks,str_pseudo,str_radialstream,str_irrstreaks,str_lines,str_circle,str_clod,str_chrys,str_rhomb,str_regress,str_regblackdots,str_regbrdots,str_irrblackdots,str_periblack,str_irrbrdots,str_irrbluedots,str_irrred,str_regblackglob,str_regbrglob,str_regblueglob,str_irrblackglob,str_irrbrglob,str_irrblueglob,str_irrbluered,ves_comma,ves_atyp,ves_pinkveil,ves_polymorph,ves_dotted,ves_linearbranch,ves_serp,ves_hel,ves_hairpin,ves_coil,ves_milky,ves_clods,ves_linear,oth_lacuna,oth_milia,oth_comedo,oth_cereb,oth_sharpdemarc,oth_spoke,oth_moth,oth_finger,oth_leaf,oth_ovoids,oth_blgrayglob,oth_ulcer
+
 
 var new_geodata;
 var my_data = {};
@@ -144,7 +137,7 @@ var dg_viewer = OpenSeadragon({
     tileSources: {
         type: 'legacy-image-pyramid',
         levels: [{
-            url: 'images/base_img/UDA2_pilot_060-p1c.png',
+            url: 'images/base_img/UDA2_pilot_001-p1c.png',
             height: 920,
             width: 960
         }]
@@ -161,8 +154,6 @@ var OpacitySlider;
 
 
 $(document).ready(function() {
-
-
 
     OpacitySlider = $('#opacity_slider').bootstrapSlider({
         formatter: function(value) {
@@ -192,6 +183,8 @@ $(document).ready(function() {
             image_info_list[val.image_name] = val;
         });
         //Maybe add functionality here to update_current_image.... this event needs to run when I load stuff which I don't think it is..
+         var imageName = $("#image_list_dd option:first").val();
+        update_rater_overlays(imageName);
 
     });
 
@@ -247,7 +240,7 @@ $(document).ready(function() {
     });
 
 
-    function load_new_image (  image_name ) {
+    function load_new_image(image_name) {
         //Consolidating all of the function calls that need to be made when I switch an image into this snipper... this should be called
         //on document ready, and attached to the SELECT element when it's changed.
 
@@ -265,78 +258,55 @@ $(document).ready(function() {
     });
 
     //Adding RADIO Buttons to allow me to select features
-    /*
-    flt = $("#feature_list_target");
     $.each(annotated_feature_list, function(v, k) {
-        //console.log('adding radio buttons');
-        var rb = '<input type="radio" name=rb_feature_set id="feat_' + k + '" value="' + k + '" /><label for="feat_' + k + '">' + k + '<label>'
-        var radioBtn = $(rb);
-        flt.append(radioBtn);
-    });
-    //now that the buttons are apended I can turn it into a button set
-    flt.buttonset();
-    //Now add an onclick handler for this..
-    */
-  $.each(annotated_feature_list, function(v,k){
-            var rb = `<label class="btn btn-default feature_btns"><input type="radio" class="feature_btns" name="features" value="${k}" id="feat_${k}">${k}</label>`;
-            //console.log(rb);
-            $("#feature_btns").append(rb);
+        var rb = `<label class="btn btn-default feature_btns"><input type="radio" class="feature_btns" name="features" value="${k}" id="feat_${k}">${k}</label>`;
+        //console.log(rb);
+        $("#feature_btns").append(rb);
 
-            });
-  
+    });
+
     $(".feature_btns").first().button("toggle");
 
-  //$("#feature_btns").first().toggle();
-// $(document).ready(function() {
-//     $(".btn").first().button("toggle");
-// });
+    //$("#feature_btns").first().toggle();
+    // $(document).ready(function() {
+    //     $(".btn").first().button("toggle");
+    // });
 
-$("#feature_btns :input").change(function() {
-    console.log(this.id); // points to the clicked input button
+    $("#feature_btns :input").change(function() {
+        //console.log(this.id); // points to the clicked input button
 
-    current_feature = this.value;
-    //console.log
-//});
-
-   // $('#feature_btns input[type=radio]').change(function() {
-      //  console.log(this.value);
-      //  current_feature = this.value;
-
+        current_feature = this.value;
         $("#feature_info_stats").empty();
         //ALSO ADDI N SOME STATS TO INDICATE HOW MANY TILES WERE MARKED FOR THIS FEATURE...
         cfd = superpixel_markup_info[current_feature]; //Current Feature data
         if (!cfd) {
             $("#feature_info_stats").append("Feature " + current_feature + " NOT in this image");
         } else {
-
             $("#feature_info_stats").append("Feature" + current_feature + " present");
-
         }
 
 
         //So I need to check the state of the button to either draw or clear a given tile(s) colors for a rater..
-        // cur_opacity = $('.tileClass').attr('opacity');
-        //cur_slider_value = $("#slider").slider("option", "value");
-
         cur_slider_value = OpacitySlider.val();
         //     var new_opacity = (cur_opacity == 0) ? cur_slider_value : 0;
         $('.tileClass').attr('opacity', cur_slider_value);
-
-
-
         new_mark_superpixels();
-
     })
 
 
     show_all_tiles();
     new_mark_superpixels();
 
+
     //end of READY function
 });
 
 
 $('#tile_img').toggle();
+
+
+
+
 
 function update_rater_overlays(imageName) {
     console.log("NEED TO update the overlay SRC ids as well" + imageName);
@@ -346,8 +316,9 @@ function update_rater_overlays(imageName) {
 
     //NEED TO GRAB THE OVERLAY FOR THIS IMAGE
     $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
-
+      new_mark_superpixels();
 }
+
 
 
 
