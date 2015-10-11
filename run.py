@@ -166,5 +166,5 @@ def All_TileInfo_for_image( imageName):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0',port=1234)
 

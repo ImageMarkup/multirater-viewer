@@ -92,7 +92,7 @@
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading"><a href="">Feature Selector</a></div>
-                    <div id="feature_btns" class="btn-group" data-toggle="buttons"></div>
+                    <div id="feature_btn_group" class="btn-group" data-toggle="buttons-radio"></div>
                 </div>
             </div>
             <div class="col-xs-8">
@@ -259,9 +259,16 @@ $(document).ready(function() {
 
     //Adding RADIO Buttons to allow me to select features
     $.each(annotated_feature_list, function(v, k) {
-        var rb = `<label class="btn btn-default feature_btns"><input type="radio" class="feature_btns" name="features" value="${k}" id="feat_${k}">${k}</label>`;
         //console.log(rb);
-        $("#feature_btns").append(rb);
+//#var rb = `<label class="btn btn-default feature_btns"><input type="radio" class="feature_btns" name="features" value="${k}" id="feat_${k}">${k}</label>`;
+        
+
+        var rb = `  <button class="btn" id="${k}" value="${k}" >${k}</button>`;  
+
+        //<label class="btn btn-default feature_btns"><input type="radio" class="feature_btns" name="features" value="${k}" id="feat_${k}">${k}</label>`;
+        
+
+        $("#feature_btn_group").append(rb);
 
     });
 
@@ -272,7 +279,7 @@ $(document).ready(function() {
     //     $(".btn").first().button("toggle");
     // });
 
-    $("#feature_btns :input").change(function() {
+    $("#feature_btn_group button").click(function() {
         //console.log(this.id); // points to the clicked input button
 
         current_feature = this.value;
