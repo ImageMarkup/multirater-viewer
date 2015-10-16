@@ -206,35 +206,13 @@ $(document).ready(function() {
         //##This needs to clear as well as update information and change the viewer
         //Need to change the image source based on the new image I just added in the toggle, will also push the text
         // to a DIV so it's obvious what Image I am looking at
-        $selected_image = this.value;
+        selected_image = this.value;
         console.log(image_info_list[this.value].filename_url);
-        selected_image_filename_url = image_info_list[this.value].filename_url;
+     
         //ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
-        new_tile_source = {
-            'type': 'legacy-image-pyramid',
-            levels: [{
-                'url': selected_image_filename_url,
-                'height': image_info_list[this.value].img_height,
-                'width': image_info_list[this.value].img_width,
-            }]
-        }
-        update_rater_overlays($selected_image);
-        dg_viewer.open(new_tile_source);
+        
 
-        //Now that the new image is loaded, should next load the actual markup data for this image
-        //I should call this function when I select an image...
-
-        //Need to refactor this.... ill be calling this too often
-        $.getJSON('api/TileInfo/ALL/' + $selected_image, function(data) {
-            superpixel_markup_info = data;
-
-
-            //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
-            hide_unannotated_features( superpixel_markup_info);
-
-            //Also add in something to actual  lly display this..
-            new_mark_superpixels();
-        })
+        load_new_image(selected_image);
 
     });
 
@@ -248,9 +226,47 @@ $(document).ready(function() {
         //Consolidating all of the function calls that need to be made when I switch an image into this snipper... this should be called
         //on document ready, and attached to the SELECT element when it's changed.
 
+        console.log("consolidinating image load code to here for"+image_name);
+
+
+        //First remove all of the SVG elements to prevent the screen from flashing weird colors
+        $(".tileClass").remove();
+
+
+           image_filename_url = image_info_list[image_name].filename_url;
+        new_tile_source = {
+            'type': 'legacy-image-pyramid',
+            levels: [{
+                'url': image_filename_url,
+                'height': image_info_list[image_name].img_height,
+                'width': image_info_list[image_name].img_width,
+            }]
+        }
+        update_rater_overlays(image_name);
+        dg_viewer.open(new_tile_source);
+
+        //Now that the new image is loaded, should next load the actual markup data for this image
+        //I should call this function when I select an image...
+
+
+
+
+
+        //This gets the markup info for the currently selected image
+        $.getJSON('api/TileInfo/ALL/' + image_name, function(data) {
+            superpixel_markup_info = data;
+            //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
+            hide_unannotated_features( superpixel_markup_info);
+            //Also add in something to actual  lly display this..
+            new_mark_superpixels();
+        })
+
 
 
     }
+
+
+
 
 
 
@@ -310,6 +326,23 @@ $('#tile_img').toggle();
 
 
 
+  function load_feature_list() { 
+        //AJAX Call to hit the API EndPoint and get the list of features for the given project and/or Image
+        //I think to make the UI cleaner and so the buttons don't move around, we will load all of
+        avail_features = []
+
+
+        $.getJSON('api/FeatureList', function(data) {
+            avail_features = data['features'];
+            //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
+            console.log("newly available features are");
+            console.log(avail_features)
+        })
+
+    }
+
+
+
     function  hide_unannotated_features( superpixel_markup_info)
         {
             console.log('should be hiding buttons');
@@ -323,7 +356,7 @@ $('#tile_img').toggle();
             //TODO Need to clean up logic below; for some reason if I reset all the buttons above and then ran the below code, nothing got set
             //Not sure if I was running into a race condition?
 
-            
+
             $.each( annotated_feature_list, function(index,value) {
 
                         console.log(index,value);
@@ -333,20 +366,20 @@ $('#tile_img').toggle();
                             //the ID of the feature buttons actually have feat_ prepended to the feature name..
                             $("#feat_"+value).addClass('disabled');
                             console.log('I think I just this?? #feat_'+value);
-                            $("#feat_net_targ").addClass('disabled');
+                           // $("#feat_net_targ").addClass('disabled');
                             console.log('CRAP');
                             }
                         else if (avail_features.indexOf(value) >-1 )
                                 {
 
-                                    $("#feat"+value).button('reset');
+                                    $("#feat_"+value).removeClass('disabled');
 
                                 }
 
                         });
             
 
-            //$.each( )
+      
 
         }
 

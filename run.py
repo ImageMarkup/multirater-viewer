@@ -13,22 +13,6 @@ tile_db = db_ptr['tileLevelData']
 def root():
     return app.send_static_file('index.html')
 
-@app.route('/index_v2.html')
-def dev_view():
-    return app.send_static_file('index_v2.html')
-
-
-@app.route('/simple_svg_viewer.html')
-def dev_view_svg():
-    return app.send_static_file('simple_svg_viewer.html')
-
-@app.route('/osd_svg_viewer.html')
-def dev_view_osd_svg():
-    return app.send_static_file('osd_svg_viewer.html')
-
-@app.route('/new_layout.html')
-def dev_view_newlayout():
-    return app.send_static_file('new_layout.html')
 
 
 @app.route('/data/<path:path>')
@@ -53,6 +37,11 @@ def send_images(path):
 @app.route('/json_data/<path:path>')
 def send_json_data(path):
     return send_from_directory('json_data',path)
+
+@app.route('/api/FeatureList')
+def get_feature_list():
+    feat_list = get_AllFeatures( tile_db)
+    return jsonify(features=feat_list)
 
 
 def get_MarkupData_for_ImageFeature( TileDatabase, image_name, feature):
@@ -86,7 +75,10 @@ def get_MarkupData_for_ImageFeature( TileDatabase, image_name, feature):
     return tdff
 
 
-
+def get_AllFeatures( TileDatabase):
+    feature_set = [u'ves_clods', u'str_regblackdots', u'net_targ', u'oth_moth', u'str_hypo_areas', u'str_scar', u'str_irrred', u'str_reg_blotch', u'str_strless', u'str_irrstreaks', u'ves_hel', u'ves_linearbranch', u'str_radialstream', u'ves_coil', u'oth_ulcer', u'str_bluegraydots', u'c_red', u'str_pseudo', u'str_irrblackglob', u'c_dbrown', u'c_bluegray', u'net_atyp', u'c_lbrown', u'ves_comma',u'net_neg', u'str_regbrglob', u'c_white', u'ves_serp', u'str_irrblueglob', u'oth_finger', u'str_regress', u'str_irrbluered', u'str_bluewhite', u'oth_comedo', u'ves_milky', u'str_lines', u'ves_dotted', u'str_chrys', u'oth_spoke', u'c_black', u'ves_hairpin', u'str_irrbrglob', u'str_regbrdots', u'str_clod', u'str_peribrown', u'oth_milia', u'net_pseudo', u'ves_atyp', u'oth_blgrayglob', u'str_rhomb', u'ves_linear', u'oth_ovoids', u'ves_polymorph', u'str_regblueglob', u'oth_cereb', u'str_irrbluedots', u'str_regblackglob', u'str_irrbrdots', u'oth_leaf', u'oth_sharpdemarc', u'oth_lacuna', u'c_gray', u'c_blue',  u'str_streaks', u'net_typ', u'str_periblack', u'str_circle', u'ves_pinkveil', u'str_irreg_blotch',u'str_irrblackdots', u'c_bluewhite', u'str_bluegraygran']  ### Should eventually pull this directly from mong
+    """This should eventually just be the database query... fix this when you get a change"""
+    return feature_set
 
 def get_AllMarkupData_for_Image( TileDatabase, image_name):
     """returns the tiles marked up for a specific feature"""
