@@ -228,6 +228,10 @@ $(document).ready(function() {
         $.getJSON('api/TileInfo/ALL/' + $selected_image, function(data) {
             superpixel_markup_info = data;
 
+
+            //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
+            hide_unannotated_features( superpixel_markup_info);
+
             //Also add in something to actual  lly display this..
             new_mark_superpixels();
         })
@@ -249,6 +253,7 @@ $(document).ready(function() {
     }
 
 
+
     //$("#tile_button").button();
     $("#tile_button").click(function() {
         //Make sure tiles are actually visible in case they were toggled off..
@@ -260,16 +265,8 @@ $(document).ready(function() {
     //Adding RADIO Buttons to allow me to select features
     $.each(annotated_feature_list, function(v, k) {
         //console.log(rb);
-//#var rb = `<label class="btn btn-default feature_btns"><input type="radio" class="feature_btns" name="features" value="${k}" id="feat_${k}">${k}</label>`;
-        
-
-        var rb = `  <button class="btn" id="${k}" value="${k}" >${k}</button>`;  
-
-        //<label class="btn btn-default feature_btns"><input type="radio" class="feature_btns" name="features" value="${k}" id="feat_${k}">${k}</label>`;
-        
-
+        var rb = `  <button class="btn" id="feat_${k}" value="${k}" >${k}</button>`;  
         $("#feature_btn_group").append(rb);
-
     });
 
     $(".feature_btns").first().button("toggle");
@@ -312,6 +309,46 @@ $(document).ready(function() {
 $('#tile_img').toggle();
 
 
+
+    function  hide_unannotated_features( superpixel_markup_info)
+        {
+            console.log('should be hiding buttons');
+            //Beacause we may have 30-50 features present, we do not want the observer to try and click on each button to "see" if a given feature is there
+            //First I need to reset all the radio buttons to make them all clickable, then disable if not present
+            //$("#feature_btn_group").button('reset');
+            //avail_features list the features that have been detected in this image..
+            avail_features = Object.keys(superpixel_markup_info);
+            //var annotated_feature_list = ['net_typ', 'net_atyp', 'str_chrys','net_targ','ves_serp','ves_clods']; //will load these frim a file
+
+            //TODO Need to clean up logic below; for some reason if I reset all the buttons above and then ran the below code, nothing got set
+            //Not sure if I was running into a race condition?
+
+            
+            $.each( annotated_feature_list, function(index,value) {
+
+                        console.log(index,value);
+
+                        if( avail_features.indexOf(value) < 0 ) 
+                            {//feature is not present
+                            //the ID of the feature buttons actually have feat_ prepended to the feature name..
+                            $("#feat_"+value).addClass('disabled');
+                            console.log('I think I just this?? #feat_'+value);
+                            $("#feat_net_targ").addClass('disabled');
+                            console.log('CRAP');
+                            }
+                        else if (avail_features.indexOf(value) >-1 )
+                                {
+
+                                    $("#feat"+value).button('reset');
+
+                                }
+
+                        });
+            
+
+            //$.each( )
+
+        }
 
 
 
