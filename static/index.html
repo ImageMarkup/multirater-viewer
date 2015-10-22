@@ -343,6 +343,26 @@ function load_feature_list() {
 
       
 
+$("#feature_btn_group").empty();
+$.each(feature_groups, function(k,v) { 
+              cur_grp = feature_groups[k];
+                   console.log("ITERATING THIS FEATURE NOW!!",cur_grp.feature_group, cur_grp.feature_abbrev) 
+        //For each high level feature group, I want to now list all of the features associated with that group
+                $.each(avail_features, function(idx,feat) {
+                                //console.log(feat);
+                                 if (feat.startsWith(cur_grp.feature_abbrev)){
+                                
+             var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${feat}" id="feat_${feat}" value="${feat}" >${feat}</button>`;
+            $("#feature_btn_group").append(rb);
+
+                                    console.log('MATCHED GROUP FOR:'+feat)};
+                               })
+              $("#feature_btn_group").append("<br>");
+
+
+          });
+      
+
         annotated_feature_list = avail_features;
 
         $("#feature_btn_group button").click(function() {
@@ -418,6 +438,7 @@ function update_rater_overlays(imageName) {
 
 
 
+
 //COME HERE LATER--- ADD SOME FUNCTION THAT RUNS ON DOCUMENT COMPLETION THAT LOADS THE IMAGE FOR THE VIEWER AND 
 //THE PROPER OVERLAY
 
@@ -437,13 +458,24 @@ $(function() {
 
 
 //This code will cgenerate the buttons
+function run_it()
+    {
+
+ //var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${k}" id="feat_${k}" value="${k}" >${k}</button>`;
+   //         $("#feature_btn_group").append(rb);
+
+  $("#feature_btn_group").empty(); //clear current selection
+
 $.each(top_level_features, function(k,v) { 
               feat = top_level_features[k];
                    console.log(feat.feature_group, feat.feature_abbrev) } 
         //For each high level feature group, I want to now list all of the features associated with that group
-
+                   //console.log(rb);
+           // var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${k}" id="feat_${k}" value="${k}" >${k}</button>`;
+            //$("#feature_btn_group").append(rb);
+        
           );
-
+    }
 
 
 //need to add a callback function to this as well... hmm so want to load the geodata than push it to the SVG

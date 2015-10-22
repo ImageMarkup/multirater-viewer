@@ -14,6 +14,13 @@ def root():
     return app.send_static_file('index.html')
 
 
+@app.route('/buttons')
+def root_buttons():
+    return app.send_static_file('button_group_example.html')
+
+@app.route('/more_buttons')
+def root_more_buttons():
+    return app.send_static_file('buttons.html')
 
 @app.route('/data/<path:path>')
 def send_datadir(path):
