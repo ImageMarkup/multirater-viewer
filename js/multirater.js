@@ -76,7 +76,7 @@ function loadSVGTileData(imageName) {
 
                             if (tileAnnotated) {
                      //Now that I know the tile has been annotated, I need to render the results
-                     console.log(raters_for_tile, tileID);
+                     //console.log(raters_for_tile, tileID);
                         
                         if (raters_for_tile.length == 1)
                             {
@@ -84,7 +84,7 @@ function loadSVGTileData(imageName) {
                             //Currently I am going 
                             //var a = fruits.indexOf("Apple");
                             rater_index = raters.indexOf(raters_for_tile[0])
-                            console.log(raters_for_tile,rater_index)
+                           // console.log(raters_for_tile,rater_index)
 
                         $("#tile"+tileID).css('fill',colours[rater_index]);
 
@@ -100,7 +100,7 @@ function loadSVGTileData(imageName) {
 
        
       $(".tileClass").hover(function() {
-                console.log(this.id);
+              //  console.log(this.id);
                 pixnum = (this.id).substring(4);
                 $("#tile_info_stats").empty(); /// clear the current DIV before I start putting stats in it..
 //              $("#tile_info_stats").append(num_superpixels.toString() + ' superpixels are in this image');
@@ -114,7 +114,7 @@ function loadSVGTileData(imageName) {
               //didn't actually mark that specific superpixel with the given feature
               rft = []
               $.each(pix_raters, function(k,v) { if ( v != '0.0') {rft.push(k); } })
-              console.log(rft);
+              //console.log(rft);
               $("#tile_info_stats").append("<br>Raters: "+JSON.stringify(rft));
 
 
