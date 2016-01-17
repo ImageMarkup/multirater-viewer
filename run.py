@@ -14,7 +14,7 @@ def root():
     return app.send_static_file('index.html')
 
 @app.route('/accordion_demo.html')
-def root():
+def accoridon_demo():
     return app.send_static_file('accordion_demo.html')
 
 
