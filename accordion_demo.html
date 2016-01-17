@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>ISIC MultiRater Viewer</title>
+    <meta name="generator" content="Bootply" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!-- <link href="css/bootstrap-slider.css" rel="stylesheet"> -->
+    <link href="css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/jquery-ui.css">
+    <link href="css/jquery-ui.theme.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <script src="js/multirater.js"></script>
+    <script src="js/jquery-2.1.3.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/d3.v3.min.js" charset="utf-8"></script>
+    <script src="js/bootstrap-slider.js"></script>
+    <!-- <script src="js/jquery.svg.js"></script> -->
+    <script src="js/openseadragon.js"></script>
+    <script src="js/openseadragon-svg-overlay.js"></script>
+    <script src="js/osd-filters/osd_filters.js"></script>
+
+
+    
+    <style>
+    .right-side-button {
+        float: right;
+        padding-right: 20px;
+        margin-right: 20px;
+    }
+    
+    .panel-heading a:after {
+        font-family: 'Glyphicons Halflings';
+        content: "\e114";
+        float: right;
+        color: grey;
+    }
+    
+    .panel-heading a.collapsed:after {
+        content: "\e080";
+    }
+    /* Overriding radio buttons so I can add some space and curve the borders */
+    
+    .feature_btns {
+        /*border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important  ;*/
+        border-radius: 4px !important;
+        margin: 2px !important;
+        padding: 2px !important;
+    }
+    
+    .btn-group-single > .btn:first-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+    
+    .navbar-brand {
+        color: yellow !important;
+    }
+    /*  .navbar-brand {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        text-align: left;
+        margin: auto;
+    }*/
+    
+    .slider-selection {
+        background: #BABABA;
+    }
+    
+    #opacity_slider .slider-selection {
+        background: #BABABA;
+    }
+    
+    .rtr {
+        padding: 10px;
+        margin: 10px;
+    }
+    
+    .featurebtns-example {
+        margin: 2px !important;
+        margin-bottom: 2px !important;
+        padding: 2px !important;
+    }
+    
+    .button-panel {
+        margin: 2px !important;
+        margin-bottom: 2px !important;
+        padding: 2px !important;
+    }
+
+.navbar-custom { color: #0000FF; background-color: #0000FF; }
+
+
+    </style>
+
+<script>
+var feature_groups = [{
+    'feature_group': 'Structures',
+    'feature_abbrev': 'str'
+}, {
+    'feature_group': 'Colors',
+    'feature_abbrev': 'c'
+}, {
+    'feature_group': 'Vessels',
+    'feature_abbrev': 'ves'
+}, {
+    'feature_group': 'Other',
+    'feature_abbrev': 'oth'
+}, {
+    'feature_group': 'Network',
+    'feature_abbrev': 'net'
+}]
+
+
+function create_featurelist_widget( full_feature_set, feature_grouping, widget_div)
+    {
+        //This will actually create the widget of buttons associated with a set of features
+        //This creates an accordion, and will group the buttons based on a "top leavel" feature
+        //which also serves as the name of the individual accordion piece
+
+     $.each(feature_grouping, function(k, v) {
+                //So this actually creates the structure for the buttons and groups them
+                console.log(k,v);
+                //First thing I need to do is create an h3 (or h4 ) tag for the group
+                $("#"+widget_div).append(`<h4>${v['feature_group']}</h4>`);
+                //Now that the accordion has a name, I need to add buttons for each individual feature...
+            })
+    
+
+     //Now that I've created the HTML content, I can turn the entire div into an accordion
+
+     $("#"+widget_div).accordion();
+
+    }
+
+
+function load_feature_list() {
+    //AJAX Call to hit the API EndPoint and get the list of features for the given project and/or Image
+    //I think to make the UI cleaner and so the buttons don't move around, we will load all of the buttons associated
+    //with a project...
+    avail_features = []
+    $.getJSON('api/FeatureList', function(data) {
+        avail_features = data['features'];
+        //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
+        console.log("newly available features are");
+        console.log(avail_features)
+
+        //Also now load the feature button by iterating through them
+        $.each(avail_features, function(v, k) {
+            //console.log(rb);
+            var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${k}" id="feat_${k}" value="${k}" >${k}</button>`;
+            $("#feature_btn_group").append(rb);
+        });
+
+
+
+        $("#feature_btn_group").empty();
+        //Add in the needed code for an accordion group
+
+        $("#feature_btn_group").append('<div class="featurebtns-example"> <div class="panel-group" role="tablist" id="button-accordion">');
+
+
+        $.each(feature_groups, function(k, v) {
+            cur_grp = feature_groups[k];
+            console.log("ITERATING THIS FEATURE NOW!!", cur_grp.feature_group, cur_grp.feature_abbrev)
+                //For each high level feature group, I want to now list all of the features associated with that group
+                //   $("#feature_btn_group").append("<div>"+cur_grp.feature_group+"");
+
+            accord_data_header = `
+        <div class="panel panel-default featurebtns-example">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#button-accordion" href="#collapse${cur_grp.feature_group}">${cur_grp.feature_group}</a>
+                </h3>
+            </div>
+            <div id="collapse${cur_grp.feature_group}" class="panel-collapse collapse ">
+                <div class="panel-body button-panel">`;
+
+            accord_data_footer = `</div></div></div>`
+
+
+            //  $("#feature_btn_group").append(accord_data_header);
+            button_data_for_cur_grp = "";
+            $.each(avail_features, function(idx, feat) {
+                if (feat.startsWith(cur_grp.feature_abbrev)) {
+                    feat_without_class = feat.replace(cur_grp.feature_abbrev + '_', '');
+
+                    //To save Space I am removing the feature Class i.e. net col oth
+                    var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${feat}" id="feat_${feat}" value="${feat}" >${feat_without_class}</button>`;
+                    button_data_for_cur_grp += rb;
+                    //$("#feature_btn_group").append(rb);
+
+                    //console.log('MATCHED GROUP FOR:' + feat)
+                };
+            })
+
+            $("#feature_btn_group").append(accord_data_header + button_data_for_cur_grp + accord_data_footer);
+
+            //$("#feature_btn_group").append(button_data_for_cur_grp);
+            //console.log(button_data_for_cur_grp);
+            console.log(accord_data_header + button_data_for_cur_grp + accord_data_footer);
+            //$("#feature_btn_group").append(accord_data_footer);
+
+
+
+
+        });
+
+        $("#feature_btn_group").append("</div></div>");
+
+
+
+        annotated_feature_list = avail_features;
+
+        $("#feature_btn_group button").click(function() {
+            //console.log(this.id); // points to the clicked input button
+
+            current_feature = this.value;
+            $("#feature_info_stats").empty();
+            //ALSO ADDI N SOME STATS TO INDICATE HOW MANY TILES WERE MARKED FOR THIS FEATURE...
+            cfd = superpixel_markup_info[current_feature]; //Current Feature data
+            if (!cfd) {
+                $("#feature_info_stats").append("Feature " + current_feature + " NOT in this image");
+            } else {
+                $("#feature_info_stats").append("Feature" + current_feature + " present");
+            }
+
+
+            //So I need to check the state of the button to either draw or clear a given tile(s) colors for a rater..
+            cur_slider_value = OpacitySlider.val();
+            //     var new_opacity = (cur_opacity == 0) ? cur_slider_value : 0;
+            $('.tileClass').attr('opacity', cur_slider_value);
+            new_mark_superpixels();
+        })
+
+
+        $(".feature_btns").not('.disabled').first().button("toggle"); //this should select the first active button in the image set
+        console.log('did i select the first button?');
+        //  $(".feature_btns").first().button("toggle");  //this isn't working for this type of radio button... seems to set the active and focus attributes
+
+
+
+    })
+
+}
+
+
+$(document).ready( function() {
+
+//Generate the feature set widget/box... first I should cleare the div
+
+$("#feature_accordion").empty();
+
+//I now need to iterate through the feature set
+//The feature set group is categorized based on some parameters I have to know apriori
+//Sine there are like 80 features, It was much easier to group these into some sort of logical groups
+console.log('hello world');
+
+})
+</script>
+
+</head>
+
+
+<body>
+<div id="feature_accordion">
+
+
+</div>
+
+
+<div id="accordion">
+ <!--  <h3>Section 1</h3>
+  <div>
+    <p>
+    Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+    ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
+    amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
+    odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+    </p>
+  </div>
+  <h3>Section 2</h3>
+  <div>
+    <p>
+    Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
+    purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
+    velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
+    suscipit faucibus urna.
+    </p>
+  </div>
+  <h3>Section 3</h3>
+  <div>
+    <p>
+    Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
+    Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
+    ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
+    lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
+    </p>
+    <ul>
+      <li>List item one</li>
+      <li>List item two</li>
+      <li>List item three</li>
+    </ul>
+  </div>
+  <h3>Section 4</h3>
+  <div>
+    <p>
+    Cras dictum. Pellentesque habitant morbi tristique senectus et netus
+    et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
+    faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
+    mauris vel est.
+    </p>
+    <p>
+    Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus.
+    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
+    inceptos himenaeos.
+    </p>
+  </div> -->
+</div>
+ 
+
+ <script>
+  $(function() {
+    $( "#accordion" ).accordion();
+
+
+
+    current_feature_set = [];
+    
+    create_featurelist_widget( current_feature_set, feature_groups, 'feature_accordion');
+
+  });
+  </script>
+</body>
+</html>
