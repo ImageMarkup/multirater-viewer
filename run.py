@@ -13,6 +13,11 @@ tile_db = db_ptr['tileLevelData']
 def root():
     return app.send_static_file('index.html')
 
+@app.route('/layoutit_test.html')
+def layout_testing():
+    return app.send_static_file('layoutit_test.html')
+
+
 @app.route('/accordion_demo.html')
 def accoridon_demo():
     return app.send_static_file('accordion_demo.html')

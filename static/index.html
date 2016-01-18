@@ -95,6 +95,12 @@
 
 .navbar-custom { color: #0000FF; background-color: #0000FF; }
 
+.inforow
+    {
+        height: 60px;
+
+    }
+
 
     </style>
 </head>
@@ -138,13 +144,28 @@
     <!-- Need to cleanup class assignment for these buttons... this seems redundant -->
     </nav>
     <div class="container-fluid" id="main">
+        <div class="row inforow" >
+        <div class="col-md-4">
+            <p class="text-center">
+                <h3>Data Set<select id="data_source_dd"></select></h3>
+            </p>
+        </div>
+        <div class="col-md-4">
+            <p>
+                <h3>Image List <select id='image_list_dd'></select> </h3>
+            </p>
+        </div>
+        <div class="col-md-4">
+            <p>
+                Some other metadata?
+            </p>
+        </div>
+    </div>
+
+
         <div class="row">
             <div class="col-xs-4" id="left">
-                <h4>Data Src<select id="data_source_dd"></select></h4>
-                <h3>Image List <select id='image_list_dd'></select> </h3>
-                <!-- item list -->
-                <div class="panel panel-default">
-                </div>
+                
                 <!-- <div id="slider" width="300px !important"></div> -->
                 <div class="panel panel-default">
                     <div class="panel-heading" align="center">Please select the raters to overlay</div>
