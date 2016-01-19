@@ -326,8 +326,36 @@ function create_featurelist_widget(full_feature_set, feature_grouping, widget_di
             //Now push the new radio buttons to that div
         });
         $("#featbtn_" + cur_grp['feature_group']).append(button_data_for_cur_grp);
+
     });
     $("#" + widget_div).accordion();
+    //The accordion has now been created, add click handlers to the buttons
+      // annotated_feature_list = avail_features;
+      $("#feature_accordion button").click(function() {
+            console.log(this.id); // points to the clicked input button
+            current_feature = this.value;
+           $("#feature_info_stats").empty();
+                //ALSO ADDI N SOME STATS TO INDICATE HOW MANY TILES WERE MARKED FOR THIS FEATURE...
+            cfd = superpixel_markup_info[current_feature]; //Current Feature data
+            if (!cfd) {
+                $("#feature_info_stats").append("Feature " + current_feature + " NOT in this image");
+            } else {
+                $("#feature_info_stats").append("Feature" + current_feature + " present");
+            }
+        //     //So I need to check the state of the button to either draw or clear a given tile(s) colors for a rater..
+             cur_slider_value = OpacitySlider.val();
+             cur_opacity = 100;
+            var new_opacity = (cur_opacity == 0) ? cur_slider_value : 0;
+            $('.tileClass').attr('opacity', cur_slider_value);
+            new_mark_superpixels();
+
+              });
+        
+        
+
+ 
+
+
 }
 
 

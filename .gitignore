@@ -1,2 +1,4 @@
 *.pyc
 secrets.py
+*.delete
+*.zip
