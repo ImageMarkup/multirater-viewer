@@ -12308,12 +12308,15 @@ function filterFiles( files ){
         i;
     for( i = 0; i < files.length; i++ ){
         file = files[ i ];
+	console.log(file);
         if( file.height &&
             file.width &&
             file.url && (
                 file.url.toLowerCase().match(/^.*\.(png|jpg|jpeg|gif)$/) || (
-                    file.mimetype &&
+                
+		  file.mimetype &&
                     file.mimetype.toLowerCase().match(/^.*\/(png|jpg|jpeg|gif)$/)
+			//MADE EDITS HERE
                 )
             ) ){
             //This is sufficient to serve as a level

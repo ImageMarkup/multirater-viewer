@@ -90,10 +90,8 @@ function loadSVGTileData(imageName) {
 
                             }
                         else{
-
                         $("#tile"+tileID).css('fill',color_heatmap[raters_for_tile.length]);
                           }
-
                  }
 
               });
@@ -152,9 +150,7 @@ function loadSVGTileData(imageName) {
             $(".tileClass").hover(function() {
                 console.log(this.id)
             });
-
             return polygon_list;
-
         }
 
 
@@ -174,79 +170,12 @@ function loadSVGTileData(imageName) {
 
 
 
-function load_feature_list() {
+//function load_feature_list() {
 //     //AJAX Call to hit the API EndPoint and get the list of features for the given project and/or Image
 //     //I think to make the UI cleaner and so the buttons don't move around, we will load all of
 //     avail_features = []
-//     $.getJSON('api/FeatureList', function(data) {
-//         avail_features = data['features'];
-//         //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
-//         console.log("newly available features are");
-//         console.log(avail_features)
-
-//         //Also now load the feature button by iterating through them
-//         $.each(avail_features, function(v, k) {
-//             //console.log(rb);
-//             var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${k}" id="feat_${k}" value="${k}" >${k}</button>`;
-//             $("#feature_btn_group").append(rb);
-//         });
-
-
-
 //         $("#feature_btn_group").empty();
 //         //Add in the needed code for an accordion group
-
-//         $("#feature_btn_group").append('<div class="featurebtns-example"> <div class="panel-group" role="tablist" id="button-accordion">');
-
-
-//         $.each(feature_groups, function(k, v) {
-//             cur_grp = feature_groups[k];
-//             console.log("ITERATING THIS FEATURE NOW!!", cur_grp.feature_group, cur_grp.feature_abbrev)
-//                 //For each high level feature group, I want to now list all of the features associated with that group
-//                 //   $("#feature_btn_group").append("<div>"+cur_grp.feature_group+"");
-
-//             accord_data_header = `
-//         <div class="panel panel-default featurebtns-example">
-//             <div class="panel-heading">
-//                 <h3 class="panel-title">
-//                     <a data-toggle="collapse" data-parent="#button-accordion" href="#collapse${cur_grp.feature_group}">${cur_grp.feature_group}</a>
-//                 </h3>
-//             </div>
-//             <div id="collapse${cur_grp.feature_group}" class="panel-collapse collapse ">
-//                 <div class="panel-body button-panel">`;
-
-//             accord_data_footer = `</div></div></div>`
-
-
-//             //  $("#feature_btn_group").append(accord_data_header);
-//             button_data_for_cur_grp = "";
-//             $.each(avail_features, function(idx, feat) {
-//                 if (feat.startsWith(cur_grp.feature_abbrev)) {
-//                     feat_without_class = feat.replace(cur_grp.feature_abbrev + '_', '');
-
-//                     //To save Space I am removing the feature Class i.e. net col oth
-//                     var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${feat}" id="feat_${feat}" value="${feat}" >${feat_without_class}</button>`;
-//                     button_data_for_cur_grp += rb;
-//                     //$("#feature_btn_group").append(rb);
-
-//                     //console.log('MATCHED GROUP FOR:' + feat)
-//                 };
-//             })
-
-//             $("#feature_btn_group").append(accord_data_header + button_data_for_cur_grp + accord_data_footer);
-
-//             //$("#feature_btn_group").append(button_data_for_cur_grp);
-//             //console.log(button_data_for_cur_grp);
-//             console.log(accord_data_header + button_data_for_cur_grp + accord_data_footer);
-//             //$("#feature_btn_group").append(accord_data_footer);
-
-
-
-
-//         });
-
-//         $("#feature_btn_group").append("</div></div>");
-
 
 
 //         annotated_feature_list = avail_features;
@@ -281,7 +210,7 @@ function load_feature_list() {
 
 //     })
 
-}
+//}
 
 
  function load_feature_list() {
@@ -312,6 +241,7 @@ function create_featurelist_widget(full_feature_set, feature_grouping, widget_di
         //First thing I need to do is create an h3 (or h4 ) tag for the group
         $("#" + widget_div).append(` <h4>${cur_grp['feature_group']}</h4><div id="featbtn_${cur_grp['feature_group']}"></div>`);
         //Now I need to figure out which buttons to add to this feature
+        //TO DO:  REMEMBER F THE FEATURE GROUP HAS A SPACE... JAVASCRIPT WILL EXPLODE
 
         button_data_for_cur_grp = [];
         $.each(full_feature_set, function(idx, feat) {
@@ -320,7 +250,9 @@ function create_featurelist_widget(full_feature_set, feature_grouping, widget_di
             if (feat.startsWith(cur_grp.feature_abbrev)) {
                 feat_without_class = feat.replace(cur_grp.feature_abbrev + '_', '');
                 //To save Space I am removing the feature Class i.e. net col oth
-                var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${feat}" id="feat_${feat}" value="${feat}" >${feat_without_class}</button>`;
+                
+                //TO DO:  Need to figure out/clarify what class I should put this in so it actually displays
+                var rb = `  <button class="feature_btns btn btn-xs" style="font-size:10px" data-toggle="tooltip" data-placement="top" title="${feat}" id="feat_${feat}" value="${feat}" >${feat_without_class}</button>`;
                 button_data_for_cur_grp += rb;
             }
             //Now push the new radio buttons to that div
@@ -328,9 +260,13 @@ function create_featurelist_widget(full_feature_set, feature_grouping, widget_di
         $("#featbtn_" + cur_grp['feature_group']).append(button_data_for_cur_grp);
 
     });
-    $("#" + widget_div).accordion();
+    $("#" + widget_div).accordion( {collapsible: true});
     //The accordion has now been created, add click handlers to the buttons
       // annotated_feature_list = avail_features;
+
+
+      annotated_feature_list = avail_features;
+
       $("#feature_accordion button").click(function() {
             console.log(this.id); // points to the clicked input button
             current_feature = this.value;
@@ -347,15 +283,78 @@ function create_featurelist_widget(full_feature_set, feature_grouping, widget_di
              cur_opacity = 100;
             var new_opacity = (cur_opacity == 0) ? cur_slider_value : 0;
             $('.tileClass').attr('opacity', cur_slider_value);
-            new_mark_superpixels();
-
+           new_mark_superpixels();
+      //hide_unannotated_features(superpixel_markup_info);
               });
         
-        
-
- 
-
 
 }
 
+
+function get_image_annotation_data( study_id,image_id)
+  {
+    //So in order for the UI to function properly, I need to grab all of the annotations available for the currnetly displayed image, and then build
+    //a new object that contains some summary information for the image...
+
+    //The Study ID can be obtained from
+    $("#data_source_dd").val();
+
+    annotationsAvailable = 'https://isic-archive.com/api/v1/annotations?studyId=' + cur_studyId '&imageId=' + image_id ;
+
+
+  }
+
+
+
+function hide_unannotated_features(superpixel_markup_info) {
+    console.log('should be hiding buttons');
+    //Beacause we may have 30-50 features present, we do not want the observer to try and click on each button to "see" if a given feature is there
+    //First I need to reset all the radio buttons to make them all clickable, then disable if not present
+    //$("#feature_btn_group").button('reset');
+    //avail_features list the features that have been detected in this image..
+    img_avail_features = Object.keys(superpixel_markup_info);
+    //var annotated_feature_list = ['net_typ', 'net_atyp', 'str_chrys','net_targ','ves_serp','ves_clods']; //will load these frim a file
+
+    //TODO Need to clean up logic below; for some reason if I reset all the buttons above and then ran the below code, nothing got set
+    //Not sure if I was running into a race condition?
+    
+    feats_in_cur_image = []
+
+    $.each(annotated_feature_list, function(index, value) {
+        //console.log(index, value);
+        if (img_avail_features.indexOf(value) < 0) { //feature is not present
+            //the ID of the feature buttons actually have feat_ prepended to the feature name..
+            $("#feat_" + value).addClass('disabled');
+            //console.log('I think I just this?? #feat_' + value);
+            // $("#feat_net_targ").addClass('disabled');
+            //console.log('CRAP');
+        } else if (img_avail_features.indexOf(value) > -1) {
+            $("#feat_" + value).removeClass('disabled');
+            feats_in_cur_image.push(value);
+        }
+    });
+
+    //I am adding in additional code to also push this list of features into a separate around
+
+    console.log(feats_in_cur_image);
+    $("#featbtn_ImageSpecific").empty();
+    $("#featbtn_ImageSpecific").text(feats_in_cur_image.join(", "));
+    //May want to add stats on counts??
+
+
+$(function() {
+    //Adding keyboard listnered to toggle the tiles on/off if I press the letter t (for toggle)
+    $("body").keypress(function(event) {
+        if (event.keyCode == 116) {
+            cur_opacity = $('.tileClass').attr('opacity');
+            //cur_slider_value = $("#slider").slider("option", "value");
+            cur_opacity = 100;
+            cur_slider_value = OpacitySlider.val();
+            var new_opacity = (cur_opacity == 0) ? cur_slider_value : 0;
+            $('.tileClass').attr('opacity', new_opacity);
+        }
+    });
+});
+
+}
 

@@ -22,10 +22,15 @@
     <script src="js/openseadragon.js"></script>
     <script src="js/openseadragon-svg-overlay.js"></script>
     <script src="js/osd-filters/osd_filters.js"></script>
-
-
-    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
     <style>
+    .vcenter {
+        display: inline-block;
+        vertical-align: middle;
+        float: none;
+    }
+    
     .right-side-button {
         float: right;
         padding-right: 20px;
@@ -92,17 +97,19 @@
         margin-bottom: 2px !important;
         padding: 2px !important;
     }
-
-.navbar-custom { color: #0000FF; background-color: #0000FF; }
-
-.inforow
-    {
-        height: 60px;
-
+    
+    .navbar-custom {
+        color: #0000FF;
+        background-color: #0000FF;
     }
-
-
+    
+    .inforow {
+        height: 60px;
+    }
     </style>
+
+
+
 </head>
 
 <body>
@@ -112,7 +119,7 @@
         <nav class="navbar navbar-default navbar-fixed-top  ">
             <div class="container-fluid">
                 <div class="navbar-header navbar-custom" style="padding-left:5px;padding-right:5px">
-                    <a class="navbar-brand" href="#" style="color:blue" >ISIC MultiViewer</a>
+                    <a class="navbar-brand" href="#" style="color:blue">ISIC MultiViewer</a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
@@ -144,44 +151,40 @@
     <!-- Need to cleanup class assignment for these buttons... this seems redundant -->
     </nav>
     <div class="container-fluid" id="main">
-        <div class="row inforow" >
-        <div class="col-md-3">
-            <p class="text-center">
-                <h3>Data Set<select id="data_source_dd"></select></h3>
-            </p>
+        <div class="row inforow">
+            <div class="col-md-3 vcenter">
+                <p class="text-center">
+                    <h3>Data Set<select id="data_source_dd"></select></h3>
+                </p>
+            </div>
+            <div class="col-md-3 vcenter">
+                <p class="text-center" style="vertical-align:middle">
+                    <b>Image List</b>
+                    <select id='image_list_dd' style="width: 50%"></select>
+                </p>
+            </div>
+            <div class="col-md-3 vcenter">
+                <p>
+                    <span id="feature_info_stats" class=""></span>
+                    <span id="tile_info_stats" class=""></span>
+                </p>
+            </div>
+            <div class="col-md-3 vcenter">
+                <p class="text-center">
+                    <h3>Cur Feature</h3>
+                </p>
+            </div>
         </div>
-        <div class="col-md-3">
-            <p>
-                <h3>Image List <select id='image_list_dd'></select> </h3>
-            </p>
-        </div>
-        <div class="col-md-3">
-            <p>
-                <span id="feature_info_stats" class=""></span>
-                <span id="tile_info_stats" class=""></span>
-
-            </p>
-        </div>
-        <div class="col-md-3">
-            <p class="text-center">
-                <h3>Cur Feature</h3>
-            </p>
-        </div>
-        
-    </div>
-
-
         <div class="row">
             <div class="col-xs-4" id="left">
-                
                 <!-- <div id="slider" width="300px !important"></div> -->
                 <div class="panel panel-default">
                     <div class="panel-heading" align="center">Please select the raters to overlay</div>
                     <div id="rater_info">
                         <div id="tile_opacity"></div>
                         <span id="displayed_data_info" class="h6">
-                      <ul id="rater_color_list"></ul>
-           </span>
+                        <ul id="rater_color_list"></ul>
+                        </span>
                     </div>
                 </div>
                 <div class="panel panel-default">
@@ -190,7 +193,8 @@
                     <!--<div id="feature_btn_group" class="featurebtns_wrapper" data-toggle="buttons-radio"></div>-->
                     <div id="feature_accordion"></div>
                 </div>
-               
+                <div id="curimg_feats"></div>
+                <!-- I am debating creating a second set of buttons listing what's in the current image? -->
             </div>
             <div class="col-xs-8">
                 <div id="openseadragon1" style="width: 100%; height: 600px; border: 1px solid blue" class="openseadragon"></div>
@@ -221,6 +225,8 @@ var avail_studies_dict = {};
 var annotated_feature_list = [];
 //['net_typ', 'net_atyp', 'str_chrys','net_targ','ves_serp','ves_clods']; //will load these frim a file
 
+//feature group should not have a space... need to think about this
+
 var feature_groups = [{
     'feature_group': 'Structures',
     'feature_abbrev': 'str'
@@ -236,17 +242,11 @@ var feature_groups = [{
 }, {
     'feature_group': 'Network',
     'feature_abbrev': 'net'
+}, {
+    'feature_group': 'ImageSpecific',
+    'feature_abbrev': 'THISSTRINGWILLNEVERMATCH'
+
 }]
-
-$.each(top_level_features, function(k, v) {
-        feat = top_level_features[k];
-        //console.log(feat.feature_group, feat.feature_abbrev)
-    }
-    //For each high level feature group, I want to now list all of the features associated with that group
-
-);
-
-
 
 var new_geodata;
 var my_data = {};
@@ -278,9 +278,6 @@ raters = ['braunr', 'haroldr', 'carrerac', 'marghooa'];
 
 var OpacitySlider;
 
-
-// Sample to check outhttp://designshack.net/tutorialexamples/block-radio-inputs/index.html
-
 $(document).ready(function() {
 
     //Opacity slides which is at the top of the toolbar for  changing opacity..
@@ -298,79 +295,77 @@ $(document).ready(function() {
     });
     //TODO:  Should be able to set the change function in the slider constructor.. not sure of the syntax
 
-
     //Get hte list of studies that are available
     var study_url = 'https://isic-archive.com/api/v1/study'
     study_list = $.get(study_url)
-    
+
     $.getJSON(study_url, function(data) {
         avail_studies = data;
         //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
         console.log(avail_studies)
-
-        //Also now load the feature button by iterating through them
+            //Also now load the feature button by iterating through them
         $.each(avail_studies, function(k, v) {
-            console.log(v,k);
-//$("#image_list_dd").append('<option id="' + val.image_name + '">' + val.image_name + '</option>');
-            //image_info_list[val.image_name] = val;
-           // var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${k}" id="study_${k['name']}" value="${k}" >${k}</button>`;
-             dtoa = '<option id="' + k + '">' + v.name +'</option>'
-             console.log(dtoa);
-            $("#data_source_dd").append(dtoa);
+                //      console.log(v,k);
+                dtoa = '<option id="' + v['_id'] + '" value="'+ v['_id'] + '">' + v.name + '</option>'
+                console.log(dtoa);
+                $("#data_source_dd").append(dtoa);
+                avail_studies_dict[v.name] = v;
+                //Need to figure out which image set to load... I guess for now I load the first one?
+            })
+            //Now that I have a list of all available studies, I can go ahead and populate the image list
+            //This should use the function I defined above..
+    });
 
-            avail_studies_dict[v.name] = v;
+    $("#data_source_dd").change(function(data) {
 
-
-        })
-      });
- 
-   $("#data_source_dd").change( function(data) {
-
-     console.log(this.value, this.id,this.option);
-       //I now should actually load the images associated with this data set...
+        console.log(this.value, this.id, this.option);
+        //I now should actually load the images associated with this data set...
         //Now pull the image list for this data source and then update the image_list_dd
         load_new_image_set(this.value);
 
-        console.log( avail_studies_dict[this.value]);
+        console.log(avail_studies_dict[this.value]);
         //Need to now grab the url
-        var get_img_list_url = 'https://isic-archive.com/api/v1/study/' + avail_studies_dict[this.value]['_id'] + '/images/';
+
+
+
+        //var get_img_list_url = 'https://isic-archive.com/api/v1/study/' + avail_studies_dict[this.value]['_id'] + '/images/';
+        var get_img_list_url = 'https://isic-archive.com/api/v1/study/' + this.value + '/images/';
         //https://isic-archive.com/api/v1/study/55c442809fc3c1536a012b57/images
-        $.getJSON(get_img_list_url, function(data)
-                {
+        $.getJSON(get_img_list_url, function(data) {
+            new_img_list = data;
+            console.log(new_img_list);
+            //This currently returns an _id and a name _id: "54e77f6fbae478166c01e546"  name: "ISIC_0001160"
+            //TO DO:  Load the image data now??
+            ///Need to remember to first clear the image list
+            //Now I need to iterate through each item and add it to the image list...
 
-                new_img_list = data;
-                console.log(new_img_list);
-
-                ///Need to clear the image list
-                //Now I need to iterate through each item and add it to the image list...
-                $.each(new_img_list, function(k,v)
-                        {
-                        var new_img = '<option id="' + k + '">' + v + "</option>";
-                        console.log(new_img);
+            $("#image_list_dd").empty();
+            $.each(new_img_list, function(k, v) {
+                var new_img = `<option id="${v['_id']}" value="${v['_id']}">${v['name']}</option>`;
+                //                        console.log(new_img);
+                $("#image_list_dd").append(new_img);
             })
-//                https://isic-archive.com/fcgi-bin/iipsrv.fcgi?FIF=/srv/girder/default/b2/e7/b2e787808126228d9afc11e30054b6e35f31500af3d4e343426946ab931d6f909f97511755cee2cb993293fa5fc5dcb14b4a1775c3f42b7d1d9487582acec96e&WID=256&CVT=jpeg
+            $("#image_list_dd").select2(); //Reinitialize the dynamic search widget
+        });
+    });
 
-                });
-   });
-
-   function load_new_image_set( data_set_name)
-    {
-        console.log("I need to be loading this data set now.."+data_set_name);
+    function load_new_image_set(data_set_name) {
+        console.log("I need to be loading this data set now.." + data_set_name);
     }
 
-   // $select.change(function() {
-   //      //##This needs to clear as well as update information and change the viewer
-   //      //Need to change the image source based on the new image I just added in the toggle, will also push the text
-   //      // to a DIV so it's obvious what Image I am looking at
-   //      selected_image = this.value;
-   //      console.log(image_info_list[this.value].filename_url);
+    // $select.change(function() {
+    //      //##This needs to clear as well as update information and change the viewer
+    //      //Need to change the image source based on the new image I just added in the toggle, will also push the text
+    //      // to a DIV so it's obvious what Image I am looking at
+    //      selected_image = this.value;
+    //      console.log(image_info_list[this.value].filename_url);
 
-   //      //ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
-   //      load_new_image(selected_image);
+    //      //ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
+    //      load_new_image(selected_image);
 
-   //  });
+    //  });
 
-//https://isic-archive.com/api/v1/study/55c442809fc3c1536a012b57/images
+    //https://isic-archive.com/api/v1/study/55c442809fc3c1536a012b57/images
 
 
     //Need to add in the button actions for the filter clicks
@@ -385,31 +380,31 @@ $(document).ready(function() {
     });
     $("#filter_dialog").html(color_filter_html);
 
+    //TO DO:  REFACTOR THIS CODE!!! IT SUCKS
+    // var $select = $('#image_list_dd');
+    // //request the JSON data and parse into the select element
+    // //THIS Loads the Image List
+    // $.getJSON('data/image_info.json', function(data) {
+    //     $("#image_list_dd").empty();
+    //     my_data = data.responseJSON;
+    //     //iterate over the data and append a select option
+    //     $.each(data, function(key, val) {
+    //         $("#image_list_dd").append('<option id="' + val.image_name + '">' + val.image_name + '</option>');
+    //         image_info_list[val.image_name] = val;
+    //     });
+    //     //Maybe add functionality here to update_current_image.... this event needs to run when I load stuff which I don't think it is..
+    //     var imageName = $("#image_list_dd option:first").val();
+    //     update_rater_overlays(imageName);
 
-    var $select = $('#image_list_dd');
-    //request the JSON data and parse into the select element
-    //THIS Loads the Image List
-    $.getJSON('data/image_info.json', function(data) {
-        $("#image_list_dd").empty();
-        my_data = data.responseJSON;
-        //iterate over the data and append a select option
-        $.each(data, function(key, val) {
-            $("#image_list_dd").append('<option id="' + val.image_name + '">' + val.image_name + '</option>');
-            image_info_list[val.image_name] = val;
-        });
-        //Maybe add functionality here to update_current_image.... this event needs to run when I load stuff which I don't think it is..
-        var imageName = $("#image_list_dd option:first").val();
-        update_rater_overlays(imageName);
+    //     load_new_image(imageName); //all the code to actually load the initial image I hope should be in here...
 
-        load_new_image(imageName); //all the code to actually load the initial image I hope should be in here...
-
-    });
+    // });
 
     //Adding a list to identify which rater goes with which color-- probably need a new color scheme at some point
     $.each(raters, function(n, v) {
         //$("#rater_color_list").append(`<li><span style="color:${colours[n]}">${v}</span></li>`);
         $("#rater_color_list").append(
-            `<span class="btn btn-default "><input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons "><label for="show_${v}" style="color:${colours[n]}">${v}</label></input></span>`);
+            `<span class="btn btn-default rater_span "><input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons "><label for="show_${v}" style="color:${colours[n]}">${v}</label></input></span>`);
         //$<input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons"><label for="show_${v}">${v}</label></input> 
     });
     $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
@@ -419,16 +414,50 @@ $(document).ready(function() {
     });
 
     // Add event handler for changing the image
-    $select.change(function() {
+
+    //$select.change(function() {
+    $("#image_list_dd").change(function() {
         //##This needs to clear as well as update information and change the viewer
         //Need to change the image source based on the new image I just added in the toggle, will also push the text
         // to a DIV so it's obvious what Image I am looking at
         selected_image = this.value;
-        console.log(image_info_list[this.value].filename_url);
-
+        //console.log(image_info_list[this.value].filename_url);
         //ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
-        load_new_image(selected_image);
+        console.log(this.id, this.value, this.name);
 
+        //I need to debate if I precache this ....
+        $.getJSON('https://isic-archive.com/api/v1/image/' + this.value, function(data) {
+            cur_image_metadata = data;
+            //console.log(cur_image_metadata);
+            //Need to pass the image metadata
+            load_new_image_from_api(cur_image_metadata)
+
+            //Now load the superpixel data..
+            console.log("trying to load superpixel data");
+
+        $.getJSON('api/TileInfo/ALL/' + image_name, function(data) {
+                    superpixel_markup_info = data;
+                    //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
+                    hide_unannotated_features(superpixel_markup_info);
+                    //Also add in something to actual  lly display this..
+                    new_mark_superpixels();
+                })
+        
+        }).fail(function() {
+            alert('You do not have access to this image...');
+
+            defaultimg_not_avail = {
+                'type': 'legacy-image-pyramid',
+                levels: [{
+                    'url': 'https://c1.staticflickr.com/3/2150/2101058680_64fa63971e.jpg',
+                    'height': 435,
+                    'width': 356,
+                }]
+            }
+            dg_viewer.open(defaultimg_not_avail);;
+
+        });
+      
     });
 
     $("#tile_toggle").button().click(function() {
@@ -438,16 +467,19 @@ $(document).ready(function() {
     });
 
 
+    //def getImageDetail(image_id):
+    //    """ Get the detailed metadata for an image. """
+    //    return apiGet('image/%s' % image_id)
+    //https://isic-archive.com/api/v1/%s
+
     function load_new_image(image_name) {
         //Consolidating all of the function calls that need to be made when I switch an image into this snipper... this should be called
         //on document ready, and attached to the SELECT element when it's changed.
 
         console.log("consolidinating image load code to here for" + image_name);
-
-
+        //image_name or maybe image_id.....
         //First remove all of the SVG elements to prevent the screen from flashing weird colors
         $(".tileClass").remove();
-
         image_filename_url = image_info_list[image_name].filename_url;
         new_tile_source = {
             'type': 'legacy-image-pyramid',
@@ -470,10 +502,46 @@ $(document).ready(function() {
             //Also add in something to actual  lly display this..
             new_mark_superpixels();
         })
-
-
     }
 
+    function load_new_image_from_api(image_metadata) {
+        //The image metadata is pulled from the API
+
+        //image_name or maybe image_id.....
+        //First remove all of the SVG elements to prevent the screen from flashing weird colors
+        $(".tileClass").remove();
+
+
+        //IMPORTANT ISSUE HERE.. OSD NEEDS TO BE PATCHED OR I NEED THE BELOW HACK WHICH HARD CODES THE .JPG... it wasn't figuring this out on its own
+
+        base_url = `https://isic-archive.com/api/v1/image/${image_metadata['_id']}/`;
+        console.log(base_url);
+        image_filename_url = base_url + 'download?contentDisposition=inline&.jpg'
+        console.log(image_metadata);
+
+        new_tile_source = {
+                'type': 'legacy-image-pyramid',
+                levels: [{
+                    'url': image_filename_url,
+                    'height': image_metadata.meta.acquisition.pixelsY,
+                    'width': image_metadata.meta.acquisition.pixelsX,
+                }]
+            }
+            //update_rater_overlays(image_name);  <<TO DOO!!!!
+        dg_viewer.open(new_tile_source);
+        //http://blog.teamtreehouse.com/learn-asynchronous-image-loading-javascript
+        //Now that the new image is loaded, should next load the actual markup data for this image
+        //I should call this function when I select an image...
+        //This gets the markup info for the currently selected image
+        // $.getJSON('api/TileInfo/ALL/' + image_name, function(data) {
+        //     superpixel_markup_info = data;
+        //     //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
+        //     hide_unannotated_features(superpixel_markup_info);
+        //     //Also add in something to actual  lly display this..
+        //     new_mark_superpixels();
+        // })
+
+    }
 
     $("#tile_button").click(function() {
         //Make sure tiles are actually visible in case they were toggled off..
@@ -484,10 +552,6 @@ $(document).ready(function() {
 
     //Adding RADIO Buttons to allow me to select features
     load_feature_list(); // Deperecetd load feature_list
-
-
-
-
     show_all_tiles();
     new_mark_superpixels();
 
@@ -495,150 +559,19 @@ $(document).ready(function() {
         $('[data-toggle="tooltip"]').tooltip()
     })
 
-
+    $("#image_list_dd").select2();
     //end of READY function
 });
 
 
 $('#tile_img').toggle();
 
+//$(".rater_span").css('background-color','black')
 
-
-// function load_feature_list() {
-//     //AJAX Call to hit the API EndPoint and get the list of features for the given project and/or Image
-//     //I think to make the UI cleaner and so the buttons don't move around, we will load all of
-//     avail_features = []
-//     $.getJSON('api/FeatureList', function(data) {
-//         avail_features = data['features'];
-//         //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
-//         console.log("newly available features are");
-//         console.log(avail_features)
-
-//         //Also now load the feature button by iterating through them
-//         $.each(avail_features, function(v, k) {
-//             //console.log(rb);
-//             var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${k}" id="feat_${k}" value="${k}" >${k}</button>`;
-//             $("#feature_btn_group").append(rb);
-//         });
+//https://isic-archive.com/api/v1/image/54cfde22bae47825974ce60c
 
 
 
-//         $("#feature_btn_group").empty();
-//         //Add in the needed code for an accordion group
-
-//         $("#feature_btn_group").append('<div class="featurebtns-example"> <div class="panel-group" role="tablist" id="button-accordion">');
-
-
-//         $.each(feature_groups, function(k, v) {
-//             cur_grp = feature_groups[k];
-//             console.log("ITERATING THIS FEATURE NOW!!", cur_grp.feature_group, cur_grp.feature_abbrev)
-//                 //For each high level feature group, I want to now list all of the features associated with that group
-//                 //   $("#feature_btn_group").append("<div>"+cur_grp.feature_group+"");
-
-//             accord_data_header = `
-//         <div class="panel panel-default featurebtns-example">
-//             <div class="panel-heading">
-//                 <h3 class="panel-title">
-//                     <a data-toggle="collapse" data-parent="#button-accordion" href="#collapse${cur_grp.feature_group}">${cur_grp.feature_group}</a>
-//                 </h3>
-//             </div>
-//             <div id="collapse${cur_grp.feature_group}" class="panel-collapse collapse ">
-//                 <div class="panel-body button-panel">`;
-
-//             accord_data_footer = `</div></div></div>`
-
-
-//             //  $("#feature_btn_group").append(accord_data_header);
-//             button_data_for_cur_grp = "";
-//             $.each(avail_features, function(idx, feat) {
-//                 if (feat.startsWith(cur_grp.feature_abbrev)) {
-//                     feat_without_class = feat.replace(cur_grp.feature_abbrev + '_', '');
-
-//                     //To save Space I am removing the feature Class i.e. net col oth
-//                     var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${feat}" id="feat_${feat}" value="${feat}" >${feat_without_class}</button>`;
-//                     button_data_for_cur_grp += rb;
-//                     //$("#feature_btn_group").append(rb);
-
-//                     //console.log('MATCHED GROUP FOR:' + feat)
-//                 };
-//             })
-
-//             $("#feature_btn_group").append(accord_data_header + button_data_for_cur_grp + accord_data_footer);
-
-//             //$("#feature_btn_group").append(button_data_for_cur_grp);
-//             //console.log(button_data_for_cur_grp);
-//             console.log(accord_data_header + button_data_for_cur_grp + accord_data_footer);
-//             //$("#feature_btn_group").append(accord_data_footer);
-
-
-
-
-//         });
-
-//         $("#feature_btn_group").append("</div></div>");
-
-
-
-        // annotated_feature_list = avail_features;
-
-        // $("#feature_btn_group button").click(function() {
-        //     //console.log(this.id); // points to the clicked input button
-
-        //     current_feature = this.value;
-        //     $("#feature_info_stats").empty();
-        //     //ALSO ADDI N SOME STATS TO INDICATE HOW MANY TILES WERE MARKED FOR THIS FEATURE...
-        //     cfd = superpixel_markup_info[current_feature]; //Current Feature data
-        //     if (!cfd) {
-        //         $("#feature_info_stats").append("Feature " + current_feature + " NOT in this image");
-        //     } else {
-        //         $("#feature_info_stats").append("Feature" + current_feature + " present");
-        //     }
-
-
-        //     //So I need to check the state of the button to either draw or clear a given tile(s) colors for a rater..
-        //     cur_slider_value = OpacitySlider.val();
-        //     //     var new_opacity = (cur_opacity == 0) ? cur_slider_value : 0;
-        //     $('.tileClass').attr('opacity', cur_slider_value);
-        //     new_mark_superpixels();
-        // })
-
-
-    //     $(".feature_btns").not('.disabled').first().button("toggle"); //this should select the first active button in the image set
-    //     console.log('did i select the first button?');
-    //     //  $(".feature_btns").first().button("toggle");  //this isn't working for this type of radio button... seems to set the active and focus attributes
-
-
-
-    // })
-
-//}
-
-
-
-function hide_unannotated_features(superpixel_markup_info) {
-    console.log('should be hiding buttons');
-    //Beacause we may have 30-50 features present, we do not want the observer to try and click on each button to "see" if a given feature is there
-    //First I need to reset all the radio buttons to make them all clickable, then disable if not present
-    //$("#feature_btn_group").button('reset');
-    //avail_features list the features that have been detected in this image..
-    img_avail_features = Object.keys(superpixel_markup_info);
-    //var annotated_feature_list = ['net_typ', 'net_atyp', 'str_chrys','net_targ','ves_serp','ves_clods']; //will load these frim a file
-
-    //TODO Need to clean up logic below; for some reason if I reset all the buttons above and then ran the below code, nothing got set
-    //Not sure if I was running into a race condition?
-    $.each(annotated_feature_list, function(index, value) {
-        //console.log(index, value);
-        if (img_avail_features.indexOf(value) < 0) { //feature is not present
-            //the ID of the feature buttons actually have feat_ prepended to the feature name..
-            $("#feat_" + value).addClass('disabled');
-            //console.log('I think I just this?? #feat_' + value);
-            // $("#feat_net_targ").addClass('disabled');
-            //console.log('CRAP');
-        } else if (img_avail_features.indexOf(value) > -1) {
-            $("#feat_" + value).removeClass('disabled');
-        }
-    });
-}
 
 function update_rater_overlays(imageName) {
     //console.log("NEED TO update the overlay SRC ids as well" + imageName);
@@ -651,45 +584,8 @@ function update_rater_overlays(imageName) {
     new_mark_superpixels();
 }
 
-
 //COME HERE LATER--- ADD SOME FUNCTION THAT RUNS ON DOCUMENT COMPLETION THAT LOADS THE IMAGE FOR THE VIEWER AND 
 //THE PROPER OVERLAY
-
-$(function() {
-    //Adding keyboard listnered to toggle the tiles on/off if I press the letter t (for toggle)
-    $("body").keypress(function(event) {
-        if (event.keyCode == 116) {
-            cur_opacity = $('.tileClass').attr('opacity');
-            //cur_slider_value = $("#slider").slider("option", "value");
-            cur_opacity = 100;
-            cur_slider_value = OpacitySlider.val();
-            var new_opacity = (cur_opacity == 0) ? cur_slider_value : 0;
-            $('.tileClass').attr('opacity', new_opacity);
-        }
-    });
-});
-
-
-//This code will generate the buttons
-function run_it() {
-
-    //var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${k}" id="feat_${k}" value="${k}" >${k}</button>`;
-    //         $("#feature_btn_group").append(rb);
-
-    $("#feature_btn_group").empty(); //clear current selection
-
-    $.each(top_level_features, function(k, v) {
-            feat = top_level_features[k];
-           // console.log(feat.feature_group, feat.feature_abbrev)
-        }
-        //For each high level feature group, I want to now list all of the features associated with that group
-        //console.log(rb);
-        // var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${k}" id="feat_${k}" value="${k}" >${k}</button>`;
-        //$("#feature_btn_group").append(rb);
-
-    );
-}
-
 
 //need to add a callback function to this as well... hmm so want to load the geodata than push it to the SVG
 //<!-- Some tips on working with SVG docs http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
