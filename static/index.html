@@ -279,6 +279,10 @@ $(document).ready(function() {
         //I now should actually load the images associated with this data set...
         //Now pull the image list for this data source and then update the image_list_dd
         study_uid = this.value;
+
+        uda2pilot_demo = '55c4668a9fc3c1536a0130c8';
+        study_uid = uda2pilot_demo;
+
         load_image_list( study_uid);
         load_feature_list(study_uid);  //This will populate the feature widget..
         load_rater_list(study_uid);  //I think this is another endpoint...
