@@ -7,7 +7,7 @@
     <title>ISIC MultiRater Viewer</title>
     <meta name="generator" content="Bootply" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href="/css/bootstrap-slider.css" rel="stylesheet">
+    <link href="css/bootstrap-slider.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
     <link rel="stylesheet" href="css/jquery-ui.css">
     <link href="css/jquery-ui.theme.css" rel="stylesheet">
@@ -22,8 +22,8 @@
     <script src="js/openseadragon.js"></script>
     <script src="js/openseadragon-svg-overlay.js"></script>
     <script src="js/osd-filters/osd_filters.js"></script>
-    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
-    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
     <style>
     .vcenter {
         display: inline-block;
@@ -213,7 +213,6 @@ var avail_studies;
 var flt = {};
 
 var colours = ['purple', 'blue', 'green  ', 'navy', 'green', 'navy', 'blue', 'pink', 'orange', 'yellow', 'lime', 'green', 'blue', 'navy', 'black'];
-
 var color_heatmap = ['blue', 'blue', 'yellow', 'orange', 'red'];
 
 
@@ -223,7 +222,6 @@ var active_image = '';
 var current_feature = "net_typ";
 var avail_studies_dict = {};
 var annotated_feature_list = [];
-//['net_typ', 'net_atyp', 'str_chrys','net_targ','ves_serp','ves_clods']; //will load these frim a file
 
 //feature group should not have a space... need to think about this
 
@@ -250,124 +248,42 @@ var feature_groups = [{
 
 var new_geodata;
 var my_data = {};
-</script>
-<script type="text/javascript">
-// var dg_viewer = OpenSeadragon({
-//     id: "openseadragon1",
-//     prefixUrl: "/images/openseadragon-bin-2.0.0/images/",
-//     showNavigator: true,
-//     tileSources: {
-//         type: 'legacy-image-pyramid',
-//         levels: [{
-//             url: 'images/base_img/UDA2_pilot_001-p1c.png',
-//             height: 920,
-//             width: 960
-//         }]
-//     }
-// });
 
 var dg_viewer = OpenSeadragon({
     id: "openseadragon1",
-    prefixUrl: "/images/openseadragon-bin-2.0.0/images/",
+    prefixUrl: "images/openseadragon-bin-2.0.0/images/",
     showNavigator: true,
 });
 
 svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
 
-raters = ['braunr', 'haroldr', 'carrerac', 'marghooa'];
+raters = ['braunr', 'haroldr', 'carrerac', 'marghooa'];  //TO REMOVE ONCE I CAN LOAD THESE THINGS
 
 var OpacitySlider;
-
+var study_url = 'https://isic-archive.com/api/v1/study'
+    
 $(document).ready(function() {
 
     //Opacity slides which is at the top of the toolbar for  changing opacity..
-    OpacitySlider = $('#opacity_slider').bootstrapSlider({
-        formatter: function(value) {
-            return 'Current value: ' + value;
-        }
-    });
-
+    OpacitySlider = $('#opacity_slider').bootstrapSlider({});   //I can set these options at run time
     OpacitySlider.change(function(val) {
         new_slider_value = val.value.newValue;
         console.log('new slider value is' + new_slider_value)
         $(".tileClass").attr('opacity', new_slider_value);
-
-    });
+        });
     //TODO:  Should be able to set the change function in the slider constructor.. not sure of the syntax
 
-    //Get hte list of studies that are available
-    var study_url = 'https://isic-archive.com/api/v1/study'
-    study_list = $.get(study_url)
 
-    $.getJSON(study_url, function(data) {
-        avail_studies = data;
-        //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
-        console.log(avail_studies)
-            //Also now load the feature button by iterating through them
-        $.each(avail_studies, function(k, v) {
-                //      console.log(v,k);
-                dtoa = '<option id="' + v['_id'] + '" value="'+ v['_id'] + '">' + v.name + '</option>'
-                console.log(dtoa);
-                $("#data_source_dd").append(dtoa);
-                avail_studies_dict[v.name] = v;
-                //Need to figure out which image set to load... I guess for now I load the first one?
-            })
-            //Now that I have a list of all available studies, I can go ahead and populate the image list
-            //This should use the function I defined above..
-    });
+    avail_studies = load_avail_studies();  //This requires no parameters and populates the data_source_dd selection box
 
     $("#data_source_dd").change(function(data) {
-
-        console.log(this.value, this.id, this.option);
         //I now should actually load the images associated with this data set...
         //Now pull the image list for this data source and then update the image_list_dd
-        load_new_image_set(this.value);
-
-        console.log(avail_studies_dict[this.value]);
-        //Need to now grab the url
-
-
-
-        //var get_img_list_url = 'https://isic-archive.com/api/v1/study/' + avail_studies_dict[this.value]['_id'] + '/images/';
-        var get_img_list_url = 'https://isic-archive.com/api/v1/study/' + this.value + '/images/';
-        //https://isic-archive.com/api/v1/study/55c442809fc3c1536a012b57/images
-        $.getJSON(get_img_list_url, function(data) {
-            new_img_list = data;
-            console.log(new_img_list);
-            //This currently returns an _id and a name _id: "54e77f6fbae478166c01e546"  name: "ISIC_0001160"
-            //TO DO:  Load the image data now??
-            ///Need to remember to first clear the image list
-            //Now I need to iterate through each item and add it to the image list...
-
-            $("#image_list_dd").empty();
-            $.each(new_img_list, function(k, v) {
-                var new_img = `<option id="${v['_id']}" value="${v['_id']}">${v['name']}</option>`;
-                //                        console.log(new_img);
-                $("#image_list_dd").append(new_img);
-            })
-            $("#image_list_dd").select2(); //Reinitialize the dynamic search widget
-        });
+        study_uid = this.value;
+        load_image_list( study_uid);
     });
 
-    function load_new_image_set(data_set_name) {
-        console.log("I need to be loading this data set now.." + data_set_name);
-    }
-
-    // $select.change(function() {
-    //      //##This needs to clear as well as update information and change the viewer
-    //      //Need to change the image source based on the new image I just added in the toggle, will also push the text
-    //      // to a DIV so it's obvious what Image I am looking at
-    //      selected_image = this.value;
-    //      console.log(image_info_list[this.value].filename_url);
-
-    //      //ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
-    //      load_new_image(selected_image);
-
-    //  });
-
-    //https://isic-archive.com/api/v1/study/55c442809fc3c1536a012b57/images
-
-
+  
     //Need to add in the button actions for the filter clicks
 
     $("#filter_dialog").dialog({
@@ -380,26 +296,7 @@ $(document).ready(function() {
     });
     $("#filter_dialog").html(color_filter_html);
 
-    //TO DO:  REFACTOR THIS CODE!!! IT SUCKS
-    // var $select = $('#image_list_dd');
-    // //request the JSON data and parse into the select element
-    // //THIS Loads the Image List
-    // $.getJSON('data/image_info.json', function(data) {
-    //     $("#image_list_dd").empty();
-    //     my_data = data.responseJSON;
-    //     //iterate over the data and append a select option
-    //     $.each(data, function(key, val) {
-    //         $("#image_list_dd").append('<option id="' + val.image_name + '">' + val.image_name + '</option>');
-    //         image_info_list[val.image_name] = val;
-    //     });
-    //     //Maybe add functionality here to update_current_image.... this event needs to run when I load stuff which I don't think it is..
-    //     var imageName = $("#image_list_dd option:first").val();
-    //     update_rater_overlays(imageName);
-
-    //     load_new_image(imageName); //all the code to actually load the initial image I hope should be in here...
-
-    // });
-
+    
     //Adding a list to identify which rater goes with which color-- probably need a new color scheme at some point
     $.each(raters, function(n, v) {
         //$("#rater_color_list").append(`<li><span style="color:${colours[n]}">${v}</span></li>`);
@@ -425,6 +322,7 @@ $(document).ready(function() {
         //ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
         console.log(this.id, this.value, this.name);
 
+        image_id = this.value;
         //I need to debate if I precache this ....
         $.getJSON('https://isic-archive.com/api/v1/image/' + this.value, function(data) {
             cur_image_metadata = data;
@@ -434,6 +332,13 @@ $(document).ready(function() {
 
             //Now load the superpixel data..
             console.log("trying to load superpixel data");
+
+            study_id = $("#data_source_dd").val();
+          
+           // image_id = $("image_list_dd").val();
+            console.log(image_id);
+
+            get_image_annotation_data(study_id,image_id);
 
         $.getJSON('api/TileInfo/ALL/' + image_name, function(data) {
                     superpixel_markup_info = data;
@@ -445,7 +350,7 @@ $(document).ready(function() {
         
         }).fail(function() {
             alert('You do not have access to this image...');
-
+                //This is currently a simpsons scene
             defaultimg_not_avail = {
                 'type': 'legacy-image-pyramid',
                 levels: [{
@@ -455,7 +360,6 @@ $(document).ready(function() {
                 }]
             }
             dg_viewer.open(defaultimg_not_avail);;
-
         });
       
     });
@@ -467,42 +371,6 @@ $(document).ready(function() {
     });
 
 
-    //def getImageDetail(image_id):
-    //    """ Get the detailed metadata for an image. """
-    //    return apiGet('image/%s' % image_id)
-    //https://isic-archive.com/api/v1/%s
-
-    function load_new_image(image_name) {
-        //Consolidating all of the function calls that need to be made when I switch an image into this snipper... this should be called
-        //on document ready, and attached to the SELECT element when it's changed.
-
-        console.log("consolidinating image load code to here for" + image_name);
-        //image_name or maybe image_id.....
-        //First remove all of the SVG elements to prevent the screen from flashing weird colors
-        $(".tileClass").remove();
-        image_filename_url = image_info_list[image_name].filename_url;
-        new_tile_source = {
-            'type': 'legacy-image-pyramid',
-            levels: [{
-                'url': image_filename_url,
-                'height': image_info_list[image_name].img_height,
-                'width': image_info_list[image_name].img_width,
-            }]
-        }
-        update_rater_overlays(image_name);
-        dg_viewer.open(new_tile_source);
-
-        //Now that the new image is loaded, should next load the actual markup data for this image
-        //I should call this function when I select an image...
-        //This gets the markup info for the currently selected image
-        $.getJSON('api/TileInfo/ALL/' + image_name, function(data) {
-            superpixel_markup_info = data;
-            //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
-            hide_unannotated_features(superpixel_markup_info);
-            //Also add in something to actual  lly display this..
-            new_mark_superpixels();
-        })
-    }
 
     function load_new_image_from_api(image_metadata) {
         //The image metadata is pulled from the API
@@ -510,15 +378,11 @@ $(document).ready(function() {
         //image_name or maybe image_id.....
         //First remove all of the SVG elements to prevent the screen from flashing weird colors
         $(".tileClass").remove();
-
-
         //IMPORTANT ISSUE HERE.. OSD NEEDS TO BE PATCHED OR I NEED THE BELOW HACK WHICH HARD CODES THE .JPG... it wasn't figuring this out on its own
 
         base_url = `https://isic-archive.com/api/v1/image/${image_metadata['_id']}/`;
-        console.log(base_url);
-        image_filename_url = base_url + 'download?contentDisposition=inline&.jpg'
-        console.log(image_metadata);
-
+        image_filename_url = base_url + 'download?contentDisposition=inline&.jpg'  //Please note this hack, without the .jpg osd couldn't read
+        
         new_tile_source = {
                 'type': 'legacy-image-pyramid',
                 levels: [{
@@ -529,6 +393,7 @@ $(document).ready(function() {
             }
             //update_rater_overlays(image_name);  <<TO DOO!!!!
         dg_viewer.open(new_tile_source);
+        
         //http://blog.teamtreehouse.com/learn-asynchronous-image-loading-javascript
         //Now that the new image is loaded, should next load the actual markup data for this image
         //I should call this function when I select an image...
@@ -551,7 +416,6 @@ $(document).ready(function() {
     });
 
     //Adding RADIO Buttons to allow me to select features
-    load_feature_list(); // Deperecetd load feature_list
     show_all_tiles();
     new_mark_superpixels();
 
@@ -561,6 +425,21 @@ $(document).ready(function() {
 
     $("#image_list_dd").select2();
     //end of READY function
+
+
+    //Load the feature set... so this is based on the data that's stores in avail_studies; may want to consider making this a dict
+    $.each(avail_studies,function(idx,val)
+        {
+
+        console.log(val.meta.featuresetId);
+        console.log('load this feature set??');
+        //need to see if this matches the currently selected data set?
+        cur_image_set_id = $("#image_list_dd").val();
+        console.log(cur_image_set_id);
+
+        });
+
+
 });
 
 
