@@ -257,7 +257,6 @@ var dg_viewer = OpenSeadragon({
 
 svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
 
-raters = ['braunr', 'haroldr', 'carrerac', 'marghooa'];  //TO REMOVE ONCE I CAN LOAD THESE THINGS
 
 var OpacitySlider;
 var study_url = 'https://isic-archive.com/api/v1/study'
@@ -281,9 +280,10 @@ $(document).ready(function() {
         //Now pull the image list for this data source and then update the image_list_dd
         study_uid = this.value;
         load_image_list( study_uid);
+        load_feature_list(study_uid);  //This will populate the feature widget..
+        load_rater_list(study_uid);  //I think this is another endpoint...
     });
 
-  
     //Need to add in the button actions for the filter clicks
 
     $("#filter_dialog").dialog({
@@ -295,118 +295,28 @@ $(document).ready(function() {
         return false;
     });
     $("#filter_dialog").html(color_filter_html);
-
     
-    //Adding a list to identify which rater goes with which color-- probably need a new color scheme at some point
-    $.each(raters, function(n, v) {
-        //$("#rater_color_list").append(`<li><span style="color:${colours[n]}">${v}</span></li>`);
-        $("#rater_color_list").append(
-            `<span class="btn btn-default rater_span "><input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons "><label for="show_${v}" style="color:${colours[n]}">${v}</label></input></span>`);
-        //$<input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons"><label for="show_${v}">${v}</label></input> 
-    });
     $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
     $('.overlay_toggle').click(function() {
-        //  console.log(this.id);
         color_some_tiles(this.id, "thefeatureIwanttolookat");
     });
 
     // Add event handler for changing the image
 
-    //$select.change(function() {
     $("#image_list_dd").change(function() {
         //##This needs to clear as well as update information and change the viewer
         //Need to change the image source based on the new image I just added in the toggle, will also push the text
         // to a DIV so it's obvious what Image I am looking at
-        selected_image = this.value;
         //console.log(image_info_list[this.value].filename_url);
         //ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
-        console.log(this.id, this.value, this.name);
-
-        image_id = this.value;
-        //I need to debate if I precache this ....
-        $.getJSON('https://isic-archive.com/api/v1/image/' + this.value, function(data) {
-            cur_image_metadata = data;
-            //console.log(cur_image_metadata);
-            //Need to pass the image metadata
-            load_new_image_from_api(cur_image_metadata)
-
-            //Now load the superpixel data..
-            console.log("trying to load superpixel data");
-
-            study_id = $("#data_source_dd").val();
-          
-           // image_id = $("image_list_dd").val();
-            console.log(image_id);
-
-            get_image_annotation_data(study_id,image_id);
-
-        $.getJSON('api/TileInfo/ALL/' + image_name, function(data) {
-                    superpixel_markup_info = data;
-                    //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
-                    hide_unannotated_features(superpixel_markup_info);
-                    //Also add in something to actual  lly display this..
-                    new_mark_superpixels();
-                })
-        
-        }).fail(function() {
-            alert('You do not have access to this image...');
-                //This is currently a simpsons scene
-            defaultimg_not_avail = {
-                'type': 'legacy-image-pyramid',
-                levels: [{
-                    'url': 'https://c1.staticflickr.com/3/2150/2101058680_64fa63971e.jpg',
-                    'height': 435,
-                    'width': 356,
-                }]
-            }
-            dg_viewer.open(defaultimg_not_avail);;
-        });
-      
+        image_uid = this.value;
+        get_image_data( image_uid);
     });
 
     $("#tile_toggle").button().click(function() {
         console.log(this.id + 'was pressed')
         $(".tileClass").css('fill', 'none')
-
     });
-
-
-
-    function load_new_image_from_api(image_metadata) {
-        //The image metadata is pulled from the API
-
-        //image_name or maybe image_id.....
-        //First remove all of the SVG elements to prevent the screen from flashing weird colors
-        $(".tileClass").remove();
-        //IMPORTANT ISSUE HERE.. OSD NEEDS TO BE PATCHED OR I NEED THE BELOW HACK WHICH HARD CODES THE .JPG... it wasn't figuring this out on its own
-
-        base_url = `https://isic-archive.com/api/v1/image/${image_metadata['_id']}/`;
-        image_filename_url = base_url + 'download?contentDisposition=inline&.jpg'  //Please note this hack, without the .jpg osd couldn't read
-        
-        new_tile_source = {
-                'type': 'legacy-image-pyramid',
-                levels: [{
-                    'url': image_filename_url,
-                    'height': image_metadata.meta.acquisition.pixelsY,
-                    'width': image_metadata.meta.acquisition.pixelsX,
-                }]
-            }
-            //update_rater_overlays(image_name);  <<TO DOO!!!!
-        dg_viewer.open(new_tile_source);
-        
-        //http://blog.teamtreehouse.com/learn-asynchronous-image-loading-javascript
-        //Now that the new image is loaded, should next load the actual markup data for this image
-        //I should call this function when I select an image...
-        //This gets the markup info for the currently selected image
-        // $.getJSON('api/TileInfo/ALL/' + image_name, function(data) {
-        //     superpixel_markup_info = data;
-        //     //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
-        //     hide_unannotated_features(superpixel_markup_info);
-        //     //Also add in something to actual  lly display this..
-        //     new_mark_superpixels();
-        // })
-
-    }
 
     $("#tile_button").click(function() {
         //Make sure tiles are actually visible in case they were toggled off..
@@ -444,10 +354,7 @@ $(document).ready(function() {
 
 
 $('#tile_img').toggle();
-
 //$(".rater_span").css('background-color','black')
-
-//https://isic-archive.com/api/v1/image/54cfde22bae47825974ce60c
 
 
 
@@ -457,7 +364,6 @@ function update_rater_overlays(imageName) {
     //This will eventually need to reed the list or raters and update the sources for all of the raters that have been added
     //ALSO need to add in something that populates the stats for the rater(s)
     loadSVGTileData(imageName);
-
     //NEED TO GRAB THE OVERLAY FOR THIS IMAGE
     $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
     new_mark_superpixels();
