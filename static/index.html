@@ -340,17 +340,14 @@ $(document).ready(function() {
     $("#image_list_dd").select2();
     //end of READY function
 
-
     //Load the feature set... so this is based on the data that's stores in avail_studies; may want to consider making this a dict
     $.each(avail_studies,function(idx,val)
         {
-
         console.log(val.meta.featuresetId);
         console.log('load this feature set??');
         //need to see if this matches the currently selected data set?
         cur_image_set_id = $("#image_list_dd").val();
         console.log(cur_image_set_id);
-
         });
 
 
@@ -359,8 +356,6 @@ $(document).ready(function() {
 
 $('#tile_img').toggle();
 //$(".rater_span").css('background-color','black')
-
-
 
 
 function update_rater_overlays(imageName) {
