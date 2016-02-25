@@ -64,14 +64,18 @@ def getImageThumbnail(image_id, width=None):
         url += '?width=%s' % width
     return apiGet(url, as_json=False)
 
-def getAnnotations(study_id, user_id=None, image_id=None):
+def getAnnotations(study_id, user_id=None, image_id=None, details=False):
     """ Get the list of annotations for a study (optionally filtering by user or image). """
     url = 'annotation?studyId=' + study_id
     if user_id:
         url += '&userId=' + user_id
     if image_id:
         url += '&imageId=' + image_id
+    if details:
+        url += '&details=true'
+      
     return apiGet(url)
+
 
 def getAnnotationDetail(annotation_id):
     """ Get the details of an annotation, including the feature values. """
