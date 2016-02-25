@@ -4,6 +4,13 @@ function random(range) {
     return Math.floor(Math.random() * range);
 }
 
+
+//sample images uda2pilot isic_0001135
+
+//54e771eabae47850e86ce39d   this is a segmentation... probably need supserpixels as well...
+//"imageId": "54e755ffbae47850e86ce076",
+
+
 function loadSVGTileData(imageName) {
     console.log('need to load svg data for' + imageName);
     SVG_file = image_info_list[imageName].superpixel_svg;
@@ -34,6 +41,8 @@ function loadSVGTileData(imageName) {
     $(".tileClass").remove();
 
     my_points = contourdata_to_shape(new_geodata, img_width);
+
+
 
     //This generates the pretty multicolor tile image
     $.each(my_points, function(k, point_list) {
@@ -118,6 +127,44 @@ function new_mark_superpixels(sp_info) {
 
 };
 
+
+function lesionboundary_to_svgshape( lesionBoundary_Dict, img_width)
+{
+    //Probably should come this with the function below..
+    scale_factor = 1;
+    polygon_list = [];
+    console.log('should be trying to render the boundary now!?');
+    console.log(lesionBoundary_Dict);
+    //Openseadragon uses the image width for bo the x and y scale factor... probably should rename this pixel factor
+    x_scale_factor = 1.0 / img_width;
+    y_scale_factor = 1.0 / img_width;
+
+    $(".boundaryClass").remove();
+
+    // $.each(contours, function(index, contour) {
+    //     coord_info = contour.geometry.coordinates;
+            coord_info = lesionBoundary_Dict.lesionBoundary.geometry.coordinates[0];
+            console.log(coord_info);
+         coord_string = "";
+         $.each(coord_info, function(k, v) {
+                 console.log(k,v[0],v[1]);
+                 coord_string += `${(v[0]* x_scale_factor ) },${ ( v[1] * y_scale_factor) } `;
+             }) // the |0 made them all integers
+         console.log(coord_string);
+       // polygon_svg_str = `<polygon points="${coord_string}" style="fill:${colours[ random(9)]};stroke;purple;stroke-width:1;opacity:0.5" id="boundary0" class="boundaryClass" />`;
+    //     labelindex = contour.properties.labelindex;
+         d3.select(svg_layer.node()).append("polygon").attr("points", coord_string).style('fill', 'blue').attr('opacity', 0.2).attr('class', 'boundaryClass').attr('id', 'boundary0');
+         //.attr('stroke','blue');
+    // });
+    //     polygon_list.push({
+    //         'coords': coord_string,
+    //         'labelindex': contour.properties.labelindex
+    //     });
+    // });
+
+    // return svg_shape;
+
+}
 
 function contourdata_to_shape(contours, img_width) {
     scale_factor = 1;
@@ -499,7 +546,7 @@ function get_image_data(image_uid) {
         get_image_annotation_data(study_id, image_uid);
 
 
-          get_image_segmentations(image_uid);
+          get_avail_image_segmentations(image_uid);
         //             hide_unannotated_features(superpixel_markup_info);
         //             //Also add in something to actual  lly display this..
         //             new_mark_superpixels();
@@ -515,7 +562,10 @@ function get_image_data(image_uid) {
                 'width': 356,
             }]
         }
+        $(".boundaryClass").remove();
+        dg_viewer.clearOverlays();
         dg_viewer.open(defaultimg_not_avail);;
+
     });
 
 }
@@ -568,9 +618,50 @@ function load_rater_list(study_uid) {
 
 
 
-function get_image_segmentations(image_uid)
+function get_avail_image_segmentations(image_uid)
   {
 console.log('should be getting segmentations for'+image_uid)
+    //Now query the segmentation API
+     
+    segmentation_URL =  'https://isic-archive.com/api/v1/' + '/segmentation?imageId='+image_uid;
+    console.log(segmentation_URL);
+    
+    cur_image_segmentations = []
 
-
+    $.getJSON(segmentation_URL, function(data) {
+        cur_image_segmentations = data;
+        console.log(cur_image_segmentations);
+        //I now need to get and then render the boundary--- for now I'll just render the first one
+        get_segmentation_boundaries(cur_image_segmentations);
+    })
+  
 }
+
+function get_segmentation_boundaries( img_segmentation_list)
+    {
+        console.log('need to get oundaries now');
+        console.log(img_segmentation_list);
+
+        //I will just get the first one...
+        segmentation_boundaries_URL =  'https://isic-archive.com/api/v1/segmentation/' + img_segmentation_list[0]['_id'];
+        
+        lesion_boundary_data = [];
+        $.getJSON(segmentation_boundaries_URL, function(data) {
+                lesion_boundary_data = data;
+                console.log(lesion_boundary_data);
+                console.log('GOT THE BOUNDARY??');
+                //Since for now I am only going to bother rendering a single one, I may as well parse it now..
+                console.log(lesion_boundary_data.lesionBoundary);
+                //the geometry now contains the info I need to render it...
+                lesionboundary_to_svgshape( lesion_boundary_data, dg_viewer.viewport.contentSize.x);
+
+
+                    //DAMN IT--- these x,y coordinates are taken from the original image, not the cropped image I think
+             
+        });
+
+    }
+
+
+
+

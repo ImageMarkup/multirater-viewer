@@ -141,6 +141,7 @@
                         <span class="navbar-right right-side-button navbar-btn btn-sm">Overlay Opacity: <input id="opacity_slider" data-slider-id='op_slider' type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.05" data-slider-value="0.5"/></span>
                         <button id="tile_toggle" class="btn btn-default navbar-right navbar-btn btn-sm ">Hide Overlays</button>
                         <button id="tile_button" class="btn  btn-default navbar-right  navbar-btn btn-sm ">Show superpixels</button>
+                        <button id="tile_boundaries" class="btn btn-default navbar-right navbar-btn btn-sm">Lsn Boundaries</button>
                         <button id="show_magic" class="btn btn-default navbar-right navbar-btn btn-sm"> Filters</button>
                     </div>
                 </div>
@@ -314,6 +315,10 @@ $(document).ready(function() {
         //console.log(image_info_list[this.value].filename_url);
         //ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
         image_uid = this.value;
+
+        //Need to make this information global somehow...
+        
+
         get_image_data( image_uid);
     });
 
