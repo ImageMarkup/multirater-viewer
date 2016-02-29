@@ -662,6 +662,30 @@ function get_segmentation_boundaries( img_segmentation_list)
 
     }
 
+function get_segmentation_superpixels( img_segmentation_list)
+    {
+        console.log('need to get superpixels');
+        console.log(img_segmentation_list);
+
+        //I will just get the first one...
+        segmentation_boundaries_URL =  'https://isic-archive.com/api/v1/segmentation/' + img_segmentation_list[0]['_id'];
+        console.log(img_segmentation_list[0])
+        lesion_boundary_data = [];
+        $.getJSON(segmentation_boundaries_URL, function(data) {
+                lesion_boundary_data = data;
+                console.log(lesion_boundary_data);
+                console.log('GOT THE BOUNDARY??');
+                //Since for now I am only going to bother rendering a single one, I may as well parse it now..
+               // console.log(lesion_boundary_data.lesionBoundary);
+                //the geometry now contains the info I need to render it...
+                lesionboundary_to_svgshape( lesion_boundary_data, dg_viewer.viewport.contentSize.x);
+
+
+                    //DAMN IT--- these x,y coordinates are taken from the original image, not the cropped image I think
+             
+        });
+
+    }
 
 
 
