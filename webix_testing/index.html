@@ -62,10 +62,10 @@
 				view:"dataview",
 				id:"dataview2",
 				type: {
-					height: 60
+					height: 120
 				},
 				container:"dataB",
-				template:"<div class='webix_strong'>#name#</div> Year: #name#, rank: #id#",
+				template:"<div class='webix_strong'>#name#</div> Diagnosis:#meta.clinical.Diagnosis# <br>age: #meta.clinical.Age#<br><img src=#img_src#>",
 				data:johns_data
 			});
 
@@ -74,6 +74,7 @@
 			});
 		});
 
+//https://isic-archive.com/fcgi-bin/iipsrv.fcgi?FIF=/srv/girder/default/8b/63/8b63ff74fa455dc40aaa9a6d278b00692bb78392a03192b5984a9e900fe663fa746abe779b4b7793d3f9f753c32b2bbd2f3a11bd227b005afe3c55b83d7849c5&WID=256&CVT=jpeg
 	</script>
 
 
