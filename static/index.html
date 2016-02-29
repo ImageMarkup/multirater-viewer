@@ -12,6 +12,12 @@
     <link rel="stylesheet" href="css/jquery-ui.css">
     <link href="css/jquery-ui.theme.css" rel="stylesheet">
     <link href="css/bootstrap.css" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="css/girder.ext.min.css">
+    <link rel="stylesheet" href="css/girder.app.min.css">
+ 
+
     <script src="js/multirater.js"></script>
     <script src="js/jquery-2.1.3.js"></script>
     <script src="js/jquery-ui.js"></script>
@@ -24,6 +30,14 @@
     <script src="js/osd-filters/osd_filters.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
+
+
+  <!--<script src="js/girder.ext.min.js"></script>-->
+
+    <script src="js/girder.app.min.js"></script>
+    <script src="js/girder_connector.js"></script>
+
+
     <style>
     .vcenter {
         display: inline-block;
@@ -107,9 +121,6 @@
         height: 60px;
     }
     </style>
-
-
-
 </head>
 
 <body>
@@ -125,20 +136,15 @@
                     <ul class="nav navbar-nav">
                         <li class="active"><a a href="http://isic-archive.com">Home</a></li>
                         <li><a href="#">About</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Dropdown <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Action#1</a></li>
-                                <li><a href="#">AddOtherAction</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li class="dropdown-header">Nav header</li>
-                                <li><a href="#">Separated SOME link</a></li>
-                                <li><a href="#">One more separated link</a></li>
-                            </ul>
                         </li>
                     </ul>
                     <div class="navbar-right ">
                         <span class="navbar-right right-side-button navbar-btn btn-sm">Overlay Opacity: <input id="opacity_slider" data-slider-id='op_slider' type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.05" data-slider-value="0.5"/></span>
+                        <button id="tile_toggle" class="btn btn-default navbar-right navbar-btn btn-sm ">Hide Overlays</button>
+                        <button class="btn btn-sm navbar-btn" id="login">Login</button>
+                        <button class="btn btn-sm navbar-btn" id="register">Register</button>
+                        <label class="hidden" id="name"></label>
+                        <button class="btn  hidden" id="logout">Logout</button>
                         <button id="tile_toggle" class="btn btn-default navbar-right navbar-btn btn-sm ">Hide Overlays</button>
                         <button id="tile_button" class="btn  btn-default navbar-right  navbar-btn btn-sm ">Show superpixels</button>
                         <button id="tile_boundaries" class="btn btn-default navbar-right navbar-btn btn-sm">Lsn Boundaries</button>
@@ -261,20 +267,20 @@ svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
 
 var OpacitySlider;
 var study_url = 'https://isic-archive.com/api/v1/study'
-    
+
 $(document).ready(function() {
 
     //Opacity slides which is at the top of the toolbar for  changing opacity..
-    OpacitySlider = $('#opacity_slider').bootstrapSlider({});   //I can set these options at run time
+    OpacitySlider = $('#opacity_slider').bootstrapSlider({}); //I can set these options at run time
     OpacitySlider.change(function(val) {
         new_slider_value = val.value.newValue;
         console.log('new slider value is' + new_slider_value)
         $(".tileClass").attr('opacity', new_slider_value);
-        });
+    });
     //TODO:  Should be able to set the change function in the slider constructor.. not sure of the syntax
 
 
-    avail_studies = load_avail_studies();  //This requires no parameters and populates the data_source_dd selection box
+    avail_studies = load_avail_studies(); //This requires no parameters and populates the data_source_dd selection box
 
     $("#data_source_dd").change(function(data) {
         //I now should actually load the images associated with this data set...
@@ -284,9 +290,9 @@ $(document).ready(function() {
         uda2pilot_demo = '55c4668a9fc3c1536a0130c8';
         study_uid = uda2pilot_demo;
 
-        load_image_list( study_uid);
-        load_feature_list(study_uid);  //This will populate the feature widget..
-        load_rater_list(study_uid);  //I think this is another endpoint...
+        load_image_list(study_uid);
+        load_feature_list(study_uid); //This will populate the feature widget..
+        load_rater_list(study_uid); //I think this is another endpoint...
     });
 
     //Need to add in the button actions for the filter clicks
@@ -300,7 +306,7 @@ $(document).ready(function() {
         return false;
     });
     $("#filter_dialog").html(color_filter_html);
-    
+
     $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
     $('.overlay_toggle').click(function() {
         color_some_tiles(this.id, "thefeatureIwanttolookat");
@@ -317,9 +323,9 @@ $(document).ready(function() {
         image_uid = this.value;
 
         //Need to make this information global somehow...
-        
 
-        get_image_data( image_uid);
+
+        get_image_data(image_uid);
     });
 
     $("#tile_toggle").button().click(function() {
@@ -346,14 +352,13 @@ $(document).ready(function() {
     //end of READY function
 
     //Load the feature set... so this is based on the data that's stores in avail_studies; may want to consider making this a dict
-    $.each(avail_studies,function(idx,val)
-        {
+    $.each(avail_studies, function(idx, val) {
         console.log(val.meta.featuresetId);
         console.log('load this feature set??');
         //need to see if this matches the currently selected data set?
         cur_image_set_id = $("#image_list_dd").val();
         console.log(cur_image_set_id);
-        });
+    });
 
 
 });
@@ -384,6 +389,7 @@ function update_rater_overlays(imageName) {
 <div id="filter_dialog" title="Apply Filters">
     Filter set will appear here
 </div>
+ <div class="modal fade" id="dialog-container"></div>
 </body>
 
 </html>
