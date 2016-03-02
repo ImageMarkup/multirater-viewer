@@ -25,53 +25,67 @@
 		}
 	</style>
 <body>
+<script >
 
-	<div id="btnDiv" style="width:500px;height:45px;"></div>
-	<hr>
-	<div id="dataA" style="width:500px;height:150px;"></div>
+function fix_johns_data( bad_json_object,keys_i_want)
+	{
+		fixed_json_array = [];
+	$.each(bad_json_object)
+		{
 
-	<div id="dataB" style="width:500px;height:300px;"></div>
+
+		}
+
+	}
+
+
+</script>
+
+
+	<div id="dataA" style="width:100px;height:150px;"></div>
+
+	<div id="dataB" style="width:100%;height:100%;"></div>
 
 	<script>
 		webix.ready(function(){
-			webix.ui({
-				view: "button",
-				container: "btnDiv",
-				value: "Click me",
-				inputWidth: 120,
-				click:"$$('dataview2').select([2, 3, 4], false, true);"
-			});
-			webix.ui({
-				view:"dataview", 
-				id:"dataview1",
-				container:"dataA",
-				select:true,
-				type: {
-					height: 60
-				},
-				template:"<div class='webix_strong'>#title#</div> Year: #year#, rank: #rank#",
-				data:[
-					{ id:1, title:"The Shawshank Redemption", year:1994, votes:678790, rating:9.2, rank:1},
-					{ id:2, title:"The Godfather", year:1972, votes:511495, rating:9.2, rank:2},
-					{ id:3, title:"The Godfather: Part II", year:1974, votes:319352, rating:9.0, rank:3},
-					{ id:4, title:"The Good, the Bad and the Ugly", year:1966, votes:213030, rating:8.9, rank:4}
-				]
-			});
+			// webix.ui({
+			// 	view: "button",
+			// 	container: "btnDiv",
+			// 	value: "Click me",
+			// 	inputWidth: 120,
+			// 	click:"$$('dataview2').select([2, 3, 4], false, true);"
+			// });
+			// webix.ui({
+			// 	view:"dataview", 
+			// 	id:"dataview1",
+			// 	container:"dataA",
+			// 	select:true,
+			// 	type: {
+			// 		height: 60
+			// 	},
+			// 	template:"<div class='webix_strong'>#title#</div> Year: #year#, rank: #rank#",
+			// 	data:[
+			// 		{ id:1, title:"The Shawshank Redemption", year:1994, votes:678790, rating:9.2, rank:1},
+			// 		{ id:2, title:"The Godfather", year:1972, votes:511495, rating:9.2, rank:2},
+			// 		{ id:3, title:"The Godfather: Part II", year:1974, votes:319352, rating:9.0, rank:3},
+			// 		{ id:4, title:"The Good, the Bad and the Ugly", year:1966, votes:213030, rating:8.9, rank:4}
+			// 	]
+			// });
 			
 			webix.ui({
 				view:"dataview",
 				id:"dataview2",
 				type: {
-					height: 120
+					height: 200
 				},
 				container:"dataB",
-				template:"<div class='webix_strong'>#name#</div> Diagnosis:#meta.clinical.Diagnosis# <br>age: #meta.clinical.Age#<br><img src=#img_src#>",
+				template:"<div class='webix_strong'>#name#</div> Diagnosis:#meta.clinical.Age# <br>age: #meta.clinical.Age#<br><img src=#img_src# height=100px>",
 				data:johns_data
 			});
 
-			$$('dataview1').attachEvent('onSelectChange', function(id){
-				webix.message("Item "+id+" is selected!");
-			});
+			// $$('dataview1').attachEvent('onSelectChange', function(id){
+			// 	webix.message("Item "+id+" is selected!");
+			// });
 		});
 
 //https://isic-archive.com/fcgi-bin/iipsrv.fcgi?FIF=/srv/girder/default/8b/63/8b63ff74fa455dc40aaa9a6d278b00692bb78392a03192b5984a9e900fe663fa746abe779b4b7793d3f9f753c32b2bbd2f3a11bd227b005afe3c55b83d7849c5&WID=256&CVT=jpeg

@@ -81,6 +81,12 @@ def getAnnotationDetail(annotation_id):
     """ Get the details of an annotation, including the feature values. """
     return apiGet('annotation/%s' % annotation_id)
 
+
+def getSegmentations(imageId):
+    """ Get the list of segmentations for a sepcific image"""
+    return apiGet('segmentation?imageId=%s' % imageId)
+
+
 def getSegmentationDetail(segmentation_id):
     """ Get the details of a segmentation, including the lesion boundary. """
     return apiGet('segmentation/%s' % segmentation_id)
@@ -96,3 +102,4 @@ def getSegmentationThumbnail(segmentation_id, width=None):
     if width is not None:
         url += '?width=%s' % width
     return apiGet(url, as_json=False)
+
