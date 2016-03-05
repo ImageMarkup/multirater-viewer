@@ -31,14 +31,11 @@ function loadSVGTileData(imageName) {
 
     //  This will iterate through all the tiles and color them a different color to show the tile overlays
     $(".tileClass").remove();
-
     my_points = contourdata_to_shape(new_geodata, img_width);
-
     //This generates the pretty multicolor tile image
     $.each(my_points, function(k, point_list) {
         d3.select(svg_layer.node()).append("polygon").attr("points", point_list.coords).style('fill', 'none').attr('opacity', 0.5).attr('class', 'tileClass').attr('id', 'tile' + point_list.labelindex)
     });
-
 
 }
 
@@ -86,7 +83,6 @@ function new_mark_superpixels(sp_info) {
             }
 
         }
-
     });
 
 
@@ -148,7 +144,6 @@ function contourdata_to_shape(contours, img_width) {
     return polygon_list;
 
 }
-
 
 //Currently not actually doing anything with the feature.. or rater...!! need to add in handlers
 function color_some_tiles(rater, feature) {

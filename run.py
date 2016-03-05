@@ -14,32 +14,10 @@ def root():
     return app.send_static_file('index.html')
 
 
-@app.route('/buttons')
-def root_buttons():
-    return app.send_static_file('button_group_example.html')
-
-@app.route('/more_buttons')
-def root_more_buttons():
-    return app.send_static_file('buttons.html')
-
-@app.route('/data/<path:path>')
-def send_datadir(path):
-    return send_from_directory('data', path)
-
-
-@app.route('/js/<path:path>')
-def send_js(path):
-    return send_from_directory('js', path)
-
-
-@app.route('/css/<path:path>')
-def send_css(path):
-    return send_from_directory('css', path)
-
-
-@app.route('/fonts/<path:path>')
-def send_fonts(path):
-    return send_from_directory('fonts', path)
+@app.route('/<path:path>')
+def static_proxy(path):
+  # send_static_file will guess the correct MIME type
+  return app.send_static_file(path)
 
 @app.route('/images/<path:path>')
 def send_images(path):
@@ -120,10 +98,6 @@ def get_AllMarkupData_for_Image( TileDatabase, image_name):
                         ### Need to add data for a second rater...
                         tdfaf[k][cur_sp][rec['user_login_name']] = v
                         
-            #    print k,v,
-            #elif k not in feature_set:
-            #    print k,v,
-        #print
     return tdfaf
 
 
@@ -153,21 +127,7 @@ def All_TileInfo_for_image( imageName):
     return jsonify(**tileData)
 
 
-### There's cleatly a better way to do this... i don't want to install nginx on my machine right now though
-
-#@app.route('/images/features_output_dir/<path:path>')
-#def send_features(path):
-#    return send_from_directory('images', path)
-
-#@app.route('/images/base_img/<path:path>')
-#def send_base_images(path):
-#    return send_from_directory('images/base_img', path)
-
-#@app.route('/images/features_output_dir/net_typ/<path:path>')
- #def send_net_images(path):
-#    return send_from_directory('images/features_output_dir/net_typ', path)
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=1234)
-
+    app.run(host='0.0.0.0',port=80)

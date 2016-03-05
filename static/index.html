@@ -7,11 +7,13 @@
     <title>ISIC MultiRater Viewer</title>
     <meta name="generator" content="Bootply" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href="/css/bootstrap-slider.css" rel="stylesheet">
+    <link href="css/bootstrap-slider.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
     <link rel="stylesheet" href="css/jquery-ui.css">
     <link href="css/jquery-ui.theme.css" rel="stylesheet">
     <link href="css/bootstrap.css" rel="stylesheet">
+
+    
     <script src="js/multirater.js"></script>
     <script src="js/jquery-2.1.3.js"></script>
     <script src="js/jquery-ui.js"></script>
@@ -96,19 +98,20 @@
     <nav class="navbar navbar-custom navbar-fixed-top " role="navigation">
         <div class="navbar navbar-fixed-top navbar-left   ">
             <a class="navbar-brand" href="#">ISIC MultiRater Viewer</a>
-            <ul class="nav navbar-nav">
-                <li><a href="http://isic-archive.com">Home</a></li>
-                <li><a href="#">About</a></li>
-            </ul>
         </div>
-        <!-- Need to cleanup class assignment for these buttons... this seems redundant -->
         <div class="navbar-right navbar navbar-fixed-top right-side-button ">
             <span class="navbar-right right-side-button navbar-btn btn-sm">Overlay Opacity: <input id="opacity_slider" data-slider-id='op_slider' type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.05" data-slider-value="0.5"/></span>
             <button id="tile_toggle" class="btn btn-default navbar-right navbar-btn btn-sm ">Hide Overlays</button>
             <button id="tile_button" class="btn  btn-default navbar-right  navbar-btn btn-sm ">Show superpixels</button>
         </div>
     </nav>
+<!--	<div class="row" style="height:50px">-->
+
+<!-- </div> -->
+
     <div class="container-fluid" id="main">
+
+
         <div class="row">
             <div class="col-xs-4" id="left">
                 <h3>Image List <select id='image_list_dd'></select> </h3>
@@ -116,33 +119,35 @@
                 <div class="panel panel-default">
                 </div>
                 <!-- <div id="slider" width="300px !important"></div> -->
+
+
                 <div class="panel panel-default">
-                    <div class="panel-heading" align="center">Please select the raters to overlay</div>
-                    <div id="rater_info">
-                        <div id="tile_opacity"></div>
-                        <span id="displayed_data_info" class="h6">
                       <ul id="rater_color_list"></ul>
-           </span>
+
+                    <div id="rater_info">
+                        <span id="displayed_data_info" class="h6"></span>
                     </div>
                 </div>
                 <div class="panel panel-default">
-                    <!-- <div class="panel-heading" align="center"><b>Feature Selector</b></div>-->
-                    <!--<div id="feature_btn_group" class="btn-group btn-group-single featurebtns_wrapper" data-toggle="buttons-radio"></div>-->
                     <div id="feature_btn_group" class="featurebtns_wrapper" data-toggle="buttons-radio"></div>
                 </div>
-                <div id="feature_info_stats" class="h4 lead"></div>
-                <div id="tile_info_stats" class="h1 lead"></div>
             </div>
             <div class="col-xs-8">
                 <div id="openseadragon1" style="width: 100%; height: 600px; border: 1px solid blue" class="openseadragon"></div>
             </div>
         </div>
-        <!-- end template -->
-        <!-- script references -->
+
+		<div  style="display: none;">
+                <div id="feature_info_stats" class="col-xs-4"></div>
+                <div id="tile_info_stats" class="col-xs-4"></div>
+                <div id="rater_info_stats" class="col-xs-4"></div>
+                        <div id="tile_opacity" style="display:none"></div>
+
+			</div>
+
 </body>
 
 </html>
-<!-- Bootstrap -->
 <script>
 //Putting Various Helper functions up here
 var color20 = d3.scale.category20();
@@ -151,7 +156,6 @@ var color20 = d3.scale.category20();
 var colours = ['purple', 'blue', 'green  ', 'navy', 'green', 'navy', 'blue', 'pink', 'orange', 'yellow', 'lime', 'green', 'blue', 'navy', 'black'];
 
 var color_heatmap = ['blue', 'blue', 'yellow', 'orange', 'red'];
-
 
 var image_info_list = {};
 var superpixel_markup_info = {}; //Stores the marked up data for each tile and rater
@@ -187,7 +191,6 @@ $.each(top_level_features, function(k, v) {
 );
 
 
-
 var new_geodata;
 var my_data = {};
 </script>
@@ -205,9 +208,6 @@ svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
 raters = ['braunr', 'haroldr', 'carrerac', 'marghooa'];
 
 var OpacitySlider;
-
-
-
 
 $(document).ready(function() {
 
@@ -252,7 +252,8 @@ $(document).ready(function() {
     $.each(raters, function(n, v) {
         //$("#rater_color_list").append(`<li><span style="color:${colours[n]}">${v}</span></li>`);
         $("#rater_color_list").append(
-            `<span class="btn btn-default "><input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons "><label for="show_${v}" style="color:${colours[n]}">${v}</label></input></span>`);
+//            `<span class="btn btn-default "><input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons "><label for="show_${v}" style="color:${colours[n]}">${v}</label></input></span>`);
+            `<span class="btn btn-default "><label for="show_${v}" style="color:${colours[n]}">${v}</label></span>`);
         //$<input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons"><label for="show_${v}">${v}</label></input> 
     });
     $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
@@ -313,7 +314,6 @@ $(document).ready(function() {
             new_mark_superpixels();
         })
 
-
     }
 
 
@@ -334,8 +334,6 @@ $(document).ready(function() {
     $(function() {
         $('[data-toggle="tooltip"]').tooltip()
     })
-
-
     //end of READY function
 });
 
@@ -385,8 +383,6 @@ function load_feature_list() {
             <div id="collapse${cur_grp.feature_group}" class="panel-collapse collapse ">
                 <div class="panel-body button-panel">`;
 
-
-
             accord_data_footer = `</div></div></div>`
 
 
@@ -410,11 +406,6 @@ function load_feature_list() {
             //$("#feature_btn_group").append(button_data_for_cur_grp);
             //console.log(button_data_for_cur_grp);
             console.log(accord_data_header + button_data_for_cur_grp + accord_data_footer);
-            //$("#feature_btn_group").append(accord_data_footer);
-
-
-
-
         });
 
         $("#feature_btn_group").append("</div></div>");
@@ -436,10 +427,8 @@ function load_feature_list() {
                 $("#feature_info_stats").append("Feature" + current_feature + " present");
             }
 
-
             //So I need to check the state of the button to either draw or clear a given tile(s) colors for a rater..
             cur_slider_value = OpacitySlider.val();
-            //     var new_opacity = (cur_opacity == 0) ? cur_slider_value : 0;
             $('.tileClass').attr('opacity', cur_slider_value);
             new_mark_superpixels();
         })
@@ -449,19 +438,15 @@ function load_feature_list() {
         console.log('did i select the first button?');
         //  $(".feature_btns").first().button("toggle");  //this isn't working for this type of radio button... seems to set the active and focus attributes
 
-
-
     })
 
 }
 
 
-
 function hide_unannotated_features(superpixel_markup_info) {
-    console.log('should be hiding buttons');
+//    console.log('should be hiding buttons');
     //Beacause we may have 30-50 features present, we do not want the observer to try and click on each button to "see" if a given feature is there
     //First I need to reset all the radio buttons to make them all clickable, then disable if not present
-    //$("#feature_btn_group").button('reset');
     //avail_features list the features that have been detected in this image..
     img_avail_features = Object.keys(superpixel_markup_info);
     //var annotated_feature_list = ['net_typ', 'net_atyp', 'str_chrys','net_targ','ves_serp','ves_clods']; //will load these frim a file
@@ -487,7 +472,6 @@ function update_rater_overlays(imageName) {
     //This will eventually need to reed the list or raters and update the sources for all of the raters that have been added
     //ALSO need to add in something that populates the stats for the rater(s)
     loadSVGTileData(imageName);
-
     //NEED TO GRAB THE OVERLAY FOR THIS IMAGE
     $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
     new_mark_superpixels();
@@ -505,8 +489,6 @@ $(function() {
     $("body").keypress(function(event) {
         if (event.keyCode == 116) {
             cur_opacity = $('.tileClass').attr('opacity');
-            //cur_slider_value = $("#slider").slider("option", "value");
-
             cur_slider_value = OpacitySlider.val();
             var new_opacity = (cur_opacity == 0) ? cur_slider_value : 0;
             $('.tileClass').attr('opacity', new_opacity);
@@ -517,13 +499,10 @@ $(function() {
 
 //This code will cgenerate the buttons
 function run_it() {
-
     $("#feature_btn_group").empty(); //clear current selection
-
     $.each(top_level_features, function(k, v) {
             feat = top_level_features[k];
         }
-        //For each high level feature group, I want to now list all of the features associated with that group
     );
 }
 </script>
