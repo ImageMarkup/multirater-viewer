@@ -19,13 +19,6 @@ def static_proxy(path):
   # send_static_file will guess the correct MIME type
   return app.send_static_file(path)
 
-@app.route('/images/<path:path>')
-def send_images(path):
-    return send_from_directory('images', path)
-
-@app.route('/json_data/<path:path>')
-def send_json_data(path):
-    return send_from_directory('json_data',path)
 
 @app.route('/api/FeatureList')
 def get_feature_list():
