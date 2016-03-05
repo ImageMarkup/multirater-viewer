@@ -8,10 +8,33 @@ import pymongo
 mongo_con = pymongo.MongoClient('localhost',27017)
 db_ptr = mongo_con['TileMarkup_DB']
 tile_db = db_ptr['tileLevelData']
+import json
+isic_cache = mongo_con['dsa']
+
 
 @app.route('/')
 def root():
     return app.send_static_file('index.html')
+
+
+@app.route('/thumbview.html')
+def thumb_root():
+    return app.send_static_file('webix_thumbnail.html')
+
+
+@app.route('/api/v2/imageThumb')
+def thumb_get_imagelist():
+    my_recs = isic_cache['images'].find({ 'meta.clinical.age': {"$exists": True}, 'meta.clinical.benign_malignant': {"$exists":True}} ).limit(4100)
+
+    img_data = []
+    idx  = 0
+    for r in my_recs:
+        r['id'] = idx
+        idx +=1
+        img_src = 'https://isic-archive.com:443/api/v1/image/%s/thumbnail?width=256' % r['_id']
+        r['img_src'] = img_src
+        img_data.append(r)
+    return json.dumps(img_data)
 
 
 @app.route('/<path:path>')
