@@ -27,36 +27,32 @@
         padding-right: 20px;
         margin-right: 20px;
     }
-
-
-.panel-heading a:after {
-    font-family:'Glyphicons Halflings';
-    content:"\e114";
-    float: right;
-    color: grey;
-}
-.panel-heading a.collapsed:after {
-    content:"\e080";
-}
-
-   
-    /* Overriding radio buttons so I can add some space and curve the borders */
-    .feature_btns {
-
-    /*border-top-right-radius: 4px !important;
-    border-bottom-right-radius: 4px !important  ;*/
-    border-radius: 4px !important;
-
-    margin: 2px !important;
-    padding: 2px !important;
+    
+    .panel-heading a:after {
+        font-family: 'Glyphicons Halflings';
+        content: "\e114";
+        float: right;
+        color: grey;
     }
-
-
-.btn-group-single > .btn:first-child {
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-}
-
+    
+    .panel-heading a.collapsed:after {
+        content: "\e080";
+    }
+    /* Overriding radio buttons so I can add some space and curve the borders */
+    
+    .feature_btns {
+        /*border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important  ;*/
+        border-radius: 4px !important;
+        margin: 2px !important;
+        padding: 2px !important;
+    }
+    
+    .btn-group-single > .btn:first-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+    
     .navbar-brand {
         color: yellow !important;
     }
@@ -80,25 +76,18 @@
         padding: 10px;
         margin: 10px;
     }
-
-
-     .featurebtns-example
-        {
-
-            margin: 2px !important;
-            margin-bottom: 2px !important;
-            padding: 2px !important;
-        }
     
-     .button-panel
-        {
-margin: 2px !important;
-            margin-bottom: 2px !important;
-            padding: 2px !important;
-
-        }
-
-
+    .featurebtns-example {
+        margin: 2px !important;
+        margin-bottom: 2px !important;
+        padding: 2px !important;
+    }
+    
+    .button-panel {
+        margin: 2px !important;
+        margin-bottom: 2px !important;
+        padding: 2px !important;
+    }
     </style>
 </head>
 
@@ -140,10 +129,7 @@ margin: 2px !important;
                     <!-- <div class="panel-heading" align="center"><b>Feature Selector</b></div>-->
                     <!--<div id="feature_btn_group" class="btn-group btn-group-single featurebtns_wrapper" data-toggle="buttons-radio"></div>-->
                     <div id="feature_btn_group" class="featurebtns_wrapper" data-toggle="buttons-radio"></div>
-
-
-
-               </div>
+                </div>
                 <div id="feature_info_stats" class="h4 lead"></div>
                 <div id="tile_info_stats" class="h1 lead"></div>
             </div>
@@ -175,46 +161,44 @@ var current_feature = "net_typ";
 var annotated_feature_list = [];
 //['net_typ', 'net_atyp', 'str_chrys','net_targ','ves_serp','ves_clods']; //will load these frim a file
 
-var feature_groups = [  {'feature_group': 'Structures', 'feature_abbrev': 'str'}, 
-                            {'feature_group': 'Colors', 'feature_abbrev': 'c'}, 
-                            {'feature_group': 'Vessels', 'feature_abbrev': 'ves'},
-                            {'feature_group': 'Other', 'feature_abbrev': 'oth'},
-                            {'feature_group': 'Network', 'feature_abbrev': 'net'}
-                                ]
-                            
-$.each(top_level_features, function(k,v) { 
-              feat = top_level_features[k];
-                   console.log(feat.feature_group, feat.feature_abbrev) } 
-        //For each high level feature group, I want to now list all of the features associated with that group
+var feature_groups = [{
+    'feature_group': 'Structures',
+    'feature_abbrev': 'str'
+}, {
+    'feature_group': 'Colors',
+    'feature_abbrev': 'c'
+}, {
+    'feature_group': 'Vessels',
+    'feature_abbrev': 'ves'
+}, {
+    'feature_group': 'Other',
+    'feature_abbrev': 'oth'
+}, {
+    'feature_group': 'Network',
+    'feature_abbrev': 'net'
+}]
 
-          );
-//c_lbrown,c_dbrown,c_white,c_gray,c_blue,c_black,c_red,c_bluegray,c_bluewhite,net_typ,net_atyp,net_pseudo,net_neg,net_targ,str_strless,str_hypo_areas,str_reg_blotch,str_irreg_blotch,str_bluewhite,str_bluegraygran,str_scar,str_peribrown,str_bluegraydots,str_streaks,str_pseudo,str_radialstream,str_irrstreaks,str_lines,str_circle,str_clod,str_chrys,str_rhomb,str_regress,str_regblackdots,str_regbrdots,str_irrblackdots,str_periblack,str_irrbrdots,str_irrbluedots,str_irrred,str_regblackglob,str_regbrglob,str_regblueglob,str_irrblackglob,str_irrbrglob,str_irrblueglob,str_irrbluered,ves_comma,ves_atyp,ves_pinkveil,ves_polymorph,ves_dotted,ves_linearbranch,ves_serp,ves_hel,ves_hairpin,ves_coil,ves_milky,ves_clods,ves_linear,oth_lacuna,oth_milia,oth_comedo,oth_cereb,oth_sharpdemarc,oth_spoke,oth_moth,oth_finger,oth_leaf,oth_ovoids,oth_blgrayglob,oth_ulcer
+$.each(top_level_features, function(k, v) {
+        feat = top_level_features[k];
+        console.log(feat.feature_group, feat.feature_abbrev)
+    }
+    //For each high level feature group, I want to now list all of the features associated with that group
+
+);
+
 
 
 var new_geodata;
 var my_data = {};
 </script>
 <script type="text/javascript">
-// var dg_viewer = OpenSeadragon({
-//     id: "openseadragon1",
-//     prefixUrl: "/images/openseadragon-bin-2.0.0/images/",
-//     showNavigator: true,
-//     tileSources: {
-//         type: 'legacy-image-pyramid',
-//         levels: [{
-//             url: 'images/base_img/UDA2_pilot_001-p1c.png',
-//             height: 920,
-//             width: 960
-//         }]
-//     }
-// });
+
 
 var dg_viewer = OpenSeadragon({
     id: "openseadragon1",
     prefixUrl: "/images/openseadragon-bin-2.0.0/images/",
     showNavigator: true,
-    }
-    );
+});
 
 svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
 
@@ -377,21 +361,21 @@ function load_feature_list() {
             $("#feature_btn_group").append(rb);
         });
 
-      
-
-$("#feature_btn_group").empty();
-//Add in the needed code for an accordion group
-
-$("#feature_btn_group").append( '<div class="featurebtns-example"> <div class="panel-group" role="tablist" id="button-accordion">');
 
 
-$.each(feature_groups, function(k,v) { 
-              cur_grp = feature_groups[k];
-                   console.log("ITERATING THIS FEATURE NOW!!",cur_grp.feature_group, cur_grp.feature_abbrev) 
-        //For each high level feature group, I want to now list all of the features associated with that group
-               //   $("#feature_btn_group").append("<div>"+cur_grp.feature_group+"");
+        $("#feature_btn_group").empty();
+        //Add in the needed code for an accordion group
 
-accord_data_header = `
+        $("#feature_btn_group").append('<div class="featurebtns-example"> <div class="panel-group" role="tablist" id="button-accordion">');
+
+
+        $.each(feature_groups, function(k, v) {
+            cur_grp = feature_groups[k];
+            console.log("ITERATING THIS FEATURE NOW!!", cur_grp.feature_group, cur_grp.feature_abbrev)
+                //For each high level feature group, I want to now list all of the features associated with that group
+                //   $("#feature_btn_group").append("<div>"+cur_grp.feature_group+"");
+
+            accord_data_header = `
         <div class="panel panel-default featurebtns-example">
             <div class="panel-heading">
                 <h3 class="panel-title">
@@ -404,33 +388,34 @@ accord_data_header = `
 
 
             accord_data_footer = `</div></div></div>`
-            
-
-          //  $("#feature_btn_group").append(accord_data_header);
-               button_data_for_cur_grp = "";
-                $.each(avail_features, function(idx,feat) {
-                                 if (feat.startsWith(cur_grp.feature_abbrev)){
-                     feat_without_class = feat.replace(cur_grp.feature_abbrev+'_','');                 
-
-                     //To save Space I am removing the feature Class i.e. net col oth
-             var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${feat}" id="feat_${feat}" value="${feat}" >${feat_without_class}</button>`;
-              button_data_for_cur_grp += rb;
-            //$("#feature_btn_group").append(rb);
-
-                                    console.log('MATCHED GROUP FOR:'+feat)};
-                               })
-             
-          $("#feature_btn_group").append(accord_data_header+button_data_for_cur_grp+accord_data_footer);
-
-              //$("#feature_btn_group").append(button_data_for_cur_grp);
-        //console.log(button_data_for_cur_grp);
-          console.log(accord_data_header+button_data_for_cur_grp+accord_data_footer);      
-          //$("#feature_btn_group").append(accord_data_footer);
-
-            
 
 
-          });
+            //  $("#feature_btn_group").append(accord_data_header);
+            button_data_for_cur_grp = "";
+            $.each(avail_features, function(idx, feat) {
+                if (feat.startsWith(cur_grp.feature_abbrev)) {
+                    feat_without_class = feat.replace(cur_grp.feature_abbrev + '_', '');
+
+                    //To save Space I am removing the feature Class i.e. net col oth
+                    var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${feat}" id="feat_${feat}" value="${feat}" >${feat_without_class}</button>`;
+                    button_data_for_cur_grp += rb;
+                    //$("#feature_btn_group").append(rb);
+
+                    console.log('MATCHED GROUP FOR:' + feat)
+                };
+            })
+
+            $("#feature_btn_group").append(accord_data_header + button_data_for_cur_grp + accord_data_footer);
+
+            //$("#feature_btn_group").append(button_data_for_cur_grp);
+            //console.log(button_data_for_cur_grp);
+            console.log(accord_data_header + button_data_for_cur_grp + accord_data_footer);
+            //$("#feature_btn_group").append(accord_data_footer);
+
+
+
+
+        });
 
         $("#feature_btn_group").append("</div></div>");
 
@@ -460,9 +445,9 @@ accord_data_header = `
         })
 
 
-    $(".feature_btns").not('.disabled').first().button("toggle");  //this should select the first active button in the image set
-    console.log('did i select the first button?');
-//  $(".feature_btns").first().button("toggle");  //this isn't working for this type of radio button... seems to set the active and focus attributes
+        $(".feature_btns").not('.disabled').first().button("toggle"); //this should select the first active button in the image set
+        console.log('did i select the first button?');
+        //  $(".feature_btns").first().button("toggle");  //this isn't working for this type of radio button... seems to set the active and focus attributes
 
 
 
@@ -531,31 +516,17 @@ $(function() {
 
 
 //This code will cgenerate the buttons
-function run_it()
-    {
+function run_it() {
 
- //var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${k}" id="feat_${k}" value="${k}" >${k}</button>`;
-   //         $("#feature_btn_group").append(rb);
+    $("#feature_btn_group").empty(); //clear current selection
 
-  $("#feature_btn_group").empty(); //clear current selection
-
-$.each(top_level_features, function(k,v) { 
-              feat = top_level_features[k];
-                   console.log(feat.feature_group, feat.feature_abbrev) } 
+    $.each(top_level_features, function(k, v) {
+            feat = top_level_features[k];
+        }
         //For each high level feature group, I want to now list all of the features associated with that group
-                   //console.log(rb);
-           // var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${k}" id="feat_${k}" value="${k}" >${k}</button>`;
-            //$("#feature_btn_group").append(rb);
-        
-          );
-    }
-
-
-//need to add a callback function to this as well... hmm so want to load the geodata than push it to the SVG
-//<!-- Some tips on working with SVG docs http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
-//ttps://www.dashingd3js.com/creating-svg-elements-based-on-data dg_viewer.viewport.maxZoomPixelRatio=5 dg_viewer.viewport.minZoomPixelRatio=0.4 Can play //around with these $(".rater_buttons").click( function() { console.log(this.id) }); -->
+    );
+}
 </script>
-
 </body>
 
 </html>
