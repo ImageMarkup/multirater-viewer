@@ -11,7 +11,6 @@ function loadSVGTileData(imageName) {
     img_width = image_info_list[imageName].img_width;
 
     new_geodata = function() {
-        console.log('loading new geo data');
         geo_array = [];
         $.ajax({
             'async': false,
@@ -73,8 +72,6 @@ function new_mark_superpixels(sp_info) {
                 //In this case the tile is colored for the individual rater.... otherwise it's a color palette
                 //Currently I am going 
                 rater_index = raters.indexOf(raters_for_tile[0])
-                console.log(raters_for_tile, rater_index)
-
                 $("#tile" + tileID).css('fill', colours[rater_index]);
 
             } else {
@@ -87,7 +84,6 @@ function new_mark_superpixels(sp_info) {
 
 
     $(".tileClass").hover(function() {
-        console.log(this.id);
         pixnum = (this.id).substring(4);
         $("#tile_info_stats").empty(); /// clear the current DIV before I start putting stats in it..
         //              $("#tile_info_stats").append(num_superpixels.toString() + ' superpixels are in this image');
@@ -102,7 +98,6 @@ function new_mark_superpixels(sp_info) {
         rft = []
         $.each(pix_raters, function(k, v) {
             if (v != '0.0') { rft.push(k); } })
-        console.log(rft);
         $("#tile_info_stats").append("<br>Raters: " + JSON.stringify(rft));
 
 
@@ -138,7 +133,7 @@ function contourdata_to_shape(contours, img_width) {
 
     //Need to add the below function to a callback function for above..
     $(".tileClass").hover(function() {
-        console.log(this.id)
+        //console.log(this.id)
     });
 
     return polygon_list;
@@ -148,7 +143,7 @@ function contourdata_to_shape(contours, img_width) {
 //Currently not actually doing anything with the feature.. or rater...!! need to add in handlers
 function color_some_tiles(rater, feature) {
     //given a feature and a rater and an image ID I should color the respective tiles on the super pixel image
-    console.log("should be painting " + feature + "for " + rater);
+    //console.log("should be painting " + feature + "for " + rater);
     new_mark_superpixels(); // loadSVGTileData(imageName);
     //I think I am going to structure this to paint all tiles for all the raters...
 }
@@ -157,6 +152,6 @@ function show_all_tiles() {
     //This will iterate through all the tiles and color them a different color to show the tile overlays
     //s$(".tileClass").remove()
     $(".tileClass").css('fill', function() { pixnum = this.id.substring(4);
-        console.log(pixnum);
+        //console.log(pixnum);
         return color20((pixnum % 20)) });
 }

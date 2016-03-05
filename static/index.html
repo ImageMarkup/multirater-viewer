@@ -105,9 +105,6 @@
             <button id="tile_button" class="btn  btn-default navbar-right  navbar-btn btn-sm ">Show superpixels</button>
         </div>
     </nav>
-<!--	<div class="row" style="height:50px">-->
-
-<!-- </div> -->
 
     <div class="container-fluid" id="main">
 
@@ -182,13 +179,13 @@ var feature_groups = [{
     'feature_abbrev': 'net'
 }]
 
-$.each(top_level_features, function(k, v) {
-        feat = top_level_features[k];
-        console.log(feat.feature_group, feat.feature_abbrev)
-    }
+// $.each(top_level_features, function(k, v) {
+//         feat = top_level_features[k];
+//         console.log(feat.feature_group, feat.feature_abbrev)
+//     }
     //For each high level feature group, I want to now list all of the features associated with that group
 
-);
+//);
 
 
 var new_geodata;
@@ -220,16 +217,13 @@ $(document).ready(function() {
 
     OpacitySlider.change(function(val) {
         new_slider_value = val.value.newValue;
-        console.log('new slider value is' + new_slider_value)
+      //  console.log('new slider value is' + new_slider_value)
         $(".tileClass").attr('opacity', new_slider_value);
 
     });
-    //TODO:  Should be able to set the change function in the slider constructor.. not sure of the syntax
-
 
     var $select = $('#image_list_dd');
 
-    //request the JSON data and parse into the select element
     //THIS Loads the Image List
     $.getJSON('data/image_info.json', function(data) {
         $("#image_list_dd").empty();
@@ -243,7 +237,6 @@ $(document).ready(function() {
         var imageName = $("#image_list_dd option:first").val();
         update_rater_overlays(imageName);
 
-
         load_new_image(imageName); //all the code to actually load the initial image I hope should be in here...
 
     });
@@ -252,9 +245,7 @@ $(document).ready(function() {
     $.each(raters, function(n, v) {
         //$("#rater_color_list").append(`<li><span style="color:${colours[n]}">${v}</span></li>`);
         $("#rater_color_list").append(
-//            `<span class="btn btn-default "><input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons "><label for="show_${v}" style="color:${colours[n]}">${v}</label></input></span>`);
             `<span class="btn btn-default "><label for="show_${v}" style="color:${colours[n]}">${v}</label></span>`);
-        //$<input type='checkbox' class="overlay_toggle" name="${v}" value="${v}" id="show_${v}" class="rater_buttons"><label for="show_${v}">${v}</label></input> 
     });
     $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
     $('.overlay_toggle').click(function() {
@@ -268,15 +259,14 @@ $(document).ready(function() {
         //Need to change the image source based on the new image I just added in the toggle, will also push the text
         // to a DIV so it's obvious what Image I am looking at
         selected_image = this.value;
-        console.log(image_info_list[this.value].filename_url);
+        //console.log(image_info_list[this.value].filename_url);
 
-        //ALSO ADD IN SOMETHING HERE TO CHANGE THE OVERLAY images
         load_new_image(selected_image);
 
     });
 
     $("#tile_toggle").button().click(function() {
-        console.log(this.id + 'was pressed')
+       // console.log(this.id + 'was pressed')
         $(".tileClass").css('fill', 'none')
     });
 
@@ -285,8 +275,7 @@ $(document).ready(function() {
         //Consolidating all of the function calls that need to be made when I switch an image into this snipper... this should be called
         //on document ready, and attached to the SELECT element when it's changed.
 
-        console.log("consolidinating image load code to here for" + image_name);
-
+      //  console.log("consolidinating image load code to here for" + image_name);
 
         //First remove all of the SVG elements to prevent the screen from flashing weird colors
         $(".tileClass").remove();
@@ -326,8 +315,6 @@ $(document).ready(function() {
 
     //Adding RADIO Buttons to allow me to select features
     load_feature_list();
-
-
     show_all_tiles();
     new_mark_superpixels();
 
@@ -342,105 +329,6 @@ $('#tile_img').toggle();
 
 
 
-function load_feature_list() {
-    //AJAX Call to hit the API EndPoint and get the list of features for the given project and/or Image
-    //I think to make the UI cleaner and so the buttons don't move around, we will load all of
-    avail_features = []
-    $.getJSON('api/FeatureList', function(data) {
-        avail_features = data['features'];
-        //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
-        console.log("newly available features are");
-        console.log(avail_features)
-
-        //Also now load the feature button by iterating through them
-        $.each(avail_features, function(v, k) {
-            //console.log(rb);
-            var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${k}" id="feat_${k}" value="${k}" >${k}</button>`;
-            $("#feature_btn_group").append(rb);
-        });
-
-
-
-        $("#feature_btn_group").empty();
-        //Add in the needed code for an accordion group
-
-        $("#feature_btn_group").append('<div class="featurebtns-example"> <div class="panel-group" role="tablist" id="button-accordion">');
-
-
-        $.each(feature_groups, function(k, v) {
-            cur_grp = feature_groups[k];
-            console.log("ITERATING THIS FEATURE NOW!!", cur_grp.feature_group, cur_grp.feature_abbrev)
-                //For each high level feature group, I want to now list all of the features associated with that group
-                //   $("#feature_btn_group").append("<div>"+cur_grp.feature_group+"");
-
-            accord_data_header = `
-        <div class="panel panel-default featurebtns-example">
-            <div class="panel-heading">
-                <h3 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#button-accordion" href="#collapse${cur_grp.feature_group}">${cur_grp.feature_group}</a>
-                </h3>
-            </div>
-            <div id="collapse${cur_grp.feature_group}" class="panel-collapse collapse ">
-                <div class="panel-body button-panel">`;
-
-            accord_data_footer = `</div></div></div>`
-
-
-            //  $("#feature_btn_group").append(accord_data_header);
-            button_data_for_cur_grp = "";
-            $.each(avail_features, function(idx, feat) {
-                if (feat.startsWith(cur_grp.feature_abbrev)) {
-                    feat_without_class = feat.replace(cur_grp.feature_abbrev + '_', '');
-
-                    //To save Space I am removing the feature Class i.e. net col oth
-                    var rb = `  <button class="btn btn-xs feature_btns" data-toggle="tooltip" data-placement="top" title="${feat}" id="feat_${feat}" value="${feat}" >${feat_without_class}</button>`;
-                    button_data_for_cur_grp += rb;
-                    //$("#feature_btn_group").append(rb);
-
-                    console.log('MATCHED GROUP FOR:' + feat)
-                };
-            })
-
-            $("#feature_btn_group").append(accord_data_header + button_data_for_cur_grp + accord_data_footer);
-
-            //$("#feature_btn_group").append(button_data_for_cur_grp);
-            //console.log(button_data_for_cur_grp);
-            console.log(accord_data_header + button_data_for_cur_grp + accord_data_footer);
-        });
-
-        $("#feature_btn_group").append("</div></div>");
-
-
-
-        annotated_feature_list = avail_features;
-
-        $("#feature_btn_group button").click(function() {
-            //console.log(this.id); // points to the clicked input button
-
-            current_feature = this.value;
-            $("#feature_info_stats").empty();
-            //ALSO ADDI N SOME STATS TO INDICATE HOW MANY TILES WERE MARKED FOR THIS FEATURE...
-            cfd = superpixel_markup_info[current_feature]; //Current Feature data
-            if (!cfd) {
-                $("#feature_info_stats").append("Feature " + current_feature + " NOT in this image");
-            } else {
-                $("#feature_info_stats").append("Feature" + current_feature + " present");
-            }
-
-            //So I need to check the state of the button to either draw or clear a given tile(s) colors for a rater..
-            cur_slider_value = OpacitySlider.val();
-            $('.tileClass').attr('opacity', cur_slider_value);
-            new_mark_superpixels();
-        })
-
-
-        $(".feature_btns").not('.disabled').first().button("toggle"); //this should select the first active button in the image set
-        console.log('did i select the first button?');
-        //  $(".feature_btns").first().button("toggle");  //this isn't working for this type of radio button... seems to set the active and focus attributes
-
-    })
-
-}
 
 
 function hide_unannotated_features(superpixel_markup_info) {
@@ -454,30 +342,18 @@ function hide_unannotated_features(superpixel_markup_info) {
     //TODO Need to clean up logic below; for some reason if I reset all the buttons above and then ran the below code, nothing got set
     //Not sure if I was running into a race condition?
     $.each(annotated_feature_list, function(index, value) {
-        console.log(index, value);
+      //  console.log(index, value);
         if (img_avail_features.indexOf(value) < 0) { //feature is not present
             //the ID of the feature buttons actually have feat_ prepended to the feature name..
             $("#feat_" + value).addClass('disabled');
-            console.log('I think I just this?? #feat_' + value);
+           // console.log('I think I just this?? #feat_' + value);
             // $("#feat_net_targ").addClass('disabled');
-            console.log('CRAP');
+          
         } else if (img_avail_features.indexOf(value) > -1) {
             $("#feat_" + value).removeClass('disabled');
         }
     });
 }
-
-function update_rater_overlays(imageName) {
-    console.log("NEED TO update the overlay SRC ids as well" + imageName);
-    //This will eventually need to reed the list or raters and update the sources for all of the raters that have been added
-    //ALSO need to add in something that populates the stats for the rater(s)
-    loadSVGTileData(imageName);
-    //NEED TO GRAB THE OVERLAY FOR THIS IMAGE
-    $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
-    new_mark_superpixels();
-}
-
-
 
 
 
@@ -500,12 +376,9 @@ $(function() {
 //This code will cgenerate the buttons
 function run_it() {
     $("#feature_btn_group").empty(); //clear current selection
-    $.each(top_level_features, function(k, v) {
-            feat = top_level_features[k];
-        }
-    );
+    // $.each(top_level_features, function(k, v) {
+    //         feat = top_level_features[k];
+    //     }
+    // );
 }
 </script>
-</body>
-
-</html>
