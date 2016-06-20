@@ -1,0 +1,24 @@
+{
+  "name": "ISIC MultiRaterv2",
+  "homepage": "https://github.com/ImageMarkup/multirater-viewer",
+  "description": "This is a rewrite of isic multirater viewer using bower for dependencies",
+  "main": "index.html",
+  "keywords": [
+    "isic"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.0.0",
+    "d3": "^3.5.17",
+    "jquery-ui": "^1.11.4",
+    "openseadragon": "2.1.0",
+    "svg-overlay": "*"
+  }
+}
