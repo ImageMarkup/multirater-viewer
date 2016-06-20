@@ -5,9 +5,26 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
     <title>ISIC MultiRater Viewer</title>
+
+
+	<script src="bower_components/jquery/dist/jquery.js"></script> <!-- Currently using 3.0 -->
+	<script src="bower_components/openseadragon/built-openseadragon/openseadragon/openseadragon.js"></script>
+	<script src="bower_components/svg-overlay/openseadragon-svg-overlay.js"></script>
+
 </head>
 <body>
 	
 
-	
+<div class="col-xs-8">
+                <div id="openseadragon1" style="width: 100%; height: 600px; border: 1px solid blue" class="openseadragon"></div>
+            </div>
+
+<script>
+var dg_viewer = OpenSeadragon({
+    id: "openseadragon1",
+    prefixUrl: "bower_components/openseadragon/built-openseadragon/openseadragon/images/",
+    showNavigator: true,
+});
+</script>
+
 </body>
