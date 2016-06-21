@@ -1,0 +1,30 @@
+{
+  "name": "isic_multirater_viewer",
+  "homepage": "https://github.com/ImageMarkup/multirater-viewer",
+  "description": "Multirater viewer app for isic archive",
+  "main": "index.html",
+  "keywords": [
+    "isic"
+  ],
+  "authors": [
+    "David A Gutman"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "d3": "^3.5.17",
+    "jquery-ui": "^1.11.4",
+    "openseadragon": "2.1.0",
+    "jquery": "^2.2.4",
+    "svg-overlay": "*",
+    "webix": "^3.3.17"
+  }
+}
