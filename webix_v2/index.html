@@ -4,24 +4,28 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
-    <title>ISIC MultiRater Viewer</title>
+    <title>ISIC V2 MultiRater Viewer</title>
     <script src="bower_components/jquery/dist/jquery.js"></script>
-    <!-- Currently using 3.0 -->
     <script src="bower_components/openseadragon/built-openseadragon/openseadragon/openseadragon.js"></script>
     <script src="bower_components/svg-overlay/openseadragon-svg-overlay.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-    <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
     <script src="bower_components/webix/codebase/webix.js"></script>
     <link href="bower_components/webix/codebase/webix.css" rel="stylesheet">
     <!-- Custom JS and CSS here-->
-    <script src="js/isic_multirater.js"></script>
+    <!-- <script src="js/isic_multirater.js"></script> -->
     <link href="css/isic_multirater.css" rel="stylesheet">
+    <script src="js/isic_multirater_layout.js"></script>
 </head>
 
 <body>
- <div id="isicmrv_header" style="display:none">
-    <div class='headerBox'>
-    <div class="header">
+    <div id="multirater_layout"></div>
+    <div id="osd_viewdiv">
+        <h2>OSD Zoomer</h2>
+        <div id="openseadragon1" style="width: 100%; height: 800px; border: 1px solid blue" class="openseadragon"></div>
+    </div>
+    <!-- <div id="isicmrv_header" style="display:none">
+  -->
+    <!-- <div class='headerBox'> -->
+    <!--  <div class="header">
         <div class='content'>
             <a href='http://isic-archive.com' class='top_logo'></a>
             <div class='top_menu'>
@@ -40,54 +44,8 @@
                         <button id="tile_button" class="btn  btn-default navbar-right  navbar-btn btn-sm ">Show superpixels</button>
                         <button id="tile_boundaries" class="btn btn-default navbar-right navbar-btn btn-sm">Lsn Boundaries</button>
                         <button id="show_magic" class="btn btn-default navbar-right navbar-btn btn-sm"> Filters</button>
-                    </div>
-        </div>
-    </div>
-    </div>
-    </div>
-
-    <div id="multirater_layout"></div>
-    <div id="osd_viewdiv" style="display:none">
-        <h2>OSD Zoomer</h2>
-        <div id="openseadragon1" style="width: 100%; height: 600px; border: 1px solid blue" class="openseadragon"></div>
-    </div>
+    
    
-        
-        </div>
-    </div>
-
-
-    <script>
-    webix.ready(function() {
-
-        webix.ui({
-            container: "multirater_layout",
-            id: "wbx_layout",
-            type: "space",
-            rows: [
-                { template: "html->isicmrv_header",autoheight:true}, 
-                {
-                    template: "row 2"
-                }, {
-                    cols: [{
-                            template: "left div"
-                        }, {
-                            template: "html->osd_viewdiv",
-                            autoheight: true,
-
-                        },
-
-                    ]
-                }
-            ]
-
-
-        })
-
-    });
-    </script>
-    <!-- <!-- <div class="container">
-        <!-- Static navbar -->
     <!-- <nav class="navbar navbar-default navbar-fixed-top  ">
             <div class="container-fluid">
                 
@@ -96,14 +54,7 @@
                         <li class="active"><a a href="http://isic-archive.com">Home</a></li>
                         <li><a href="#">About</a></li>
                         </li>
-                    </ul> -->
-    <!--   
-                </div> -->
-    <!--/.nav-collapse -->
-    <!--           </div>
-   -->
-    <!--/.container-fluid -->
-    <!--   </div>
+   
    -->
     <!-- Need to cleanup class assignment for these buttons... this seems redundant -->
     <!--   </nav>
@@ -133,9 +84,6 @@
             </div>
         </div>
    -->
-    <!--      <div class="row">
-            <div class="col-xs-4" id="left">
-                <!-- <div id="slider" width="300px !important"></div> -->
     <!--          <div class="panel panel-default">
                     <div class="panel-heading" align="center">Please select the raters to overlay</div>
                     <div id="rater_info">
@@ -156,14 +104,39 @@
     <!-- I am debating creating a second set of buttons listing what's in the current image? -->
     <!--     </div>
            <div class="col-xs-8"> -->
-    <div id="filter_dialog" style="display:none" title="Apply Filters">
+    <!-- <div id="filter_dialog" style="display:none" title="Apply Filters">
         Filter set will appear here
-    </div>
+    </div> -->
     <script>
+    sampleDZI = 'http://node15.cci.emory.edu/cgi-bin/iipsrv.fcgi?DeepZoom=/PYRAMIDS/PYRAMIDS/CDSA/GBM_Frozen/intgen.org_GBM.tissue_images.3.0.0/TCGA-06-0137-01A-01-BS1.svs.dzi.tif.dzi'
+
+
+    baseURL = "http://dermannotator.org:8000/v2"
+
+    imageSetName = 'ISIC_UDA-2_1'
+    imageName = 'ISIC_0001111'
+    spxSuffix = '_superpixels_v3.0.png.svg.json'
+    imgSuffix = '.jpg'
+
+    imgURL = baseURL + '/' + imageSetName + '/' + imageName + '/' + imageName + imgSuffix;
+
+    webSelectedImageTileSource = {
+        'type': 'legacy-image-pyramid',
+        levels: [{
+            'url': imgURL,
+            'height': 1000,
+            'width': 2000
+        }]
+
+    }
+
+
     var dg_viewer = OpenSeadragon({
         id: "openseadragon1",
         prefixUrl: "bower_components/openseadragon/built-openseadragon/openseadragon/images/",
         showNavigator: true,
+        tileSources: webSelectedImageTileSource,
+        maxZoomLevel: 10
     });
     </script>
 </body>
