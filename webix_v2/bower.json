@@ -1,0 +1,31 @@
+{
+  "name": "isic_multirater_viewer_v2",
+  "homepage": "https://github.com/ImageMarkup/multirater-viewer",
+  "authors": [
+    "David Gutman <dagutman@gmail.com>"
+  ],
+  "description": "Rewrite of isic multirater viewer",
+  "main": "index.html",
+  "keywords": [
+    "isic",
+    "multirater",
+    "webix",
+    "dermatology"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "d3": "^4.2.2",
+    "jquery-ui": "^1.12.0",
+    "openseadragon": "2.1.0",
+    "svg-overlay": "*",
+    "webix": "^3.4.0"
+  }
+}
