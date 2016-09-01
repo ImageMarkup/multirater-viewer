@@ -10,10 +10,13 @@
     <script src="bower_components/svg-overlay/openseadragon-svg-overlay.js"></script>
     <script src="bower_components/webix/codebase/webix.js"></script>
     <link href="bower_components/webix/codebase/webix.css" rel="stylesheet">
+    <script src="bower_components/d3/d3.js"></script>
     <!-- Custom JS and CSS here-->
     <!-- <script src="js/isic_multirater.js"></script> -->
     <link href="css/isic_multirater.css" rel="stylesheet">
     <script src="js/isic_multirater_layout.js"></script>
+
+        <script src="multirater.js"></script>
 </head>
 
 <body>
@@ -108,6 +111,10 @@
         Filter set will appear here
     </div> -->
     <script>
+    
+    var superpixel_markup_info = [];
+    var imageInfoList = {}; //This contains a list for all loaded images...
+
     sampleDZI = 'http://node15.cci.emory.edu/cgi-bin/iipsrv.fcgi?DeepZoom=/PYRAMIDS/PYRAMIDS/CDSA/GBM_Frozen/intgen.org_GBM.tissue_images.3.0.0/TCGA-06-0137-01A-01-BS1.svs.dzi.tif.dzi'
 
 
@@ -119,16 +126,55 @@
     imgSuffix = '.jpg'
 
     imgURL = baseURL + '/' + imageSetName + '/' + imageName + '/' + imageName + imgSuffix;
+    imgSVGuRL = baseURL + '/' + imageSetName + '/' + imageName + '/' + imageName + spxSuffix;
+    current_feature = "blob";
+
+
+
+ // console.log('need to load svg data for' + imageName);
+ //    SVG_file = image_info_list[imageName].superpixel_svg;
+ //    img_height = image_info_list[imageName].img_height;
+ //    img_width = image_info_list[imageName].img_width;
+
+    imageInfoList[imageName] = { 
+                    'superpixel_svg': imgSVGuRL,
+                    'img_height': 2848,
+                    'img_width': 4288
+                    }
+
+
+     $.getJSON(imgSVGuRL, function(data) {
+        superpixel_markup_info = data;
+        //I am going to disable buttons on the feature list if that feature isn't present in the currnet image...
+        // hide_unannotated_features(superpixel_markup_info);
+        
+
+        loadSVGTileData(imageName)
+        // show_all_tiles();
+        // new_mark_superpixels();
+    })
+
 
     webSelectedImageTileSource = {
         'type': 'legacy-image-pyramid',
         levels: [{
             'url': imgURL,
-            'height': 1000,
-            'width': 2000
+            'height':  2848,
+            'width': 4288
         }]
 
     }
+
+
+
+        $('.tileClass').attr('opacity', 1.0);
+    //  $("#tile_button").click(function() {
+    //     //Make sure tiles are actually visible in case they were toggled off..
+    //     cur_slider_value = OpacitySlider.val();
+    //     $('.tileClass').attr('opacity', cur_slider_value);
+    //     show_all_tiles();
+    // });
+
 
 
     var dg_viewer = OpenSeadragon({
@@ -138,5 +184,9 @@
         tileSources: webSelectedImageTileSource,
         maxZoomLevel: 10
     });
+
+    svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
+
+
     </script>
 </body>
