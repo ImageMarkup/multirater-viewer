@@ -2,3 +2,4 @@
 secrets.py
 *.delete
 *.zip
+.ipynb*

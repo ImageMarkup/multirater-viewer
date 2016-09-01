@@ -1,0 +1,25 @@
+{
+  "name": "multirater-viewer",
+  "homepage": "https://github.com/ImageMarkup/multirater-viewer",
+  "authors": [
+    "David Gutman <dagutman@gmail.com>"
+  ],
+  "description": "This is the ISIC multirater viewer",
+  "main": "index.html",
+  "keywords": [
+    "isic",
+    "webix",
+    "multirater"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "webix": "^3.4.0"
+  }
+}
