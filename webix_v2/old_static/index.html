@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>ISIC MultiRater Viewer</title>
+    <meta name="generator" content="Bootply" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="css/bootstrap-slider.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/jquery-ui.css">
+    <link href="css/jquery-ui.theme.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <link href="css/multirater_classis.css" rel="stylesheet">
+    
+    <script src="js/jquery-2.1.3.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/d3.v3.min.js" charset="utf-8"></script>
+    <script src="js/bootstrap-slider.js"></script>
+    <!-- <script src="js/jquery.svg.js"></script> -->
+    <script src="js/openseadragon.js"></script>
+    <script src="js/openseadragon-svg-overlay.js"></script>
+    <script src="js/multirater.js"></script>
+
+</head>
+
+<body>
+    <!-- begin template -->
+    <nav class="navbar navbar-custom navbar-fixed-top " role="navigation">
+        <div class="navbar navbar-fixed-top navbar-left   ">
+            <a class="navbar-brand" href="#">ISIC MultiRater Viewer</a>
+        </div>
+        <div class="navbar-right navbar navbar-fixed-top right-side-button ">
+            <span class="navbar-right right-side-button navbar-btn btn-sm">Overlay Opacity: <input id="opacity_slider" data-slider-id='op_slider' type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.05" data-slider-value="0.5"/></span>
+            <button id="tile_toggle" class="btn btn-default navbar-right navbar-btn btn-sm ">Hide Overlays</button>
+            <button id="tile_button" class="btn  btn-default navbar-right  navbar-btn btn-sm ">Show superpixels</button>
+        </div>
+    </nav>
+
+    <div class="container-fluid" id="main">
+
+
+        <div class="row">
+            <div class="col-xs-4" id="left">
+                <h3 align="center">Image List <select id='image_list_dd'></select> </h3>
+                <!-- item list -->
+                      <ul id="rater_color_list"></ul>
+
+                    <div id="feature_btn_group" class="featurebtns_wrapper" data-toggle="buttons-radio"></div>
+            </div>
+            <div class="col-xs-8">
+                <div id="openseadragon1" style="width: 100%; height: 600px; border: 1px solid blue" class="openseadragon"></div>
+            </div>
+        </div>
+
+		<div  style="display: none;">
+                <div id="feature_info_stats" class="col-xs-4"></div>
+                <div id="tile_info_stats" class="col-xs-4"></div>
+                <div id="rater_info_stats" class="col-xs-4"></div>
+                        <div id="tile_opacity" style="display:none"></div>
+
+			</div>
+
+</body>
+
+</html>
+<script>
+//Putting Various Helper functions up here
+
+</script>
+<script type="text/javascript">
+
+
+var dg_viewer = OpenSeadragon({
+    id: "openseadragon1",
+    prefixUrl: "/images/openseadragon-bin-2.0.0/images/",
+    showNavigator: true,
+      'maxZoomLevel': 4,
+        'showRotationControl': true, 
+});
+
+svg_layer = dg_viewer.svgOverlay(); //need to move to onload handler
+
+raters = ['braunr', 'haroldr', 'carrerac', 'marghooa'];
+
+var OpacitySlider;
+
+$(document).ready(function() {
+    //Opacity slides which is at the top of the toolbar for  changing opacity..
+    OpacitySlider = $('#opacity_slider').bootstrapSlider({
+        formatter: function(value) {
+            return 'Current value: ' + value;
+        }
+    });
+
+ $("body").keypress(function(event) {
+        if (event.keyCode == 116) {
+            cur_opacity = $('.tileClass').attr('opacity');
+            cur_slider_value = OpacitySlider.val();
+            var new_opacity = (cur_opacity == 0) ? cur_slider_value : 0;
+            $('.tileClass').attr('opacity', new_opacity);
+        }
+    });
+
+
+    OpacitySlider.change(function(val) {
+        new_slider_value = val.value.newValue;
+        console.log('new slider value is' + new_slider_value)
+        $(".tileClass").attr('opacity', new_slider_value);
+
+    });
+
+    var $select = $('#image_list_dd');
+
+    //THIS Loads the Image List
+    $.getJSON('data/image_info.json', function(data) {
+        $("#image_list_dd").empty();
+        my_data = data.responseJSON;
+        //iterate over the data and append a select option
+        $.each(data, function(key, val) {
+            $("#image_list_dd").append('<option id="' + val.image_name + '">' + val.image_name + '</option>');
+            image_info_list[val.image_name] = val;
+        });
+        //Maybe add functionality here to update_current_image.... this event needs to run when I load stuff which I don't think it is..
+        var imageName = $("#image_list_dd option:first").val();
+        update_rater_overlays(imageName);
+
+        load_new_image(imageName); //all the code to actually load the initial image I hope should be in here...
+
+    });
+
+    //Adding a list to identify which rater goes with which color-- probably need a new color scheme at some point
+    $.each(raters, function(n, v) {
+        //$("#rater_color_list").append(`<li><span style="color:${colours[n]}">${v}</span></li>`);
+        $("#rater_color_list").append(
+            `<span class="btn btn-default "><label for="show_${v}" style="color:${colours[n]}">${v}</label></span>`);
+    });
+    $(":checkbox").prop('checked', true); //reset all checkboxes to be checked...
+    $('.overlay_toggle').click(function() {
+        //  console.log(this.id);
+        color_some_tiles(this.id, "thefeatureIwanttolookat");
+    });
+
+    // Add event handler for changing the image
+    $select.change(function() {
+        //##This needs to clear as well as update information and change the viewer
+        //Need to change the image source based on the new image I just added in the toggle, will also push the text
+        // to a DIV so it's obvious what Image I am looking at
+        selected_image = this.value;
+        //console.log(image_info_list[this.value].filename_url);
+
+        load_new_image(selected_image);
+
+    });
+
+    $("#tile_toggle").button().click(function() {
+       // console.log(this.id + 'was pressed')
+        $(".tileClass").css('fill', 'none')
+    });
+
+    $("#tile_button").click(function() {
+        //Make sure tiles are actually visible in case they were toggled off..
+        cur_slider_value = OpacitySlider.val();
+        $('.tileClass').attr('opacity', cur_slider_value);
+        show_all_tiles();
+    });
+
+    //Adding RADIO Buttons to allow me to select features
+    load_feature_list();
+    show_all_tiles();
+    new_mark_superpixels();
+
+    $(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+    //end of READY function
+});
+
+
+$('#tile_img').toggle();
+
+
+
+
+</script>
