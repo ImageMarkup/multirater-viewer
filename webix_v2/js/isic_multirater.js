@@ -141,7 +141,7 @@ function load_image_list(study_uid) {
         })
         $("#image_list_dd").select2(); //Reinitialize the dynamic search widget
 
-        //console.log('should be trying to load', first_imageuid);
+
        //So I now need to actually get some metadata for the first image, which then calls another function to load the data..
         get_image_data(first_imageuid);
 
