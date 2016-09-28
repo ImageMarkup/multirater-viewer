@@ -152,9 +152,7 @@ function loadSVGTileData(imageName) {
             $(".tileClass").hover(function() {
                 console.log(this.id)
             });
-
             return polygon_list;
-
         }
 
 
@@ -169,6 +167,8 @@ function loadSVGTileData(imageName) {
  function show_all_tiles() {
               //This will iterate through all the tiles and color them a different color to show the tile overlays
               //s$(".tileClass").remove()
-              $(".tileClass").css( 'fill', function() { pixnum = this.id.substring(4); console.log( pixnum ); return color20( (pixnum %20 ))  } ); 
+              $(".tileClass").css( 'fill', function() { pixnum = this.id.substring(4); 
+                // console.log( pixnum );
+               return color20( (pixnum %20 ))  } ); 
               }
 

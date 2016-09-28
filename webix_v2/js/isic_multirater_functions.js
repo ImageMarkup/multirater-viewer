@@ -3,6 +3,8 @@
 var color20 = d3.scale.category20();
 
 
+        //activate buttons
+        //slide.HasAperioXML ? $$("aperio_import_btn").enable() : $$("aperio_import_btn").disable();
 
 function loadSVGTileData(imageName) {
 

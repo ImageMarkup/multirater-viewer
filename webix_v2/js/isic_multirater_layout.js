@@ -35,10 +35,11 @@ wbxMultiRaterHeader = {
             { view: "template", borderless: true, template: "<img src='images/1920px-MSKCC_logo.jpg' height=90 >", width: 300 },
             {},
             { view: "button", id: "tile_button", value: "Show Superpixels", autowidth: true, disabled: false, click: tileButtonClicked },
-            { view: "button", id: "show_magic", value: "Filters", autowidth: true, disabled: false, click: magicClicked },
-            { view: "button", id: "tile_boundaries", value: "Tile Boundaries", css: "top_button", click: tileBoundariesClicked }, {
+            // { view: "button", id: "show_magic", value: "Filters", autowidth: true, disabled: false, click: magicClicked },
+            { view: "button", id: "tile_boundaries", value: "Tile Boundaries", css: "top_button", autowidth: true, click: tileBoundariesClicked }, {
                 view: "slider",
-                label: "Opacity",
+                // label: "Opacity",
+                title: "Opacity",
                 value: "50",
                 min: 0,
                 max: 100,
@@ -46,10 +47,23 @@ wbxMultiRaterHeader = {
                 on: {
                     onChange: function() {
                         console.log("sliders changing?");
-                        // this.define("title", "Final value " + this.getValue());
-                        // this.refresh();
-                        webix.message(this.getValue());
-                    }
+                        this.define("title", "Final value " + this.getValue()+"%");
+                        this.refresh();
+                        
+
+        //Make sure tiles are actually visible in case they were toggled off..
+        cur_slider_value = this.getValue() / 100;
+        show_all_tiles();
+        $('.tileClass').attr('opacity', cur_slider_value);
+                    },
+                    onSliderDrag:function(){
+        this.define("title", "Dragging... Currently "+this.getValue()+"%");
+        this.refresh();
+    cur_slider_value = this.getValue() / 100;
+        show_all_tiles();
+        $('.tileClass').attr('opacity', cur_slider_value);
+    
+    }
                 },
 
             }
