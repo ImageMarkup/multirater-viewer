@@ -1,4 +1,2 @@
-*.pyc
-secrets.py
-*.delete
-*.zip
+bower_components/*
+app/config.js
