@@ -1,6 +1,0 @@
-[submodule "osd-filters"]
-	path = osd-filters
-	url = git@github.com:dgutman/osd-filters.git
-[submodule "js/-f"]
-	path = js/-f
-	url = git@github.com:dgutman/osd-filters.git
