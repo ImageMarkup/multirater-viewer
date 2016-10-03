@@ -7,6 +7,7 @@ require = {
 		"jquery": "bower_components/jquery/dist/jquery",
 		"scalebar": "lib/openseadragon-scalebar",
 		"config": "app/config",
+		"slide": "app/slide",
 		"zoomer": "app/zoomer"
 	},
 

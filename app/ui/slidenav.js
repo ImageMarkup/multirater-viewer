@@ -1,4 +1,4 @@
-define("ui/slidenav", ["config", "zoomer", "jquery"], function(config, zoomer, $){
+define("ui/slidenav", ["config", "zoomer", "slide"], function(config, zoomer, slide){
 
 	var folderName = null;
 	var patientId = null;
@@ -10,7 +10,7 @@ define("ui/slidenav", ["config", "zoomer", "jquery"], function(config, zoomer, $
         options:{
 			body:{
 				template:"#name#",
-				url: config.BASE_URL + "/folder?parentType=folder&parentId=57ed673c2f9b2e54ae833a24"
+				url: config.BASE_URL + "/dataset"
 			}
         },
         on:{
@@ -18,7 +18,7 @@ define("ui/slidenav", ["config", "zoomer", "jquery"], function(config, zoomer, $
             	var item = this.getPopup().getBody().getItem(id);
             	folderName = item.name;
             	var thumbs = $$("thumbnails_panel");
-                var url = config.BASE_URL + "/folder?parentType=folder&parentId=" + item._id;
+                var url = config.BASE_URL + "/image?datasetId=" + item._id;
                 thumbs.clearAll();
                 thumbs.load(url);
           	}
@@ -29,19 +29,21 @@ define("ui/slidenav", ["config", "zoomer", "jquery"], function(config, zoomer, $
 		view: "dataview",
         id: "thumbnails_panel",
         select: true,
-        template: "<div class='webix_strong'>#name#</div>",
+        template: "<div class='webix_strong'>#name#</div><img src='"+ config.BASE_URL +"/image/#_id#/thumbnail?width=180'/>",
         datatype: "json",
         type: {height: 170, width: 200},
         ready: function(){
-        	slide = this.getItem(this.getFirstId());
-            patientId = slide.name;
-            var url = config.BASE_URL + "/item?folderId=" + slide._id;
+        	var item = this.getItem(this.getFirstId());
+            patientId = item.name;
+            slideObj = slide.init(item._id);
+            data = slideObj.data();
+            
             var tileSource = {
 				type: 'legacy-image-pyramid',
 				levels: [{
 					url: "http://digitalslidearchive.emory.edu:7070/" + folderName + "/" + patientId + "/" + patientId + ".jpg",
-					height:  2848,
-					width: 4288
+					height:  data.meta.acquisition.pixelsY,
+					width: data.meta.acquisition.pixelsX
 				}]
 			};
 
@@ -49,15 +51,17 @@ define("ui/slidenav", ["config", "zoomer", "jquery"], function(config, zoomer, $
         },
         on: {
          	"onItemClick": function(id, e, node) {
-             	slide = this.getItem(id);
-             	patientId = slide.name;
-             	var url = config.BASE_URL + "/item?folderId=" + slide._id;
-            	var tileSource = {
+             	item = this.getItem(id);
+             	patientId = item.name;
+             	slideObj = slide.init(item._id);
+             	data = slideObj.data();
+             	
+	            var tileSource = {
 					type: 'legacy-image-pyramid',
-						levels: [{
-							url: "http://digitalslidearchive.emory.edu:7070/" + folderName + "/" + patientId + "/" + patientId + ".jpg",
-							height:  2848,
-							width: 4288
+					levels: [{
+						url: "http://digitalslidearchive.emory.edu:7070/" + folderName + "/" + patientId + "/" + patientId + ".jpg",
+						height:  data.meta.acquisition.pixelsY,
+						width: data.meta.acquisition.pixelsX
 					}]
 				};
 
