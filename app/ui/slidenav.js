@@ -56,6 +56,7 @@ define("ui/slidenav", ["config", "zoomer", "slide"], function(config, zoomer, sl
              	slideObj = slide.init(item._id);
              	data = slideObj.data();
              	
+             	slideObj.annotations();
 	            var tileSource = {
 					type: 'legacy-image-pyramid',
 					levels: [{

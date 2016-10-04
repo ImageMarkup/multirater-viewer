@@ -8,6 +8,7 @@ require = {
 		"scalebar": "lib/openseadragon-scalebar",
 		"config": "app/config",
 		"slide": "app/slide",
+		"annotation": "app/annotation",
 		"zoomer": "app/zoomer"
 	},
 
