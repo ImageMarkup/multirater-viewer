@@ -13,9 +13,6 @@ define("slide", ["pubsub", "config", "jquery", "zoomer"], function(pubsub, confi
 		viewer: function(){
             console.log(this);
             itemId = this.id;
-            zoom = this.zoom;
-            pan = this.pan;
-            sharedUrl = config.HOST_URL + "/#item/" + this.id;
 
             tileSource = {
                 width: this.tiles.sizeX,

@@ -2,8 +2,8 @@ define("routes", ["crossroads", "hasher", "config", "jquery", "ui", "osd", "slid
 
     function init() {
         crossroads.addRoute("/item/{id}", function(id) {
-            $.get(config.BASE_URL + "/item/" + id, function(item) {
-                console.log("SLIDE: ", item);
+            $.get(config.BASE_URL + "/folder/" + id, function(item) {
+                console.log("ITEM: ", item);
                 slide.init(item);
             });
         });
