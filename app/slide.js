@@ -1,40 +1,36 @@
-define("slide", ["config", "annotation", "jquery", "webix"], function(config, annotation, $){
+define("slide", ["pubsub", "config", "jquery", "zoomer"], function(pubsub, config, $, viewer){
 
 	var slide = {
-		id: null,
+		init: function(item){
+			this.tiles = item.meta.tileInfo;
+            this.id = item.meta.slideId;
+			this.viewer();
 
-		init: function(id){
-			this.id = id;
+            pubsub.publish("SLIDE", this);
 			return this;
 		},
 
-		data: function(){
-			var url = config.BASE_URL + "/image/" + this.id;
-			var slideData = null;
+		viewer: function(){
+            console.log(this);
+            itemId = this.id;
+            zoom = this.zoom;
+            pan = this.pan;
+            sharedUrl = config.HOST_URL + "/#item/" + this.id;
 
-			webix.ajax().sync().get(url, function(text, data, xmlHttpRequest){
-	        	slideData = JSON.parse(text);
-	        });
+            tileSource = {
+                width: this.tiles.sizeX,
+                height: this.tiles.sizeY,
+                tileWidth: this.tiles.tileWidth,
+                tileHeight: this.tiles.tileHeight,
+                minLevel: 0,
+                maxLevel: this.tiles.levels - 1,
+                getTileUrl: function(level, x, y) {
+                    return config.BASE_URL + "/item/" + itemId + "/tiles/zxy/" + level + "/" + x + "/" + y;
+                }
+            };
 
-	        return slideData;
-		},
-
-		annotations: function(){
-			var url = config.BASE_URL + "/annotation?imageId=" + this.id + "&studyId=573f11119fc3c132505c0ee7";
-			var annotationData = new Array();
-			
-			webix.ajax().sync().get(url, function(text, data, xmlHttpRequest){
-				$.each(JSON.parse(text), function(key, obj){
-					var anntUrl = config.BASE_URL + "/annotation/" + obj._id;
-					webix.ajax().sync().get(anntUrl, function(text, data, xmlHttpRequest){
-						annotationData.push(JSON.parse(text));
-					});
-				});
-			});
-
-			console.log(annotationData);
-			return annotationData;
-		}
+            viewer.open(tileSource);
+        }
 	}
 
 	return slide;

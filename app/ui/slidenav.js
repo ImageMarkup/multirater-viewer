@@ -10,15 +10,14 @@ define("ui/slidenav", ["config", "zoomer", "slide"], function(config, zoomer, sl
         options:{
 			body:{
 				template:"#name#",
-				url: config.BASE_URL + "/dataset"
+				url: config.BASE_URL + "/folder?parentType=folder&parentId=" + config.FOLDER_ID
 			}
         },
         on:{
         	"onChange": function(id){
             	var item = this.getPopup().getBody().getItem(id);
-            	folderName = item.name;
             	var thumbs = $$("thumbnails_panel");
-                var url = config.BASE_URL + "/image?datasetId=" + item._id;
+                var url = config.BASE_URL + "/folder?parentType=folder&parentId=" + item._id
                 thumbs.clearAll();
                 thumbs.load(url);
           	}
@@ -29,44 +28,19 @@ define("ui/slidenav", ["config", "zoomer", "slide"], function(config, zoomer, sl
 		view: "dataview",
         id: "thumbnails_panel",
         select: true,
-        template: "<div class='webix_strong'>#name#</div><img src='"+ config.BASE_URL +"/image/#_id#/thumbnail?width=180'/>",
+        template: "<div class='webix_strong'>#name#</div><img src='"+ config.BASE_URL +"/item/#meta.slideId#/tiles/thumbnail'/>",
         datatype: "json",
         type: {height: 170, width: 200},
         ready: function(){
         	var item = this.getItem(this.getFirstId());
-            patientId = item.name;
-            slideObj = slide.init(item._id);
-            data = slideObj.data();
-            
-            var tileSource = {
-				type: 'legacy-image-pyramid',
-				levels: [{
-					url: "http://digitalslidearchive.emory.edu:7070/" + folderName + "/" + patientId + "/" + patientId + ".jpg",
-					height:  data.meta.acquisition.pixelsY,
-					width: data.meta.acquisition.pixelsX
-				}]
-			};
-
-			zoomer.viewer.open(tileSource);	
+        	console.log(item);
+            slide.init(item);
         },
         on: {
          	"onItemClick": function(id, e, node) {
              	item = this.getItem(id);
-             	patientId = item.name;
-             	slideObj = slide.init(item._id);
-             	data = slideObj.data();
-             	
-             	slideObj.annotations();
-	            var tileSource = {
-					type: 'legacy-image-pyramid',
-					levels: [{
-						url: "http://digitalslidearchive.emory.edu:7070/" + folderName + "/" + patientId + "/" + patientId + ".jpg",
-						height:  data.meta.acquisition.pixelsY,
-						width: data.meta.acquisition.pixelsX
-					}]
-				};
-
-				zoomer.viewer.open(tileSource);
+             	console.log(item);
+             	slide.init(item);
            	}
       	}
     };

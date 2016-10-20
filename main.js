@@ -2,13 +2,17 @@ require = {
 	urlArgs: "bust" + (+new Date),
 
 	paths:{
+		"pubsub": "bower_components/PubSubJS/src/pubsub",
+		"hasher": "bower_components/hasher/dist/js/hasher.min",
+        "signals": "bower_components/js-signals/dist/signals.min",
+        "crossroads": "bower_components/crossroads/dist/crossroads.min",
 		"osd": "bower_components/openseadragon/built-openseadragon/openseadragon/openseadragon",
 		"webix": "bower_components/webix/codebase/webix",
 		"jquery": "bower_components/jquery/dist/jquery",
 		"scalebar": "lib/openseadragon-scalebar",
 		"config": "app/config",
+		"routes": "app/routes",
 		"slide": "app/slide",
-		"annotation": "app/annotation",
 		"zoomer": "app/zoomer"
 	},
 
