@@ -4,8 +4,12 @@ define("slide", ["pubsub", "config", "jquery", "zoomer"], function(pubsub, confi
 		init: function(item){
 			this.tiles = item.meta.tileInfo;
             this.id = item.meta.slideId;
+            this.patientFolderId = item._id;
+            this.name = item.name;
+            this.size = item.size;
 			this.viewer();
-
+            this.keyvalue();
+            this.initDataViews();
             pubsub.publish("SLIDE", this);
 			return this;
 		},
@@ -27,6 +31,36 @@ define("slide", ["pubsub", "config", "jquery", "zoomer"], function(pubsub, confi
             };
 
             viewer.open(tileSource);
+        },
+
+        keyvalue: function() {
+            var metadata = {
+                image: [],
+                clinical: []
+            };
+
+            metadata.image.push({
+                key: "Name",
+                value: this.name
+            });
+            metadata.image.push({
+                key: "Size",
+                value: this.size
+            });
+
+            $.each(this.tiles, function(key, value) {
+                metadata.image.push({
+                    key: key,
+                    value: value
+                });
+            });
+
+            this.metadata = metadata;
+        },
+
+        initDataViews: function() {
+            $$("image_metadata_table").clearAll();
+            $$("image_metadata_table").define("data", this.metadata.image);
         }
 	}
 

@@ -1,4 +1,4 @@
-define("ui/slidenav", ["config", "zoomer", "slide"], function(config, zoomer, slide){
+define("ui/slidenav", ["config", "zoomer", "slide", "jquery"], function(config, zoomer, slide, $){
 
 	var folderName = null;
 	var patientId = null;
@@ -20,7 +20,15 @@ define("ui/slidenav", ["config", "zoomer", "slide"], function(config, zoomer, sl
                 var url = config.BASE_URL + "/folder?parentType=folder&parentId=" + item._id
                 thumbs.clearAll();
                 thumbs.load(url);
-          	}
+          	},
+            "onAfterRender": function(){
+              $.get(config.BASE_URL + "/folder?parentType=folder&parentId=" + config.FOLDER_ID, function(folders){
+                  var foldersMenu = $$("slideset_list").getPopup().getList();
+                  foldersMenu.clearAll();
+                  foldersMenu.parse(folders);
+                  $$("slideset_list").setValue(folders[0].id);
+               });
+            }
     	}
 	};
 
