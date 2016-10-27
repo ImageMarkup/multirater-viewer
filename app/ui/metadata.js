@@ -51,12 +51,6 @@ define("ui/metadata", function() {
                         header: "Value",
                         fillspace: true
                     }]
-                }, {
-                    id: "aboutView2",
-                    width: 800,
-                    height: 450,
-                    template: "<i>Placeholder 2</i>",
-                    padding: 5
                 }]
             }, {
                 view: "tabbar",
@@ -68,9 +62,6 @@ define("ui/metadata", function() {
                 }, {
                     value: 'Clinical',
                     id: 'clinical_metadata_table'
-                }, {
-                    value: '??',
-                    id: "aboutView2"
                 }]
             }]
         }

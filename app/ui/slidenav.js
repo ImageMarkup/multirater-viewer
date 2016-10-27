@@ -36,18 +36,16 @@ define("ui/slidenav", ["config", "zoomer", "slide", "jquery"], function(config, 
 		view: "dataview",
         id: "thumbnails_panel",
         select: true,
-        template: "<div class='webix_strong'>#name#</div><img src='"+ config.BASE_URL +"/item/#meta.slideId#/tiles/thumbnail'/>",
+        template: "<div class='webix_strong'>#name#</div><img src='"+ config.BASE_URL + "/file/#meta.thumbNailId#/download?.jpg'/>",
         datatype: "json",
         type: {height: 170, width: 200},
         ready: function(){
         	var item = this.getItem(this.getFirstId());
-        	console.log(item);
-            slide.init(item);
+          slide.init(item);
         },
         on: {
          	"onItemClick": function(id, e, node) {
              	item = this.getItem(id);
-             	console.log(item);
              	slide.init(item);
            	}
       	}

@@ -2,35 +2,33 @@ define("slide", ["pubsub", "config", "jquery", "zoomer"], function(pubsub, confi
 
 	var slide = {
 		init: function(item){
-			this.tiles = item.meta.tileInfo;
-            this.id = item.meta.slideId;
-            this.patientFolderId = item._id;
-            this.name = item.name;
-            this.size = item.size;
+            $.extend(this, item);
 			this.viewer();
             this.keyvalue();
             this.initDataViews();
+            this.superPixels();
             pubsub.publish("SLIDE", this);
 			return this;
 		},
 
 		viewer: function(){
-            console.log(this);
-            itemId = this.id;
-
-            tileSource = {
-                width: this.tiles.sizeX,
-                height: this.tiles.sizeY,
-                tileWidth: this.tiles.tileWidth,
-                tileHeight: this.tiles.tileHeight,
-                minLevel: 0,
-                maxLevel: this.tiles.levels - 1,
-                getTileUrl: function(level, x, y) {
-                    return config.BASE_URL + "/item/" + itemId + "/tiles/zxy/" + level + "/" + x + "/" + y;
-                }
+            var tileSource = {
+                type: 'legacy-image-pyramid',
+                levels: [{
+                    url: config.BASE_URL + "/file/"+this.meta.slideId+"/download?.jpg",
+                    height:  this.meta.imageHeight,
+                    width: this.meta.imageWidth
+                }]
             };
 
             viewer.open(tileSource);
+        },
+
+        superPixels: function(){
+            $.get(config.BASE_URL + "/file/"+ this.meta.svgJsonId +"/download", function(data){
+                console.log(JSON.parse(data));
+            });
+
         },
 
         keyvalue: function() {
@@ -48,7 +46,7 @@ define("slide", ["pubsub", "config", "jquery", "zoomer"], function(pubsub, confi
                 value: this.size
             });
 
-            $.each(this.tiles, function(key, value) {
+            $.each(this.meta, function(key, value) {
                 metadata.image.push({
                     key: key,
                     value: value
