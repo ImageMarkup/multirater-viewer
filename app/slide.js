@@ -24,12 +24,21 @@ define("slide", ["pubsub", "config", "jquery", "zoomer"], function(pubsub, confi
             viewer.open(tileSource);
         },
 
-        superPixels: function(){
-            $.get(config.BASE_URL + "/file/"+ this.meta.svgJsonId +"/download", function(data){
-                console.log(JSON.parse(data));
+        
+	superPixels: function(){
+            var svg = null;
+            $.ajax({
+                url: config.BASE_URL + "/file/"+ this.meta.svgJsonId +"/download", 
+                async: false,
+                success: function(data){
+                    svg = JSON.parse(data);
+                }
             });
 
+
+            return svg;
         },
+
 
         keyvalue: function() {
             var metadata = {

@@ -13,7 +13,8 @@ require = {
 		"config": "app/config",
 		"routes": "app/routes",
 		"slide": "app/slide",
-		"zoomer": "app/zoomer"
+		"zoomer": "app/zoomer",
+		"osdSVG": "bower_components/svg-overlay/openseadragon-svg-overlay"
 	},
 
 	packages:[

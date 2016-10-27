@@ -22,6 +22,7 @@
     "crossroads": "^0.12.2",
     "hasher": "^1.2.0",
     "js-signals": "^1.0.0",
-    "PubSubJS": "pubsub-js#^1.5.4"
+    "PubSubJS": "pubsub-js#^1.5.4",
+    "svg-overlay": "*"
   }
 }
