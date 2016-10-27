@@ -1,40 +1,65 @@
-define("slide", ["config", "annotation", "jquery", "webix"], function(config, annotation, $){
+define("slide", ["pubsub", "config", "jquery", "zoomer"], function(pubsub, config, $, viewer){
 
 	var slide = {
-		id: null,
-
-		init: function(id){
-			this.id = id;
+		init: function(item){
+            $.extend(this, item);
+			this.viewer();
+            this.keyvalue();
+            this.initDataViews();
+            this.superPixels();
+            pubsub.publish("SLIDE", this);
 			return this;
 		},
 
-		data: function(){
-			var url = config.BASE_URL + "/image/" + this.id;
-			var slideData = null;
+		viewer: function(){
+            var tileSource = {
+                type: 'legacy-image-pyramid',
+                levels: [{
+                    url: config.BASE_URL + "/file/"+this.meta.slideId+"/download?.jpg",
+                    height:  this.meta.imageHeight,
+                    width: this.meta.imageWidth
+                }]
+            };
 
-			webix.ajax().sync().get(url, function(text, data, xmlHttpRequest){
-	        	slideData = JSON.parse(text);
-	        });
+            viewer.open(tileSource);
+        },
 
-	        return slideData;
-		},
+        superPixels: function(){
+            $.get(config.BASE_URL + "/file/"+ this.meta.svgJsonId +"/download", function(data){
+                console.log(JSON.parse(data));
+            });
 
-		annotations: function(){
-			var url = config.BASE_URL + "/annotation?imageId=" + this.id + "&studyId=573f11119fc3c132505c0ee7";
-			var annotationData = new Array();
-			
-			webix.ajax().sync().get(url, function(text, data, xmlHttpRequest){
-				$.each(JSON.parse(text), function(key, obj){
-					var anntUrl = config.BASE_URL + "/annotation/" + obj._id;
-					webix.ajax().sync().get(anntUrl, function(text, data, xmlHttpRequest){
-						annotationData.push(JSON.parse(text));
-					});
-				});
-			});
+        },
 
-			console.log(annotationData);
-			return annotationData;
-		}
+        keyvalue: function() {
+            var metadata = {
+                image: [],
+                clinical: []
+            };
+
+            metadata.image.push({
+                key: "Name",
+                value: this.name
+            });
+            metadata.image.push({
+                key: "Size",
+                value: this.size
+            });
+
+            $.each(this.meta, function(key, value) {
+                metadata.image.push({
+                    key: key,
+                    value: value
+                });
+            });
+
+            this.metadata = metadata;
+        },
+
+        initDataViews: function() {
+            $$("image_metadata_table").clearAll();
+            $$("image_metadata_table").define("data", this.metadata.image);
+        }
 	}
 
 	return slide;
