@@ -1,4 +1,4 @@
-define("zoomer", ["pubsub", "osd", "scalebar"], function(pubsub, osd, scalebar){
+define("zoomer", ["pubsub", "osd", "scalebar","osdSVG","d3"], function(pubsub, osd, scalebar,osdSVG,d3){
 
 	var slide = null;
     pubsub.subscribe("SLIDE", function(msg, data) {
@@ -13,6 +13,11 @@ define("zoomer", ["pubsub", "osd", "scalebar"], function(pubsub, osd, scalebar){
 		showNavigator: true,
 		tileSources: "http://node15.cci.emory.edu/cgi-bin/iipsrv.fcgi?DeepZoom=/var/www/CDSA/CDSA_Logo_v1.tif.dzi.tif.dzi"
 	});
+
+
+    var svg_layer = viewer.svgOverlay();
+
+
 
 	viewer.scalebar({
 		type: osd.ScalebarType.MAP,
