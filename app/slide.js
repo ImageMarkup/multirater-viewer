@@ -1,22 +1,22 @@
-define("slide", ["pubsub", "config", "jquery", "zoomer"], function(pubsub, config, $, viewer){
+define("slide", ["pubsub", "config", "jquery", "zoomer", "spx"], function(pubsub, config, $, viewer, spx) {
 
-	var slide = {
-		init: function(item){
+    var slide = {
+        init: function(item) {
             $.extend(this, item);
-			this.viewer();
+            this.viewer();
             this.keyvalue();
             this.initDataViews();
             this.superPixels();
             pubsub.publish("SLIDE", this);
-			return this;
-		},
+            return this;
+        },
 
-		viewer: function(){
+        viewer: function() {
             var tileSource = {
                 type: 'legacy-image-pyramid',
                 levels: [{
-                    url: config.BASE_URL + "/file/"+this.meta.slideId+"/download?.jpg",
-                    height:  this.meta.imageHeight,
+                    url: config.BASE_URL + "/file/" + this.meta.slideId + "/download?.jpg",
+                    height: this.meta.imageHeight,
                     width: this.meta.imageWidth
                 }]
             };
@@ -24,14 +24,15 @@ define("slide", ["pubsub", "config", "jquery", "zoomer"], function(pubsub, confi
             viewer.open(tileSource);
         },
 
-	   superPixels: function(){
+        superPixels: function() {
             console.log("Loading super pixels ...");
             $.ajax({
                 context: this,
-                url: config.BASE_URL + "/file/"+ this.meta.svgJsonId +"/download", 
-                success: function(data){
-                    this.spx = JSON.parse(data);
-                    console.log("Loaded", this.spx.length, "super pixels");
+                url: config.BASE_URL + "/file/" + this.meta.svgJsonId + "/download",
+                success: function(data) {
+                    data = JSON.parse(data);
+                    this.spx = spx.transform(data, this.meta.imageWidth);
+                    console.log("Loaded", data.length, "super pixels");
                 }
             });
         },
@@ -66,7 +67,7 @@ define("slide", ["pubsub", "config", "jquery", "zoomer"], function(pubsub, confi
             $$("image_metadata_table").clearAll();
             $$("image_metadata_table").define("data", this.metadata.image);
         }
-	}
+    }
 
-	return slide;
+    return slide;
 });

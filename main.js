@@ -1,33 +1,31 @@
 require = {
-	urlArgs: "bust" + (+new Date),
+    urlArgs: "bust" + (+new Date),
 
-	paths:{
-		"pubsub": "bower_components/PubSubJS/src/pubsub",
-		"hasher": "bower_components/hasher/dist/js/hasher.min",
+    paths: {
+        "pubsub": "bower_components/PubSubJS/src/pubsub",
+        "hasher": "bower_components/hasher/dist/js/hasher.min",
         "signals": "bower_components/js-signals/dist/signals.min",
         "crossroads": "bower_components/crossroads/dist/crossroads.min",
-		"osd": "bower_components/openseadragon/built-openseadragon/openseadragon/openseadragon",
-		"webix": "bower_components/webix/codebase/webix",
-		"jquery": "bower_components/jquery/dist/jquery",
-		"scalebar": "lib/openseadragon-scalebar",
-		"config": "app/config",
-		"routes": "app/routes",
-		"slide": "app/slide",
-		"zoomer": "app/zoomer",
-		"osdSVG": "bower_components/svg-overlay/openseadragon-svg-overlay",
-		"d3": "bower_components/d3/d3.min",
-		"osdSPX": "app/svgOverlay"
-	},
+        "osd": "bower_components/openseadragon/built-openseadragon/openseadragon/openseadragon",
+        "webix": "bower_components/webix/codebase/webix",
+        "jquery": "bower_components/jquery/dist/jquery",
+        "scalebar": "lib/openseadragon-scalebar",
+        "config": "app/config",
+        "routes": "app/routes",
+        "slide": "app/slide",
+        "zoomer": "app/zoomer",
+        "osdSVG": "bower_components/svg-overlay/openseadragon-svg-overlay",
+        "d3": "bower_components/d3/d3.min",
+        "spx": "app/svgOverlays"
+    },
 
-	packages:[
-		{
-			name: "ui",
-			location: "app/ui"
-		}
-	],
+    packages: [{
+        name: "ui",
+        location: "app/ui"
+    }],
 
-	shim: {
-		"scalebar": ["osd"], 
-		"osdSVG": ["osd"]
-	}
+    shim: {
+        "scalebar": ["osd"],
+        "osdSVG": ["osd"]
+    }
 }

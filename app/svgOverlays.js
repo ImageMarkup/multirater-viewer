@@ -1,76 +1,46 @@
-define("svgSPX", ["pubsub",  "jquery", "zoomer","d3"], function(pubsub, $, viewer,d3) {
+define("spx", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer, d3) {
 
-    var svgSPX = {
-        init: function(item) {
-            $.extend(this, item);
-           
-            this.SVGfromBoundary();
-           
-        
-            pubsub.publish("svgSPX", this);
-            return this;
-        },
+    function transform(regions, imageWidth){
+        coordinates = new Array();
+        scaleFactor = 1/imageWidth;
+        $.each(regions, function(index, region){
+            var regionCoords = new Array;
+            $.each(region.geometry.coordinates, function(junk, coords){
+                x = coords[0] * scaleFactor;
+                y = coords[1] * scaleFactor;
+                regionCoords.push(x + "," + y);
+            });
 
-       SVGfromBoundary: function( lesionBoundary_Dict, img_width)
-       	{
-       		//Need to convert the lesion Boudnary object which is in raw pixels into
-       		//the proper coordinate system form Openseadragon
-   		    scale_factor = 1;
-		    polygon_list = [];
-		    //Openseadragon uses the image width for bo the x and y scale factor... probably should rename this pixel factor
-		    x_scale_factor = 1.0 / img_width;
-		    y_scale_factor = 1.0 / img_width;
-		    $(".boundaryClass").remove(); //Remove all previous boundaries I had appended to the DOM
-		    							//may move this to a separate functino at some point
+            coordinates[index]= {
+                coords: regionCoords.join(" ")
+            }
+        });
 
+        return coordinates;
+    }
 
+    function addOverlay(regions){
+        $.each(regions, function(index, region){
+            fillColor = d3.schemeCategory20[index % 20];
 
-       	}
+            d3.select(viewer.svgOverlay().node()).append("polygon")
+                .attr("points", region.coords)
+                .style('fill', fillColor)
+                .attr('opacity', 0.2)
+                .attr('class', 'boundaryClass')
+                .attr('id', 'boundary'+index)
+                .attr('stroke','blue')
+                .attr('stroke-width', 0.001);
+        });
+    }
 
+    function removeOverlay(){
+        $(".boundaryClass").remove();
+    }
 
-// <svg width="50" height="50">
-// 2  <polygon fill="yellow" stroke="blue" stroke-width="2"
-// 3    points="05,30
-// 4            15,10
-// 5            25,30" />
-// 6</svg>
-//     console.log('should be trying to render the boundary now!?');
-//     console.log(lesionBoundary_Dict);
-
-
-
-//     // $.each(contours, function(index, contour) {
-//     //     coord_info = contour.geometry.coordinates;
-//             coord_info = lesionBoundary_Dict.lesionBoundary.geometry.coordinates[0];
-//             console.log(coord_info);
-//          coord_string = "";
-//          $.each(coord_info, function(k, v) {
-//                  console.log(k,v[0],v[1]);
-//                  coord_string += `${(v[0]* x_scale_factor ) },${ ( v[1] * y_scale_factor) } `;
-//              }) // the |0 made them all integers
-//          console.log(coord_string);
-//        // polygon_svg_str = `<polygon points="${coord_string}" style="fill:${colours[ random(9)]};stroke;purple;stroke-width:1;opacity:0.5" id="boundary0" class="boundaryClass" />`;
-//     //     labelindex = contour.properties.labelindex;
-//          d3.select(svg_layer.node()).append("polygon").attr("points", coord_string).style('fill', 'blue').attr('opacity', 0.2).attr('class', 'boundaryClass').attr('id', 'boundary0');
-//          //.attr('stroke','blue');
-//     // });
-//     //     polygon_list.push({
-//     //         'coords': coord_string,
-//     //         'labelindex': contour.properties.labelindex
-//     //     });
-//     // });
-
-//     // return svg_shape;
-
-// }
-
-
-
-
-
-
-        
-    },
-return svgSPX
-
+    return{
+        transform: transform,
+        addOverlay: addOverlay,
+        removeOverlay: removeOverlay
+    }
 });

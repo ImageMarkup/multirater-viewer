@@ -1,6 +1,7 @@
-define("ui/toolbar", ["pubsub"], function(pubsub) {
+define("ui/toolbar", ["pubsub", "spx"], function(pubsub, spx) {
 
     var slide = null;
+    var spxOn = false;
     pubsub.subscribe("SLIDE", function(msg, data) {
         slide = data;
     });
@@ -19,7 +20,7 @@ define("ui/toolbar", ["pubsub"], function(pubsub) {
                 click: ("$$('metadata_window').show();")
             }, {
                 id: "hideSVG_btn",
-                label: "Hide SPX",
+                label: "SPX",
                 view: "button",
                 click: loadSPX
             }
@@ -27,9 +28,25 @@ define("ui/toolbar", ["pubsub"], function(pubsub) {
         ]
     };
 
-    function loadSPX() {
-        console.log(slide.spx);
+    spxTools = {
+        height: 30,
+        cols: [{
+                id: "apply_filter_btn1",
+                label: "Apply Filters",
+                view: "button"
+            }, {
+                id: "metadata_btn1",
+                label: "Metadata",
+                view: "button"
+            }
+
+        ]
     };
+
+    function loadSPX() {
+        spxOn = !spxOn;
+        spxOn ? spx.addOverlay(slide.spx) : spx.removeOverlay();
+    }; 
 
     return {
         buttons: buttons
