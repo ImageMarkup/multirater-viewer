@@ -14,7 +14,7 @@ require = {
 		"routes": "app/routes",
 		"slide": "app/slide",
 		"zoomer": "app/zoomer",
-		"osdSVG": "bower_components/svg-overlay/openseadragon_svg_overlay",
+		"osdSVG": "bower_components/svg-overlay/openseadragon-svg-overlay",
 		"d3": "bower_components/d3/d3",
 		"osdSPX": "app/svgOverlay"
 	},

@@ -25,18 +25,16 @@ define("slide", ["pubsub", "config", "jquery", "zoomer"], function(pubsub, confi
         },
 
         
-	superPixels: function(){
-            var svg = null;
+	   superPixels: function(){
+            console.log("Loading super pixels file");
             $.ajax({
+                context: this,
                 url: config.BASE_URL + "/file/"+ this.meta.svgJsonId +"/download", 
-                async: false,
                 success: function(data){
-                    svg = JSON.parse(data);
+                    this.spx = JSON.parse(data);
+                    console.log("Done loading super pixels file");
                 }
             });
-
-
-            return svg;
         },
 
 

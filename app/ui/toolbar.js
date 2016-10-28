@@ -1,4 +1,10 @@
-define("ui/toolbar", function() {
+define("ui/toolbar", ["pubsub"], function(pubsub) {
+
+    var slide = null;
+    pubsub.subscribe("SLIDE", function(msg, data) {
+        console.log("toolbar SLIDE:", data);
+        slide = data;
+    });
 
     buttons = {
         height: 30,
@@ -17,10 +23,15 @@ define("ui/toolbar", function() {
             id: "hideSVG_btn",
             label: "Hide SPX",
             view: "button",
-            click: function () {console.log('hi');}
+            click: loadSPX
+        }
 
-        }]
-    }
+        ]
+    };
+
+    function loadSPX(){
+        console.log("loadSPX", slide);
+    };
 
     return {
         buttons: buttons
