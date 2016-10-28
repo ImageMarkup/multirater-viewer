@@ -1,9 +1,9 @@
-define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/toolbar", "ui/metadata", "webix"], function(filters, header, slidenav, toolbar, metadata){
-	
-	function init(){
-		filters.init();
+define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/toolbar", "ui/metadata", "webix"], function(filters, header, slidenav, toolbar, metadata) {
 
-		viewerPanel = {
+    function init() {
+        filters.init();
+
+        viewerPanel = {
             rows: [toolbar.buttons, {
                 view: "template",
                 content: "image_viewer"
@@ -11,22 +11,21 @@ define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/toolbar", "ui/m
         };
 
         webix.ui(metadata.view);
-        
-		webix.ui({
-	    	container: "main_layout",
-			rows:[
-				header.view,
-				{
-					cols: [
-						slidenav.view,
-						viewerPanel
-					]
-				}
-			]
-		});
-	}
 
-	return{
-		init: init
-	}
+        webix.ui({
+            container: "main_layout",
+            rows: [
+                header.view, {
+                    cols: [
+                        slidenav.view,
+                        viewerPanel
+                    ]
+                }
+            ]
+        });
+    }
+
+    return {
+        init: init
+    }
 });
