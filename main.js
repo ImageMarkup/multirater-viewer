@@ -15,7 +15,7 @@ require = {
 		"slide": "app/slide",
 		"zoomer": "app/zoomer",
 		"osdSVG": "bower_components/svg-overlay/openseadragon-svg-overlay",
-		"d3": "bower_components/d3/d3",
+		"d3": "bower_components/d3/d3.min",
 		"osdSPX": "app/svgOverlay"
 	},
 
@@ -27,6 +27,7 @@ require = {
 	],
 
 	shim: {
-		"scalebar": ["osd"], "osdSVG": ["osd"]
+		"scalebar": ["osd"], 
+		"osdSVG": ["osd"]
 	}
 }

@@ -24,15 +24,14 @@ define("slide", ["pubsub", "config", "jquery", "zoomer"], function(pubsub, confi
             viewer.open(tileSource);
         },
 
-        
 	   superPixels: function(){
-            console.log("Loading super pixels file");
+            console.log("Loading super pixels ...");
             $.ajax({
                 context: this,
                 url: config.BASE_URL + "/file/"+ this.meta.svgJsonId +"/download", 
                 success: function(data){
                     this.spx = JSON.parse(data);
-                    console.log("Done loading super pixels file");
+                    console.log("Loaded", this.spx.length, "super pixels");
                 }
             });
         },

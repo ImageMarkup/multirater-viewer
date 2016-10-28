@@ -2,7 +2,6 @@ define("ui/toolbar", ["pubsub"], function(pubsub) {
 
     var slide = null;
     pubsub.subscribe("SLIDE", function(msg, data) {
-        console.log("toolbar SLIDE:", data);
         slide = data;
     });
 
@@ -30,7 +29,7 @@ define("ui/toolbar", ["pubsub"], function(pubsub) {
     };
 
     function loadSPX(){
-        console.log("loadSPX", slide.spx);
+        console.log(slide.spx);
     };
 
     return {
