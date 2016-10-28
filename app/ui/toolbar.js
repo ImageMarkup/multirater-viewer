@@ -30,7 +30,7 @@ define("ui/toolbar", ["pubsub"], function(pubsub) {
     };
 
     function loadSPX(){
-        console.log("loadSPX", slide);
+        console.log("loadSPX", slide.spx);
     };
 
     return {
