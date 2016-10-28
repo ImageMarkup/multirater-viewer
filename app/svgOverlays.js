@@ -3,10 +3,10 @@ define("svgSPX", ["pubsub",  "jquery", "zoomer","d3"], function(pubsub, $, viewe
     var svgSPX = {
         init: function(item) {
             $.extend(this, item);
-            this.viewer();
-            this.keyvalue();
-            this.initDataViews();
-            this.superPixels();
+           
+            this.SVGfromBoundary();
+           
+        
             pubsub.publish("svgSPX", this);
             return this;
         },
@@ -23,8 +23,17 @@ define("svgSPX", ["pubsub",  "jquery", "zoomer","d3"], function(pubsub, $, viewe
 		    $(".boundaryClass").remove(); //Remove all previous boundaries I had appended to the DOM
 		    							//may move this to a separate functino at some point
 
+
+
        	}
 
+
+// <svg width="50" height="50">
+// 2  <polygon fill="yellow" stroke="blue" stroke-width="2"
+// 3    points="05,30
+// 4            15,10
+// 5            25,30" />
+// 6</svg>
 //     console.log('should be trying to render the boundary now!?');
 //     console.log(lesionBoundary_Dict);
 
@@ -60,8 +69,8 @@ define("svgSPX", ["pubsub",  "jquery", "zoomer","d3"], function(pubsub, $, viewe
 
 
 
-        return svgSPX
-    }
-
+        
+    },
+return svgSPX
 
 });
