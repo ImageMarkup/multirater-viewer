@@ -37,7 +37,6 @@ define("slide", ["pubsub", "config", "jquery", "zoomer", "spx"], function(pubsub
             });
         },
 
-
         keyvalue: function() {
             var metadata = {
                 image: [],

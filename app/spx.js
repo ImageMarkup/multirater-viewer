@@ -38,9 +38,16 @@ define("spx", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer, 
         $(".boundaryClass").remove();
     }
 
+    function updateOverlay(properties){
+        $.each(properties, function(property, value){
+            $(".boundaryClass").attr(property, value);
+        });
+    }
+
     return{
         transform: transform,
         addOverlay: addOverlay,
-        removeOverlay: removeOverlay
+        removeOverlay: removeOverlay,
+        updateOverlay: updateOverlay
     }
 });

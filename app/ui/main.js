@@ -4,7 +4,7 @@ define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/toolbar", "ui/m
         filters.init();
 
         viewerPanel = {
-            rows: [toolbar.buttons, {
+            rows: [toolbar.buttons, toolbar.spxTools, {
                 view: "template",
                 content: "image_viewer"
             }]
