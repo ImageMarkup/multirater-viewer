@@ -12,6 +12,13 @@ define("ui/toolbar", function() {
             label: "Metadata",
             view: "button",
             click: ("$$('metadata_window').show();")
+        },
+        {
+            id: "hideSVG_btn",
+            label: "Hide SPX",
+            view: "button",
+            click: function () {console.log('hi');}
+
         }]
     }
 

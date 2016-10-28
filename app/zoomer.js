@@ -18,6 +18,14 @@ define("zoomer", ["pubsub", "osd", "scalebar","osdSVG","d3"], function(pubsub, o
     var svg_layer = viewer.svgOverlay();
 
 
+    //example of adding a rectangle
+
+	    // var d3Rect = d3.select(svg_layer.node()).append("rect")
+	    //                     .style('fill', '#f00')
+	    //                     .attr("x", 0.5)
+	    //                     .attr("width", 0.25)
+	    //                     .attr("y", 0.5)
+	    //                     .attr("height", 0.25);
 
 	viewer.scalebar({
 		type: osd.ScalebarType.MAP,
