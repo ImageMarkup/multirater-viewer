@@ -1,31 +1,38 @@
-define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/toolbar", "ui/metadata", "webix"], function(filters, header, slidenav, toolbar, metadata) {
+define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/toolbar", "ui/metadata", "ui/spxnav", "webix"],
+    function(filters, header, slidenav, toolbar, metadata, spxnav) {
 
-    function init() {
-        filters.init();
+        function init() {
+            filters.init();
 
-        viewerPanel = {
-            rows: [toolbar.buttons, toolbar.spxTools, {
-                view: "template",
-                content: "image_viewer"
-            }]
-        };
+            viewerPanel = {
+                rows: [toolbar.buttons, {
+                    view: "template",
+                    content: "image_viewer"
+                }]
+            };
 
-        webix.ui(metadata.view);
+            webix.ui(metadata.view);
 
-        webix.ui({
-            container: "main_layout",
-            rows: [
-                header.view, {
-                    cols: [
-                        slidenav.view,
-                        viewerPanel
-                    ]
-                }
-            ]
-        });
-    }
+            webix.ui({
+                container: "main_layout",
+                id: "app",
+                rows: [
+                    header.view, {
+                        cols: [
+                            slidenav.view, {
+                                view: "resizer"
+                            },
+                            viewerPanel, {
+                                view: "resizer"
+                            },
+                            spxnav.view
+                        ]
+                    }
+                ]
+            });
+        }
 
-    return {
-        init: init
-    }
-});
+        return {
+            init: init
+        }
+    });

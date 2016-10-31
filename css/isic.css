@@ -8,3 +8,31 @@ html, body{
   max-width: 100%;
   max-height: 100%;
 }
+
+#header_title{
+	padding-top: 10px;
+	color: blue;
+	font-size: 24px;
+	font-weight: bold;
+}
+
+#header_subtitle{
+	padding-bottom: 10px;
+	font-size: 14px;
+}
+
+.webix_layout_toolbar.toolbar {
+    color: #fff;
+    font-size: 18px;
+    background: #fdfdfd;
+}
+  
+.webix_menu-x.menu  .webix_list_item{
+  	background: #fdfdfd;
+  	color:#666;
+  	line-height:50px;
+}
+  
+.webix_menu-x.menu .webix_list_item:hover{
+  background: #dfdfdf;
+}

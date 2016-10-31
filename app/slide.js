@@ -3,6 +3,9 @@ define("slide", ["pubsub", "config", "jquery", "zoomer", "spx"], function(pubsub
     var slide = {
         init: function(item) {
             $.extend(this, item);
+            spx.removeOverlay();
+            $$("spx_tools").collapse();
+            $$("spx_btn").disable();
             this.viewer();
             this.keyvalue();
             this.initDataViews();
@@ -25,14 +28,13 @@ define("slide", ["pubsub", "config", "jquery", "zoomer", "spx"], function(pubsub
         },
 
         superPixels: function() {
-            console.log("Loading super pixels ...");
             $.ajax({
                 context: this,
                 url: config.BASE_URL + "/file/" + this.meta.svgJsonId + "/download",
                 success: function(data) {
                     data = JSON.parse(data);
                     this.spx = spx.transform(data, this.meta.imageWidth);
-                    console.log("Loaded", data.length, "super pixels");
+                    console.log("Loaded", data.length, "super pixels for", this.name);
                 }
             });
         },

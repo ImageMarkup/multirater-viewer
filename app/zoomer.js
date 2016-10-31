@@ -1,4 +1,4 @@
-define("zoomer", ["pubsub", "osd", "scalebar", "osdSVG", "d3"], function(pubsub, osd, scalebar, osdSVG, d3) {
+define("zoomer", ["pubsub", "osd", "scalebar", "osdSVG", "d3", "jquery"], function(pubsub, osd, scalebar, osdSVG, d3, $) {
 
     var slide = null;
     pubsub.subscribe("SLIDE", function(msg, data) {
@@ -38,6 +38,11 @@ define("zoomer", ["pubsub", "osd", "scalebar", "osdSVG", "d3"], function(pubsub,
 
     viewer.addHandler('pan', function(event) {
 
+    });
+
+    viewer.addHandler('tile-loaded', function(event) {
+        console.log("Tile loaded for", slide.name);
+        $$("spx_btn").enable();
     });
 
     return viewer;

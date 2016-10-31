@@ -56,14 +56,16 @@ define("ui/slidenav", ["config", "zoomer", "slide", "jquery"], function(config, 
 
     nav = {
         width: 220,
-        rows: [
-            setDropdown,
-            thumbnailsPanel
-        ]
+        header: "Slides",
+        body: {
+            rows: [
+                setDropdown,
+                thumbnailsPanel
+            ]
+        }
     };
 
     return {
         view: nav
     }
-
 });
