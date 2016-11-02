@@ -54,18 +54,35 @@ define("ui/slidenav", ["config", "zoomer", "slide", "jquery"], function(config, 
         }
     };
 
-    nav = {
+    var nav = {
         width: 220,
-        header: "Slides",
-        body: {
+        id: "SlideViewTab",
             rows: [
                 setDropdown,
                 thumbnailsPanel
+        ]
+    };
+
+    //Adding a Slide View and a Study/Annotation View-- First add a tabbar widget
+    var navTabbar = {
+        rows: [{
+            view: "tabbar",
+            id: 'navTabbar',
+            value: 'formView',
+            multiview: true,
+            options: [
+                { value: 'SlideNav', id: 'SlideViewTab' },
+                { value: 'Empty', id: 'emptyView' }
             ]
-        }
+        }, {
+            cells: [
+                nav,
+                { id: "emptyView", template: "Some content", width: 220 }
+            ]
+        }]
     };
 
     return {
-        view: nav
+        view: navTabbar
     }
 });
