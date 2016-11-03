@@ -78,19 +78,29 @@ define("ui/slidenav", ["config", "zoomer", "slide", "jquery","raterData"], funct
             "onChange": function(id) {
                 var study = this.getPopup().getBody().getItem(id);
                 var url = "https://isic-archive.com:443/api/v1/study/" + study._id;
-                var e = new Array();
+                $.each($$("user_study_list").elements, function(k, e){
+                    $$("user_study_list").removeView(e.data.id);
+                });
 
                 $.get(url).then(function(data){
-                    console.log(data);
                     $.each(data.users, function(junk, user){
-                        e.push({ view:"toggle", name:"s3", offLabel: user.login + " (ON)", onLabel:user.login + " (OFF)" })
-                    });
+                        var u = { 
+                            view:"toggle", 
+                            id: user._id,
+                            name: user.login, 
+                            offLabel: user.login + " (ON)", 
+                            onLabel:user.login + " (OFF)",
+                            data: user,
+                            on:{
+                                onItemClick: function(id, e, node){
+                                    console.log($$(id));
+                                }
+                            }
+                        };
 
-                    console.log(e);
-                    $$("user_study_list").define("elements", e);
-                    $$("user_study_list").refresh();
+                        $$("user_study_list").addView(u);
+                    })
                  });
-                
             }
         }
     };
@@ -99,7 +109,7 @@ define("ui/slidenav", ["config", "zoomer", "slide", "jquery","raterData"], funct
         view:"form", 
         width:200, 
         id: "user_study_list",
-        scroll:false,
+        scroll: false,
         elements:[]
     };
 
