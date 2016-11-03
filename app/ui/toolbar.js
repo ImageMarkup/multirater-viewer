@@ -24,10 +24,42 @@ define("ui/toolbar", ["pubsub", "spx"], function(pubsub, spx) {
                 view: "button",
                 disabled: true,
                 click: loadSPX
+            },
+            {
+                id: "showSeg_btn",
+                label: "Segs",
+                view: "button",
+                disabled: false,
+                click: loadSeg
+
+
             }
 
         ]
     };
+
+    function loadSeg()
+    {
+        webix.message("Segs loaded");
+        
+        console.log(slide);
+//         GET /segmentation/{id} Get a segmentation for an image.
+// Parameters
+// Parameter   Value   Description Parameter Type  Data Type
+// id  
+// (required)
+// The ID of the segmentation. path    string
+// Response Messages
+// HTTP Status Code    Reason  Response Model
+// 400 ID was invalid.
+    }
+
+    function getSegmentations()
+    {
+
+
+    }
+
 
     function loadSPX() {
         spxOn = !spxOn;

@@ -64,6 +64,13 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "spx"], fu
         }
     };
 
+
+    var showSeg = {
+
+
+        
+    }
+
     function loadSPX() {
         spxOn = !spxOn;
         spxOn ? spx.addOverlay(slide.spx) : spx.removeOverlay();
