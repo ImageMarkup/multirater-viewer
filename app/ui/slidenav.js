@@ -1,4 +1,4 @@
-define("ui/slidenav", ["config", "zoomer", "slide", "jquery"], function(config, zoomer, slide, $) {
+define("ui/slidenav", ["config", "zoomer", "slide", "jquery","raterData"], function(config, zoomer, slide, $, raterData) {
 
     var folderName = null;
     var patientId = null;
