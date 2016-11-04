@@ -1,7 +1,10 @@
-define("ui/slidenav", ["config", "zoomer", "slide", "jquery","raterData"], function(config, zoomer, slide, $, raterData) {
+define("ui/slidenav", ["config", "zoomer", "slide", "jquery","raterData", "spx"], function(config, zoomer, slide, $, raterData, spx) {
 
     var folderName = null;
     var patientId = null;
+    var studyName = null;
+    var imageName = null;
+    var selectedRaters = new Array();
 
     var setDropdown = {
         view: "combo",
@@ -68,43 +71,61 @@ define("ui/slidenav", ["config", "zoomer", "slide", "jquery","raterData"], funct
         view: "combo",
         placeholder: "Select Study",
         id: "study_list",
-        options: {
-            body: {
-                template: "#name#",
-                url: "https://isic-archive.com:443/api/v1/study"
-            }
-        },
+        options: Object.keys(raterData),
         on: {
             "onChange": function(id) {
                 var study = this.getPopup().getBody().getItem(id);
-                var url = "https://isic-archive.com:443/api/v1/study/" + study._id;
+                studyName = study.id;
+                var images = $$("image_list").getPopup().getList();
+                images.clearAll();
+                images.parse(Object.keys(raterData[study.id])); 
+            }
+        }
+    };
+   
+    var imageList = {
+        view: "combo",
+        placeholder: "Select Image",
+        id: "image_list",
+        options: [],
+        on: {
+            "onChange": function(id) {
+                var image = this.getPopup().getBody().getItem(id);
+                var imageName = image.id;
+                var raters = Object.keys(raterData[studyName][image.id]["raters"]);
+                
                 $.each($$("user_study_list").elements, function(k, e){
                     $$("user_study_list").removeView(e.data.id);
                 });
 
-                $.get(url).then(function(data){
-                    $.each(data.users, function(junk, user){
+                $.each(raters, function(junk, rater){
                         var u = { 
                             view:"toggle", 
-                            id: user._id,
-                            name: user.login, 
-                            offLabel: user.login + " (ON)", 
-                            onLabel:user.login + " (OFF)",
-                            data: user,
+                            id: rater,
+                            name: rater, 
+                            offLabel: rater + " (ON)", 
+                            onLabel: rater + " (OFF)",
+                            
                             on:{
                                 onItemClick: function(id, e, node){
-                                    console.log($$(id));
+                                    var rater = {
+                                        "rater": $$(id).data.id, 
+                                        "color": {"r": 245, "g": 45, "b": 90}, 
+                                        "spx": raterData[studyName][imageName]["raters"][$$(id).data.id]["meta"]["annotations"]["starburst_pattern"]
+                                    };
+
+                                    selectedRaters.push(rater);
+                                    console.log(selectedRaters);
                                 }
                             }
                         };
 
                         $$("user_study_list").addView(u);
-                    })
-                 });
+                });
             }
         }
     };
-    
+   
     var userStudyList = {
         view:"form", 
         width:200, 
@@ -116,7 +137,7 @@ define("ui/slidenav", ["config", "zoomer", "slide", "jquery","raterData"], funct
     var studyNav = { 
         id: "study_view_tab", 
         width: 220,
-        rows:[studyList, userStudyList, {}]
+        rows:[studyList, imageList, userStudyList, {}]
     };
 
     //TO DO:

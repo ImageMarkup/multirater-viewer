@@ -34,6 +34,10 @@ define("spx", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer, 
         });
     }
 
+    function addRaterOverlays(regions, raters){
+
+    }
+
     function removeOverlay() {
         $(".boundaryClass").remove();
     }
@@ -48,6 +52,7 @@ define("spx", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer, 
         transform: transform,
         addOverlay: addOverlay,
         removeOverlay: removeOverlay,
-        updateOverlay: updateOverlay
+        updateOverlay: updateOverlay,
+        addRaterOverlays: addRaterOverlays
     }
 });

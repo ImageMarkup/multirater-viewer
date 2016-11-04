@@ -1,3 +1,4 @@
+define("raterData",function(){
 studyRaterData = {
  "UDA-1 Testing": {
   "ISIC_0000169": {
@@ -264298,3 +264299,6 @@ studyRaterData = {
   }
  }
 }
+
+return studyRaterData;
+});
