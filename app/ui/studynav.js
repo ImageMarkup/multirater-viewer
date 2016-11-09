@@ -3,7 +3,9 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "spx",
     var studyName = '';
     var imageName = '';
     var slide = null;
-  
+    var selectedRaters = new Array();
+    var selectedFeature = null;
+
     pubsub.subscribe("SLIDE", function(msg, data) {
         slide = data;
     });
@@ -54,10 +56,9 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "spx",
                 var data = []
                 $.each(raters, function(index, rater){
                     var raterColor = d3.schemeCategory20[index % 20];
-                    var spx = raterData[studyName][imageName]["raters"][rater]["meta"]["annotations"]["starburst_pattern"];
-                    data.push({id: rater, name: rater, spx: spx, color: raterColor, $cellCss:{color: {"background-color": raterColor}}});
+                    var spx = raterData[studyName][imageName]["raters"][rater]["meta"]["annotations"];
+                    data.push({id: rater, spx: spx, fill: raterColor});
                 });
-
                 $$("raters_list").parse(data);
             }
         }
@@ -73,20 +74,37 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "spx",
         ],
         on:{
             OnItemClick: function(id){
-                feature = this.getItem(id).id;
-                spx.addRaterOverlays(feature, raterData[studyName][imageName]["raters"], slide.spx);
+                selectedFeature = this.getItem(id).id;
+                spx.removeOverlay();
+                spx.addRaterOverlays(selectedFeature, selectedRaters, slide.spx);
             }
         }
     };
 
+    var tpl = "<span style='background-color:#fill#; border-radius:4px; padding-right:10px;'>&nbsp</span>";
     var userStudyList = {
         view: "datatable",
         id: "raters_list",
+        multiselect: true,
+        select: "row",
         autoheight: true,
         columns:[
-            {id:"name", header: "Raters", fillspace: true},
-            {id:"color", header: "Color", width: 50}   
-        ]
+            {id:"id", header: "Raters", fillspace: true},
+            {id:"fill", header:"Color", editor:"color", template:tpl, width:30} 
+        ],
+        on:{
+            onItemClick: function(id){
+                selectedRaters = new Array()
+                $.each(this.getSelectedId(true), function(index, rater){
+                    selectedRaters.push($$("raters_list").getItem(rater.id));
+                });
+
+                if(selectedFeature != null){
+                    spx.removeOverlay();
+                    spx.addRaterOverlays(selectedFeature, selectedRaters, slide.spx);
+                }
+            }
+        }
     };
 
     var studyNav = { 

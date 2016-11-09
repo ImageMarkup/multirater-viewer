@@ -2,6 +2,7 @@ define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/studynav", "ui/
     function(filters, header, slidenav, studynav, toolbar, metadata, spxnav) {
 
         function init() {
+
             filters.init();
 
             viewerPanel = {
