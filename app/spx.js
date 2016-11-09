@@ -15,8 +15,7 @@ define("spx", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer, 
                 index: index,
                 coords: regionCoords.join(" "),
                 fill: "blue",
-                opacity: 0.2,
-                visibility: "hidden"
+                opacity: 0.2
             }
         });
 
@@ -51,7 +50,6 @@ define("spx", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer, 
                     region.fill = rater.fill;
 
                     if(rater.spx[feature][i] > 0){
-                        region.visibility = "visible";
                         ratersPerRegion[i] += 1;
                     }
                 });
@@ -63,11 +61,14 @@ define("spx", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer, 
         if(x.length){
             $.each(regions, function(index, region) {
                 var css = ratersPerRegion[index] > 1 ? "multi_rater_boundary" : "boundaryClass";
+                var visibility = ratersPerRegion[index] > 0 ? "visible" : "hidden";
+                var opacity = ratersPerRegion[index] > 1 ? 0.5 : 0.2;
+
                 d3.select(viewer.svgOverlay().node()).append("polygon")
                     .attr("points", region.coords)
                     .style('fill', region.fill)
-                    .attr('opacity', region.opacity)
-                    .attr('visibility', region.visibility)
+                    .attr('opacity', opacity)
+                    .attr('visibility', visibility)
                     .attr('class', css)
                     .attr('id', 'boundary' + region.index)
                     .attr('stroke', 'blue')

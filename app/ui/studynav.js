@@ -20,12 +20,13 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "spx",
                 var study = this.getPopup().getBody().getItem(id);
                 studyName = study.id;
                 var images = $$("image_list").getPopup().getList();
+                var featureSetId = raterData[studyName]["FeatureSetId"];
                 images.clearAll();
-                images.parse(Object.keys(raterData[study.id])); 
+                images.parse(Object.keys(raterData[study.id]["MarkupData"])); 
 
                 $$("feature_list").clearAll();
-             
-                $.get("https://isic-archive.com:443/api/v1/featureset/55c3d24c9fc3c149ba6470e1", function(data){
+                
+                $.get("https://isic-archive.com:443/api/v1/featureset/" + featureSetId, function(data){
                     $$("feature_list").parse(data.localFeatures);
                 });
             }
@@ -42,7 +43,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "spx",
                 $$("raters_list").clearAll();
                 var image = this.getPopup().getBody().getItem(id);
                 imageName = image.id;
-                var raters = Object.keys(raterData[studyName][image.id]["raters"]);
+                var raters = Object.keys(raterData[studyName]["MarkupData"][image.id]["raters"]);
                 var url = config.BASE_URL + "/resource/search?mode=prefix&types=%5B%22item%22%5D&q=" + imageName + ".jpg";
 
                 //update the slide
@@ -56,7 +57,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "spx",
                 var data = []
                 $.each(raters, function(index, rater){
                     var raterColor = d3.schemeCategory20[index % 20];
-                    var spx = raterData[studyName][imageName]["raters"][rater]["meta"]["annotations"];
+                    var spx = raterData[studyName]["MarkupData"][imageName]["raters"][rater]["meta"]["annotations"];
                     data.push({id: rater, spx: spx, fill: raterColor});
                 });
                 $$("raters_list").parse(data);
@@ -112,6 +113,12 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "spx",
         width: 220,
         rows:[studyList, imageList, userStudyList, featureList]
     };
+
+    function availableFeatures(raters){
+        var features = new Array();
+
+        
+    }
 
     return {
         view: studyNav
