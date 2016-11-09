@@ -50,6 +50,49 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "spx"], fu
         }
     };
 
+    var mOpacitySlider = {
+        view: "slider",
+        id: "m_opacity_slider",
+        label: "Opacity",
+        labelPosition: "top",
+        value: "0.1",
+        step: 0.05,
+        min: 0,
+        max: 1,
+        width: 200,
+        on: {
+            "onSliderDrag": apply,
+            "onChange": apply
+        }
+    };
+
+    var mStrokeSlider = {
+        view: "slider",
+        id: "m_stroke_slider",
+        label: "Stroke",
+        value: "0.001",
+        labelPosition: "top",
+        step: 0.0000001,
+        min: 0,
+        max: 0.005,
+        width: 200,
+        on: {
+            "onSliderDrag": apply,
+            "onChange": apply
+        }
+    };
+
+    var mColorPicker = {
+        view: "colorpicker",
+        id: "m_stroke_colorpicker",
+        label: "Stroke color",
+        labelPosition: "top",
+        value: "blue",
+        on: {
+            "onChange": apply
+        }
+    };
+
     var nav = {
         width: 220,
         header: "Annotations",
@@ -57,9 +100,14 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "spx"], fu
         collapsed: true,
         body: {
             rows: [
+                {view: "template", template: "Single rater properties", height: 30},
                 opacitySlider,
                 strokeSlider,
-                colorPicker, {}
+                colorPicker,
+                {view: "template", template: "Multi rater properties", height: 30},
+                mOpacitySlider,
+                mStrokeSlider,
+                mColorPicker, {}
             ]
         }
     };
@@ -78,10 +126,16 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "spx"], fu
     }
 
     function apply() {
-        spx.updateOverlay({
+        spx.updateOverlay("boundaryClass", {
             "opacity": $$("opacity_slider").getValue(),
             "stroke-width": $$("stroke_slider").getValue(),
             "stroke": $$("stroke_colorpicker").getValue()
+        });
+
+        spx.updateOverlay("multi_rater_boundary", {
+            "opacity": $$("m_opacity_slider").getValue(),
+            "stroke-width": $$("m_stroke_slider").getValue(),
+            "stroke": $$("m_stroke_colorpicker").getValue()
         });
     }
 
