@@ -1,6 +1,6 @@
 define("raterData", function(){
 return {
- "UDA-1 Testing":{
+ "UDA-1 Testing": {
   "FeatureSetId": "55c3d24c9fc3c149ba6470e1", 
   "MarkupData": {
    "ISIC_0000169": {
@@ -264305,4 +264305,3 @@ return {
   }
  }
 }
-});
