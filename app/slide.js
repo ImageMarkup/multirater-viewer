@@ -1,5 +1,9 @@
 define("slide", ["pubsub", "config", "jquery", "zoomer", "spx"], function(pubsub, config, $, viewer, spx) {
 
+
+    LabelIndexToSPXCoords = {}
+
+
     var slide = {
         init: function(item) {
             $.extend(this, item);
@@ -35,6 +39,7 @@ define("slide", ["pubsub", "config", "jquery", "zoomer", "spx"], function(pubsub
                     data = JSON.parse(data);
                     this.spx = spx.transform(data, this.meta.imageWidth);
                     console.log("Loaded", data.length, "super pixels for", this.name);
+
                 }
             });
         },
