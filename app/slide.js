@@ -1,8 +1,6 @@
 define("slide", ["pubsub", "config", "jquery", "zoomer", "spx"], function(pubsub, config, $, viewer, spx) {
 
 
-    LabelIndexToSPXCoords = {}
-
 
     var slide = {
         init: function(item) {
