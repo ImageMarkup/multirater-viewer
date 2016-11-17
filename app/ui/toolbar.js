@@ -1,4 +1,4 @@
-define("ui/toolbar", ["pubsub", "spx"], function(pubsub, spx) {
+define("ui/toolbar", ["pubsub", "tiles"], function(pubsub, tiles) {
 
     var slide = null;
     var spxOn = false;
@@ -31,8 +31,6 @@ define("ui/toolbar", ["pubsub", "spx"], function(pubsub, spx) {
                 view: "button",
                 disabled: false,
                 click: loadSeg
-
-
             }
 
         ]
@@ -63,7 +61,7 @@ define("ui/toolbar", ["pubsub", "spx"], function(pubsub, spx) {
 
     function loadSPX() {
         spxOn = !spxOn;
-        spxOn ? spx.addOverlay(slide.spx) : spx.removeOverlay();
+        spxOn ? tiles.addOverlay(slide.tiles) : tiles.removeOverlay();
         spxOn ? $$("spx_tools").show() : $$("spx_tools").hide();
         $$("spx_tools").expand();
     };

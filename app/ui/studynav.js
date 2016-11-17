@@ -1,4 +1,4 @@
-define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "spx", "d3", "pubsub"], function(config, zoomer, slide, $, raterData, spx, d3, pubsub) {
+define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles", "d3", "pubsub"], function(config, zoomer, slide, $, raterData, tiles, d3, pubsub) {
 
     var studyName = '';
     var imageName = '';
@@ -58,7 +58,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "spx",
                 $.each(raters, function(index, rater){
                     var raterColor = d3.schemeCategory20[index % 20];
                     var spx = raterData[studyName]["MarkupData"][imageName]["raters"][rater]["meta"]["annotations"];
-                    data.push({id: rater, spx: spx, fill: raterColor});
+                    data.push({id: rater, tiles: spx, fill: raterColor});
                 });
                 $$("raters_list").parse(data);
             }
@@ -76,8 +76,8 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "spx",
         on:{
             OnItemClick: function(id){
                 selectedFeature = this.getItem(id).id;
-                spx.removeOverlay();
-                spx.addRaterOverlays(selectedFeature, selectedRaters, slide.spx);
+                tiles.removeOverlay();
+                tiles.addRaterOverlays(selectedFeature, selectedRaters, slide.tiles);
             }
         }
     };
@@ -101,8 +101,8 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "spx",
                 });
 
                 if(selectedFeature != null){
-                    spx.removeOverlay();
-                    spx.addRaterOverlays(selectedFeature, selectedRaters, slide.spx);
+                    tiles.removeOverlay();
+                    tiles.addRaterOverlays(selectedFeature, selectedRaters, slide.tiles);
                 }
             }
         }
@@ -113,12 +113,6 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "spx",
         width: 220,
         rows:[studyList, imageList, userStudyList, featureList]
     };
-
-    function availableFeatures(raters){
-        var features = new Array();
-
-        
-    }
 
     return {
         view: studyNav

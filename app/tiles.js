@@ -1,6 +1,6 @@
-define("spx", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer, d3) {
+define("tiles", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer, d3) {
 
-    function transform(tiles, imageWidth) {
+    function transformCoords(tiles, imageWidth) {
         coordinates = new Array(tiles.length);
         scaleFactor = 1 / imageWidth;
         $.each(tiles, function(index, tile) {
@@ -42,13 +42,13 @@ define("spx", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer, 
         ratersPerTile = new Array(tiles.length).fill(0);
 
         $.each(raters, function(junk, rater) {
-            if (feature in rater.spx) {
-                x.push(rater.spx[feature]);
+            if (feature in rater.tiles) {
+                x.push(rater.tiles[feature]);
 
                 $.each(tiles, function(i, tile) {
                     tile.fill = rater.fill;
 
-                    if (rater.spx[feature][i] > 0) {
+                    if (rater.tiles[feature][i] > 0) {
                         ratersPerTile[i] += 1;
                     }
                 });
@@ -79,14 +79,18 @@ define("spx", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer, 
         $(".multi_rater_boundary").remove();
     }
 
-    function updateOverlay(className, properties) {
-        $.each(properties, function(property, value) {
-            $("." + className).attr(property, value);
+    function updateOverlay(className, attributes, styles) {
+        $.each(attributes, function(attribute, value) {
+            $("." + className).attr(attribute, value);
+        });
+
+        $.each(styles, function(style, value) {
+            $("." + className).css(style, value);
         });
     }
 
     return {
-        transform: transform,
+        transformCoords: transformCoords,
         addOverlay: addOverlay,
         removeOverlay: removeOverlay,
         updateOverlay: updateOverlay,

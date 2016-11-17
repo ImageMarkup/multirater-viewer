@@ -1,10 +1,11 @@
-define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "spx"], function(config, zoomer, slide, $, pubsub, spx) {
+define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], function(config, zoomer, slide, $, pubsub, tiles) {
 
     var slide = null;
     var spxOn = false;
 
     pubsub.subscribe("SLIDE", function(msg, data) {
         slide = data;
+        resetControls();
     });
 
     var opacitySlider = {
@@ -39,10 +40,21 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "spx"], fu
         }
     };
 
-    var colorPicker = {
+    var strokeColorPicker = {
         view: "colorpicker",
         id: "stroke_colorpicker",
         label: "Stroke color",
+        labelPosition: "top",
+        value: "blue",
+        on: {
+            "onChange": apply
+        }
+    };
+
+    var fillColorPicker = {
+        view: "colorpicker",
+        id: "fill_colorpicker",
+        label: "Fill color",
         labelPosition: "top",
         value: "blue",
         on: {
@@ -103,7 +115,8 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "spx"], fu
                 {view: "template", template: "Single rater properties", height: 30},
                 opacitySlider,
                 strokeSlider,
-                colorPicker,
+                strokeColorPicker,
+                fillColorPicker,
                 {view: "template", template: "Multi rater properties", height: 30},
                 mOpacitySlider,
                 mStrokeSlider,
@@ -112,31 +125,30 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "spx"], fu
         }
     };
 
-
-    var showSeg = {
-
-
-        
-    }
-
-    function loadSPX() {
-        spxOn = !spxOn;
-        spxOn ? spx.addOverlay(slide.spx) : spx.removeOverlay();
-        spxOn ? $$("spx_tools").show() : $$("spx_tools").hide();
+    function resetControls(){
+        $$("opacity_slider").setValue("0.1");
+        $$("stroke_slider").setValue("0.001");
+        $$("stroke_colorpicker").setValue("blue");
+        $$("fill_colorpicker").setValue("blue");
+        $$("m_opacity_slider").setValue("0.1");
+        $$("m_stroke_slider").setValue("0.001");
+        $$("m_stroke_colorpicker").setValue("blue");
     }
 
     function apply() {
-        spx.updateOverlay("boundaryClass", {
+        tiles.updateOverlay("boundaryClass", {
             "opacity": $$("opacity_slider").getValue(),
             "stroke-width": $$("stroke_slider").getValue(),
             "stroke": $$("stroke_colorpicker").getValue()
+        },{
+            "fill": $$("fill_colorpicker").getValue()
         });
 
-        spx.updateOverlay("multi_rater_boundary", {
+        tiles.updateOverlay("multi_rater_boundary", {
             "opacity": $$("m_opacity_slider").getValue(),
             "stroke-width": $$("m_stroke_slider").getValue(),
             "stroke": $$("m_stroke_colorpicker").getValue()
-        });
+        }, {});
     }
 
     return {

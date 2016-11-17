@@ -1,17 +1,17 @@
-define("slide", ["pubsub", "config", "jquery", "zoomer", "spx"], function(pubsub, config, $, viewer, spx) {
+define("slide", ["pubsub", "config", "jquery", "zoomer", "tiles"], function(pubsub, config, $, viewer, tiles) {
 
 
 
     var slide = {
         init: function(item) {
             $.extend(this, item);
-            spx.removeOverlay();
+            tiles.removeOverlay();
             $$("spx_tools").collapse();
             $$("spx_btn").disable();
             this.viewer();
             this.keyvalue();
             this.initDataViews();
-            this.superPixels();
+            this.getTiles();
             pubsub.publish("SLIDE", this);
             return this;
         },
@@ -29,13 +29,13 @@ define("slide", ["pubsub", "config", "jquery", "zoomer", "spx"], function(pubsub
             viewer.open(tileSource);
         },
 
-        superPixels: function() {
+        getTiles: function() {
             $.ajax({
                 context: this,
                 url: config.BASE_URL + "/file/" + this.meta.svgJsonId + "/download",
                 success: function(data) {
                     data = JSON.parse(data);
-                    this.spx = spx.transform(data, this.meta.imageWidth);
+                    this.tiles = tiles.transformCoords(data, this.meta.imageWidth);
                     console.log("Loaded", data.length, "super pixels for", this.name);
 
                 }
