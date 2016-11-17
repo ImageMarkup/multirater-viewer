@@ -8,6 +8,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
 
     pubsub.subscribe("SLIDE", function(msg, data) {
         slide = data;
+        selectedRaters = new Array();
     });
 
     var studyList = {
