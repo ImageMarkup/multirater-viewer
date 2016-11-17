@@ -86,19 +86,22 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
     var userStudyList = {
         view: "datatable",
         id: "raters_list",
-        multiselect: true,
-        select: "row",
         autoheight: true,
         columns:[
+            { id:"rater_ch", header:{ content:"masterCheckbox" }, template:"{common.checkbox()}", width: 30},
             {id:"id", header: "Raters", fillspace: true},
-            {id:"fill", header:"Color", editor:"color", template:tpl, width:30} 
+            {id:"fill", header:"", editor:"color", template:tpl, width:30} 
         ],
         on:{
-            onItemClick: function(id){
-                selectedRaters = new Array()
-                $.each(this.getSelectedId(true), function(index, rater){
-                    selectedRaters.push($$("raters_list").getItem(rater.id));
-                });
+            onCheck: function(raterId, raterBox, state){
+                //Source: http://webix.com/snippet/a57f4c5f
+                if(state){
+                    selectedRaters = $.grep(selectedRaters, function(rater, index){return rater.id == raterId}, true);
+                    selectedRaters.push($$("raters_list").getItem(raterId));
+                }
+                else{
+                    selectedRaters = $.grep(selectedRaters, function(rater, index){return rater.id == raterId}, true);
+                }
 
                 if(selectedFeature != null){
                     tiles.removeOverlay();
