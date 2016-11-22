@@ -865,3 +865,43 @@ LongFeatureExample =
   "name": "UDA2 Study",
   "version": 1
 }
+
+
+ FeatureSetList = [{
+        "_id": "57c5fd619fc3c15fb4ce1bff",
+        "name": "Basic",
+        "version": 1
+    }, {
+        "_id": "567420f69fc3c14cc3d0ee48",
+        "name": "ISBI Challenge 2016",
+        "version": 1
+    }, {
+        "_id": "5821b10d9fc3c13ed29751e2",
+        "name": "ISBI Challenge 2017",
+        "version": 1
+    }, {
+        "_id": "580e17c39fc3c11951c28800",
+        "name": "ISBI Challenge 2017",
+        "version": 2
+    }, {
+        "_id": "55943d009fc3c13155bcad66",
+        "name": "ISIC Analytical",
+        "version": 0.1
+    }, {
+        "_id": "55c3d24c9fc3c149ba6470e1",
+        "name": "ISIC Conventional",
+        "version": 0.2
+    }, {
+        "_id": "5809196a9fc3c104822158c0",
+        "name": "ISIC Metaphoric Consensus",
+        "version": 1
+    }, {
+        "_id": "573f09bd9fc3c132505c0ee6",
+        "name": "Lesion Classification",
+        "version": 1
+    }, {
+        "_id": "55943d009fc3c13155bcad65",
+        "name": "UDA2 Study",
+        "version": 1
+    }]
+

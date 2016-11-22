@@ -7,78 +7,61 @@
     <link rel="stylesheet" type="text/css" href="bower_components/webix/codebase/webix.css">
     <link rel="stylesheet" type="text/css" href="css/isic.css">
     <script type="text/javascript" src="bower_components/webix/codebase/webix.js"></script>
-
-
     <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
-
+    <script type="text/javascript" src="createFeatureWidgetData.js"></script>
     <script type="text/javascript" src="createFeatureWidget.js"></script>
-
 </head>
 
 <body>
     <!-- <div id="main_layout" style="height:100%"></div> -->
-    
     <div id="main_layout" style="height:100%"></div>
     <!-- <div id="image_viewer" style="width:100%; height:100%"></div>    -->
     <script>
     //I obtained this from https://isic-archive.com/api/v1#!/featureset/find
 
-    FeatureSetList = [{
-        "_id": "57c5fd619fc3c15fb4ce1bff",
-        "name": "Basic",
-        "version": 1
-    }, {
-        "_id": "567420f69fc3c14cc3d0ee48",
-        "name": "ISBI Challenge 2016",
-        "version": 1
-    }, {
-        "_id": "5821b10d9fc3c13ed29751e2",
-        "name": "ISBI Challenge 2017",
-        "version": 1
-    }, {
-        "_id": "580e17c39fc3c11951c28800",
-        "name": "ISBI Challenge 2017",
-        "version": 2
-    }, {
-        "_id": "55943d009fc3c13155bcad66",
-        "name": "ISIC Analytical",
-        "version": 0.1
-    }, {
-        "_id": "55c3d24c9fc3c149ba6470e1",
-        "name": "ISIC Conventional",
-        "version": 0.2
-    }, {
-        "_id": "5809196a9fc3c104822158c0",
-        "name": "ISIC Metaphoric Consensus",
-        "version": 1
-    }, {
-        "_id": "573f09bd9fc3c132505c0ee6",
-        "name": "Lesion Classification",
-        "version": 1
-    }, {
-        "_id": "55943d009fc3c13155bcad65",
-        "name": "UDA2 Study",
-        "version": 1
-    }]
 
 
 
+    function processFeatureSetData(featureSetData) {
+        //This processes the feature set data I get from the API
+        //and generates a hierarchy that I can use to create a widget
+        //for rendering the results
+        //Need to parse localFeatures and GlobalFeatures
 
+        FeatureDataForUI = {}
+        $.each(featureSetData.localFeatures, function(id, feature) {
+            console.log(id, feature)
+                //keys I need are id, type, and name... if name is an array then I need to nest it
+            featGroup = feature.name[0];
 
+            if (featGroup in FeatureDataForUI) {
+                curData = FeatureDataForUI[featGroup];
+                curData.push( {id: feature.id, FeatGroup: feature.name[0], FullName: feature.name[1]})
+            } else {
+                FeatureDataForUI[featGroup] = [
+                {id: feature.id, FeatGroup: feature.name[0], FullName: feature.name[1]}
+                ]
 
-TopLevelFeatures = ['GlobalFeatures','Globs', 'Lines','Blobs'];
+            }
+        });
 
-FeatureAccordion = {
-    view:"accordion",
-    id: "FeatureAccordion",
-    multi:false,
-    rows: //or rows 
-        [
-        { header:"col 1", body:"content 1" }, 
-        { header:"col 2", body:"content 2" }, 
-        
-    ]
-}
+       return FeatureDataForUI;
+    }
+
+   
+
+    TopLevelFeatures = ['GlobalFeatures', 'Globs', 'Lines', 'Blobs'];
+    TopLevelFeatures =  processFeatureSetData(LongFeatureExample);
+
+    FeatureAccordion = {
+        view: "accordion",
+        id: "FeatureAccordion",
+        multi: false,
+        rows: //or rows 
+            [
+            //add these dynamically
+        ]
+    }
 
     webix.ready(function() {
 
@@ -98,89 +81,114 @@ FeatureAccordion = {
             container: "main_layout",
             id: "layout",
             height: 550,
-            width: 700,
+            width: 400,
             rows: [{
                     cols: [
                         FeatureSetListWidget, {
                             template: "col 2"
-                        }
+                        },
+
                     ]
-                }, FeatureAccordion, 
-                {
-                    template: "row 2"
-                },
+                }, FeatureAccordion,
 
             ]
         });
 
-// var copiedObject = jQuery.extend({}, originalObject)
 
 
-var form1 = [
-            { view:"segmented", value:"one", inputWidth:250, options:[
-                { id:"one", value:"One" },
-                { id:"two", value:"Two"},
-                { id:"three", value:"Three"}
-            ]},
-            { view:"segmented", value:"two", inputWidth:250, options:[
-                { id:"one", value:"One" },
-                { id:"two", value:"Two"},
-                { id:"three", value:"Three"}
-            ], align:"center"},
-            { view:"segmented", value:"three", inputWidth:250, options:[
-                { id:"one", value:"One" },
-                { id:"two", value:"Two"},
-                { id:"three", value:"Three"}
-            ], align:"right"},
-            { view:"button", value:"Confirm", width:200, align:"center" }
-        ];
 
-        var form2 = [
-            { view:"segmented", value:"one", label:"Select one", options:[
-                { id:"one", value:"One" },
-                { id:"two", value:"Two"},
-                { id:"three", value:"Three"}
-            ]},
-            { view:"segmented", value:"three", label:"Select one", labelPosition:"top", options:[
-                { id:"one", value:"One" },
-                { id:"two", value:"Two"},
-                { id:"three", value:"Three"}
-            ]},
-            { view:"button", value:"Confirm", width:200, align:"center" }
-        ];      
+        form3 = {
+            view: "segmented",
+            value: "three",
+            label: "Select one",
+            labelPosition: "top",
+            options: [{
+                id: "one",
+                value: "One"
+            }, {
+                id: "two",
+                value: "Two"
+            }, {
+                id: "three",
+                value: "Three"
+            }]
+        };
 
-        form3 = { view:"segmented", value:"three", label:"Select one", labelPosition:"top", options:[
-                { id:"one", value:"One" },
-                { id:"two", value:"Two"},
-                { id:"three", value:"Three"}
-            ]};
 
-        $.each(TopLevelFeatures, function(x,tlf)
-                {
-                    console.log(tlf);
-                    webix.message(tlf);
-              
+        // http://docs.webix.com/samples/13_form/01_controls/07_segmented.html
+        $.each( Object.keys(TopLevelFeatures), function(x, tlf) {
+            // console.log(tlf);
 
-        ItemGroup = { view: "accordionitem", header:tlf, body: form3  }; 
+            CurButtonSet = form2;
 
-              //Create/configure a view for this accordion item
-  //           ItemGroup =         { rows:[{
-  //   view:"accordionitem",
-  //   header: "hi",
-  //   body:"dyn body coming soon"
-  // }]};
+            //Now create a button set for the current set of features
+
+          
+            FeaturesForCurrentGroup = TopLevelFeatures[tlf];
+
+            ButtonOptions = []
+
+            $.each(FeaturesForCurrentGroup, function( x1, glf)
+            {
+                //group level features
+                //console.log(glf);
+                CurButtonCfg = {
+    view:"button", 
+    id:"my_"+glf.id, 
+    value:glf.id, 
+    inputWidth:100, height: 50}
+                // 
+                // ButtonOptions.push( { id: glf.id, value: glf.id})
+                // // // 
+                ButtonOptions.push( CurButtonCfg)
+            })
+
+            // ButtonSetConfig = { view:"segmented", options: ButtonOptions};
+            ButtonSetConfig = { view:"form", width: 100, elements: ButtonOptions};
+
+// var form2 = {
+//     view:"form", width:100, scroll:false,
+//     elements:[
+//         { view:"button", value:"Standard", height:50 }, 
+//         { view:"button", value:"Form", type:"form", height:50 }, 
+//         { view:"button", value:"Danger", type:"danger", height:50 }, 
+//         { view:"button", label:"Prev", type:"prev", height:50 },
+//         { view:"button", label:"Next", type:"next", height:50 }
+//     ]
+// };
+
+            ItemGroup = {
+                view: "accordionitem",
+                header: tlf,
+                collapsed: true,
+                // headerHeight:30, 
+                body: ButtonSetConfig
+                // {
+                //     view: "form",
+                //     width: 300,
+                //     elements: CurButtonSet
+                // },
+            };
+            console.log(ButtonSetConfig);
+//Use the badges for a multirater viewer
+// http://docs.webix.com/desktop__button_groups.html
+// http://docs.webix.com/desktop__button.html
+
+// { view:"button", width:40, badge:12, type:"icon", icon:"envelope" }
+
+
 
             $$('FeatureAccordion').addView(ItemGroup);
 
 
-                });
+        });
 
 
 
 
     })
     </script>
-<!-- webix.ready(function(){
+    <!-- webix.ready(function(){
  
   var app = webix.ui({
     view:"accordion",
@@ -209,7 +217,7 @@ var form1 = [
   // This does not work
   var view = webix.ui(config);
   $$('accordion').addView(view.getChildViews()[0]);
- 
+            // var copiedObject = jQuery.extend({}, originalObject) 
 }); -->
     <!-- http://webix.com/snippet/f9dbea6a -->
 </body>
