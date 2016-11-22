@@ -7,12 +7,17 @@
     <link rel="stylesheet" type="text/css" href="bower_components/webix/codebase/webix.css">
     <link rel="stylesheet" type="text/css" href="css/isic.css">
     <script type="text/javascript" src="bower_components/webix/codebase/webix.js"></script>
+
+
+    <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
+
+    <script type="text/javascript" src="createFeatureWidget.js"></script>
+
 </head>
 
 <body>
     <!-- <div id="main_layout" style="height:100%"></div> -->
-    <div>
-        <h1> SMILE</h1> </div>
+    
     <div id="main_layout" style="height:100%"></div>
     <!-- <div id="image_viewer" style="width:100%; height:100%"></div>    -->
     <script>
@@ -57,20 +62,25 @@
     }]
 
 
+
+
+
+
+TopLevelFeatures = ['GlobalFeatures','Globs', 'Lines','Blobs'];
+
 FeatureAccordion = {
     view:"accordion",
-    multi:true,
+    id: "FeatureAccordion",
+    multi:false,
     rows: //or rows 
         [
         { header:"col 1", body:"content 1" }, 
-        { header:"col 2", body:"content 2" },
-        { header:"col 3", body:"content 3" }
+        { header:"col 2", body:"content 2" }, 
+        
     ]
 }
 
     webix.ready(function() {
-
-
 
         FeatureSetListWidget = {
             view: "combo",
@@ -103,11 +113,105 @@ FeatureAccordion = {
             ]
         });
 
+// var copiedObject = jQuery.extend({}, originalObject)
+
+
+var form1 = [
+            { view:"segmented", value:"one", inputWidth:250, options:[
+                { id:"one", value:"One" },
+                { id:"two", value:"Two"},
+                { id:"three", value:"Three"}
+            ]},
+            { view:"segmented", value:"two", inputWidth:250, options:[
+                { id:"one", value:"One" },
+                { id:"two", value:"Two"},
+                { id:"three", value:"Three"}
+            ], align:"center"},
+            { view:"segmented", value:"three", inputWidth:250, options:[
+                { id:"one", value:"One" },
+                { id:"two", value:"Two"},
+                { id:"three", value:"Three"}
+            ], align:"right"},
+            { view:"button", value:"Confirm", width:200, align:"center" }
+        ];
+
+        var form2 = [
+            { view:"segmented", value:"one", label:"Select one", options:[
+                { id:"one", value:"One" },
+                { id:"two", value:"Two"},
+                { id:"three", value:"Three"}
+            ]},
+            { view:"segmented", value:"three", label:"Select one", labelPosition:"top", options:[
+                { id:"one", value:"One" },
+                { id:"two", value:"Two"},
+                { id:"three", value:"Three"}
+            ]},
+            { view:"button", value:"Confirm", width:200, align:"center" }
+        ];      
+
+        form3 = { view:"segmented", value:"three", label:"Select one", labelPosition:"top", options:[
+                { id:"one", value:"One" },
+                { id:"two", value:"Two"},
+                { id:"three", value:"Three"}
+            ]};
+
+        $.each(TopLevelFeatures, function(x,tlf)
+                {
+                    console.log(tlf);
+                    webix.message(tlf);
+              
+
+        ItemGroup = { view: "accordionitem", header:tlf, body: form3  }; 
+
+              //Create/configure a view for this accordion item
+  //           ItemGroup =         { rows:[{
+  //   view:"accordionitem",
+  //   header: "hi",
+  //   body:"dyn body coming soon"
+  // }]};
+
+            $$('FeatureAccordion').addView(ItemGroup);
+
+
+                });
+
 
 
 
     })
     </script>
+<!-- webix.ready(function(){
+ 
+  var app = webix.ui({
+    view:"accordion",
+    multi:true,
+    id: 'accordion',
+    cols:[ //or rows 
+      { 
+        header:"col 1",
+        id:'col1'
+      },
+      { header:"col 2", body:"content 2" },
+      { header:"col 3", body:"content 3" }
+    ]
+  });
+ 
+  var config = { rows:[{
+    view:"accordionitem",
+    header:"dyn header",
+    body:"dyn body"
+  }]};
+ 
+  // This works
+  //$$('accordion').addView(config);
+ 
+ 
+  // This does not work
+  var view = webix.ui(config);
+  $$('accordion').addView(view.getChildViews()[0]);
+ 
+}); -->
+    <!-- http://webix.com/snippet/f9dbea6a -->
 </body>
 
 </html>
