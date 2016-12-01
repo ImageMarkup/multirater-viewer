@@ -20,10 +20,14 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
             "onChange": function(id) {
                 var study = this.getPopup().getBody().getItem(id);
                 studyName = study.id;
-                var images = $$("image_list").getPopup().getList();
+                //var images = $$("image_list").getPopup().getList();
                 var featureSetId = raterData[studyName]["FeatureSetId"];
-                images.clearAll();
-                images.parse(Object.keys(raterData[study.id]["MarkupData"])); 
+                $$("imageDataViewList").clearAll();
+                //images.parse(Object.keys(raterData[study.id]["MarkupData"])); 
+
+
+             
+                $$("imageDataViewList").parse(Object.keys(raterData[study.id]["MarkupData"]))
 
                 $$("feature_list").clearAll();
                 
@@ -34,6 +38,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         }
     };
    
+
     var imageList = {
         view: "combo",
         placeholder: "Select Image",
@@ -66,6 +71,67 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         }
     };
    
+    
+
+    var imageListDataView =
+    {
+        view: "dataview",
+        template: "<div class='webix_strong'>#id#</div><img src='http://candygram.neurology.emory.edu:8080/api/v1/file/582bcd90f8c2ef30f991ae8c/download?.jpg'/>",
+        id: "imageDataViewList",
+        xCount:1,
+        yCount:1,
+        select: true,
+        pager: "thumbPager",
+        type: {height: 170, width: 200},
+        on: {
+            "onItemClick": function(id) {
+                $$("raters_list").clearAll();
+                var image = this.getItem(id);
+                imageName = image.id;
+                var raters = Object.keys(raterData[studyName]["MarkupData"][image.id]["raters"]);
+                var url = config.BASE_URL + "/resource/search?mode=prefix&types=%5B%22item%22%5D&q=" + imageName + ".jpg";
+
+                //update the slide
+                $.get(url).then(function(resource){
+                    $.get(config.BASE_URL + "/folder/" + resource.item[0].folderId, function(folder){
+                        slide.init(folder);
+                    })
+                 });
+
+                //add a box for each rater
+                var data = []
+                $.each(raters, function(index, rater){
+                    var raterColor = d3.schemeCategory20[index % 20];
+                    var spx = raterData[studyName]["MarkupData"][imageName]["raters"][rater]["meta"]["annotations"];
+                    data.push({id: rater, tiles: spx, fill: raterColor});
+                });
+                $$("raters_list").parse(data);
+            }
+        }
+
+//ID: #id# <img src=#thumbnail#>
+
+    }
+
+    thumbPager = {
+            view:"pager",
+            id: "thumbPager",
+            template: "{common.prev()}{common.page()}/#limit# images{common.next()}",
+            animate:true,
+            size:1,
+            group:1
+        }
+
+
+
+    var imageListDataViewHolder = 
+    {
+        view: "layout",
+        rows: [  imageListDataView]
+    }
+
+
+
     var featureList = {
         view: "datatable",
         id: "feature_list",
@@ -115,7 +181,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
     var studyNav = { 
         id: "study_view_tab", 
         width: 220,
-        rows:[studyList, imageList, userStudyList, featureList]
+        rows:[studyList, thumbPager, imageListDataViewHolder, userStudyList, featureList]
     };
 
     return {
