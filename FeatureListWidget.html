@@ -36,22 +36,28 @@
 
             if (featGroup in FeatureDataForUI) {
                 curData = FeatureDataForUI[featGroup];
-                curData.push( {id: feature.id, FeatGroup: feature.name[0], FullName: feature.name[1]})
+                curData.push({
+                    id: feature.id,
+                    FeatGroup: feature.name[0],
+                    FullName: feature.name[1]
+                })
             } else {
-                FeatureDataForUI[featGroup] = [
-                {id: feature.id, FeatGroup: feature.name[0], FullName: feature.name[1]}
-                ]
+                FeatureDataForUI[featGroup] = [{
+                    id: feature.id,
+                    FeatGroup: feature.name[0],
+                    FullName: feature.name[1]
+                }]
 
             }
         });
 
-       return FeatureDataForUI;
+        return FeatureDataForUI;
     }
 
-   
+
 
     TopLevelFeatures = ['GlobalFeatures', 'Globs', 'Lines', 'Blobs'];
-    TopLevelFeatures =  processFeatureSetData(LongFeatureExample);
+    TopLevelFeatures = processFeatureSetData(LongFeatureExample);
 
     FeatureAccordion = {
         view: "accordion",
@@ -116,65 +122,83 @@
 
 
         // http://docs.webix.com/samples/13_form/01_controls/07_segmented.html
-        $.each( Object.keys(TopLevelFeatures), function(x, tlf) {
+        $.each(Object.keys(TopLevelFeatures), function(x, tlf) {
             // console.log(tlf);
 
             CurButtonSet = form2;
 
             //Now create a button set for the current set of features
 
-          
+
             FeaturesForCurrentGroup = TopLevelFeatures[tlf];
 
             ButtonOptions = []
 
-            $.each(FeaturesForCurrentGroup, function( x1, glf)
-            {
+            $.each(FeaturesForCurrentGroup, function(x1, glf) {
                 //group level features
                 //console.log(glf);
                 CurButtonCfg = {
-    view:"button", 
-    id:"my_"+glf.id, 
-    value:glf.id, 
-    inputWidth:100, height: 50}
-                // 
-                // ButtonOptions.push( { id: glf.id, value: glf.id})
-                // // // 
-                ButtonOptions.push( CurButtonCfg)
+                        view: "button",
+                        id: "my_" + glf.id,
+                        value: glf.id,
+                        inputWidth: 100,
+                        // height: 50
+                    }
+                    // 
+                    // ButtonOptions.push( { id: glf.id, value: glf.id})
+                    // // // 
+                ButtonOptions.push(CurButtonCfg)
             })
+            console.log(ButtonOptions);
+
+            MyButtons = [ {view:"button", id:'hi',value:'moo2',inputWidth: 0},{view:"button", id:'howdy',value:'moo',inputWidth: 100}]
+
 
             // ButtonSetConfig = { view:"segmented", options: ButtonOptions};
-            ButtonSetConfig = { view:"form", width: 100, elements: ButtonOptions};
+            ButtonSetConfig = {
+                    view: "form",
+                    width: 100,
+                    elements: [{
+                        cols:  ButtonOptions
+                         //End of cols
+                    }]
+                },
 
-// var form2 = {
-//     view:"form", width:100, scroll:false,
-//     elements:[
-//         { view:"button", value:"Standard", height:50 }, 
-//         { view:"button", value:"Form", type:"form", height:50 }, 
-//         { view:"button", value:"Danger", type:"danger", height:50 }, 
-//         { view:"button", label:"Prev", type:"prev", height:50 },
-//         { view:"button", label:"Next", type:"next", height:50 }
-//     ]
-// };
+                // ]
+                //             {cols:[
+                //         { rows: 
 
-            ItemGroup = {
-                view: "accordionitem",
-                header: tlf,
-                collapsed: true,
-                // headerHeight:30, 
-                body: ButtonSetConfig
-                // {
-                //     view: "form",
-                //     width: 300,
-                //     elements: CurButtonSet
-                // },
-            };
+                //              ButtonOptions }]};
+
+                // var form2 = {
+                //     view:"form", width:100, scroll:false,
+                //     elements:[
+                //         { view:"button", value:"Standard", height:50 }, 
+                //         { view:"button", value:"Form", type:"form", height:50 }, 
+                //         { view:"button", value:"Danger", type:"danger", height:50 }, 
+                //         { view:"button", label:"Prev", type:"prev", height:50 },
+                //         { view:"button", label:"Next", type:"next", height:50 }
+                //     ]
+                // };
+
+                ItemGroup = {
+                    view: "accordionitem",
+                    header: tlf,
+                    collapsed: true,
+                    // headerHeight:30, 
+                    body: ButtonSetConfig
+                        // {
+                        //     view: "form",
+                        //     width: 300,
+                        //     elements: CurButtonSet
+                        // },
+                };
             console.log(ButtonSetConfig);
-//Use the badges for a multirater viewer
-// http://docs.webix.com/desktop__button_groups.html
-// http://docs.webix.com/desktop__button.html
+            //Use the badges for a multirater viewer
+            // http://docs.webix.com/desktop__button_groups.html
+            // http://docs.webix.com/desktop__button.html
 
-// { view:"button", width:40, badge:12, type:"icon", icon:"envelope" }
+            // { view:"button", width:40, badge:12, type:"icon", icon:"envelope" }
 
 
 
