@@ -17,6 +17,7 @@ require = {
         "osdSVG": "bower_components/svg-overlay/openseadragon-svg-overlay",
         "d3": "bower_components/d3/d3.min",
         "tiles": "app/tiles",
+        "features": "app/features",
         "raterData": "app/raterData"
     },
 

@@ -1,4 +1,4 @@
-define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles", "d3", "pubsub"], function(config, zoomer, slide, $, raterData, tiles, d3, pubsub) {
+define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles", "d3", "pubsub", "features"], function(config, zoomer, slide, $, raterData, tiles, d3, pubsub, features) {
 
     var studyName = '';
     var imageName = '';
@@ -20,24 +20,18 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
             "onChange": function(id) {
                 var study = this.getPopup().getBody().getItem(id);
                 studyName = study.id;
-                //var images = $$("image_list").getPopup().getList();
                 var featureSetId = raterData[studyName]["FeatureSetId"];
                 $$("imageDataViewList").clearAll();
-                //images.parse(Object.keys(raterData[study.id]["MarkupData"])); 
-
-
-             
                 $$("imageDataViewList").parse(Object.keys(raterData[study.id]["MarkupData"]))
-
                 $$("feature_list").clearAll();
                 
                 $.get("https://isic-archive.com:443/api/v1/featureset/" + featureSetId, function(data){
                     $$("feature_list").parse(data.localFeatures);
+                    features.init(data.localFeatures);
                 });
             }
         }
     };
-   
 
     var imageList = {
         view: "combo",
@@ -71,18 +65,15 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         }
     };
    
-    
-
-    var imageListDataView =
-    {
+    var imageListDataView = {
         view: "dataview",
-        template: "<div class='webix_strong'>#id#</div><img src='http://candygram.neurology.emory.edu:8080/api/v1/file/582bcd90f8c2ef30f991ae8c/download?.jpg'/>",
+        template: "<center><img src='http://candygram.neurology.emory.edu:8080/api/v1/file/582bcd90f8c2ef30f991ae8c/download?.jpg'/><div class='webix_strong'>#id#</div></center>",
         id: "imageDataViewList",
         xCount:1,
         yCount:1,
         select: true,
         pager: "thumbPager",
-        type: {height: 170, width: 200},
+        type: {height: 170, width: 220},
         on: {
             "onItemClick": function(id) {
                 $$("raters_list").clearAll();
@@ -108,29 +99,21 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 $$("raters_list").parse(data);
             }
         }
-
-//ID: #id# <img src=#thumbnail#>
-
     }
 
     thumbPager = {
             view:"pager",
             id: "thumbPager",
-            template: "{common.prev()}{common.page()}/#limit# images{common.next()}",
+            template: "<center>{common.prev()}{common.page()}/#limit# images{common.next()}</center>",
             animate:true,
             size:1,
             group:1
         }
 
-
-
-    var imageListDataViewHolder = 
-    {
+    var imageListDataViewHolder = {
         view: "layout",
         rows: [  imageListDataView]
     }
-
-
 
     var featureList = {
         view: "datatable",
