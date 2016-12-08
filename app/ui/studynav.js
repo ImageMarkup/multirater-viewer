@@ -1,10 +1,11 @@
-define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles", "d3", "pubsub", "features"], function(config, zoomer, slide, $, raterData, tiles, d3, pubsub, features) {
+define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles", "d3", "pubsub"], function(config, zoomer, slide, $, raterData, tiles, d3, pubsub) {
 
     var studyName = '';
     var imageName = '';
     var slide = null;
-    var selectedRaters = new Array();
+    //var selectedRaters = new Array();
     var selectedFeature = null;
+    var featureButtons = [];
 
     pubsub.subscribe("SLIDE", function(msg, data) {
         slide = data;
@@ -18,29 +19,51 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         options: Object.keys(raterData),
         on: {
             "onChange": function(id) {
+                var cols = [];
+                featureButtons = [];
+
                 var study = this.getPopup().getBody().getItem(id);
                 studyName = study.id;
                 var featureSetId = raterData[studyName]["FeatureSetId"];
                 $$("imageDataViewList").clearAll();
                 $$("imageDataViewList").parse(Object.keys(raterData[study.id]["MarkupData"]))
-                $$("feature_list").clearAll();
                 
                 $.get("https://isic-archive.com:443/api/v1/featureset/" + featureSetId, function(data){
-                    $$("feature_list").parse(data.localFeatures);
-                    features.init(data.localFeatures);
+                    $.each(data.localFeatures, function(index, feature) {
+                        btn = {
+                            id: feature.id,
+                            view:"button", 
+                            width:110, 
+                            badge:0, 
+                            label: feature.name[1] + "<br/>" + feature.name[0],
+                            width:90,
+                            height:50,
+                            type:"iconTop",
+                            css: "feature_button",
+                            disabled: true,
+                        };
+
+                        featureButtons.push(btn); 
+                        cols.push(btn);
+
+                        if((index+1) % 2 == 0){
+                             $$("feature_list").addView({cols: cols});
+                            cols = [];
+                        }
+                    });
                 });
             }
         }
     };
 
-    var imageList = {
+    /*var imageList = {
         view: "combo",
         placeholder: "Select Image",
         id: "image_list",
         options: [],
         on: {
             "onChange": function(id) {
-                $$("raters_list").clearAll();
+                //$$("raters_list").clearAll();
                 var image = this.getPopup().getBody().getItem(id);
                 imageName = image.id;
                 var raters = Object.keys(raterData[studyName]["MarkupData"][image.id]["raters"]);
@@ -61,9 +84,11 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                     data.push({id: rater, tiles: spx, fill: raterColor});
                 });
                 $$("raters_list").parse(data);
+
+
             }
         }
-    };
+    };*/
    
     var imageListDataView = {
         view: "dataview",
@@ -76,7 +101,13 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         type: {height: 170, width: 220},
         on: {
             "onItemClick": function(id) {
-                $$("raters_list").clearAll();
+                featureButtons.map(function(btn){
+                    $$(btn.id).config.badge = 0;
+                    $$(btn.id).disable();
+                    $$(btn.id).detachEvent("onItemClick");
+                    $$(btn.id).refresh();
+                });
+
                 var image = this.getItem(id);
                 imageName = image.id;
                 var raters = Object.keys(raterData[studyName]["MarkupData"][image.id]["raters"]);
@@ -87,16 +118,36 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                     $.get(config.BASE_URL + "/folder/" + resource.item[0].folderId, function(folder){
                         slide.init(folder);
                     })
-                 });
+                });
 
-                //add a box for each rater
-                var data = []
+                var data = [];
                 $.each(raters, function(index, rater){
+                    var ant = raterData[studyName]["MarkupData"][imageName]["raters"][rater]["meta"]["annotations"];
+                    
+                    $.each(ant, function(feature, tiles){
+                        try{
+                            $$(feature).config.badge += 1;
+                            $$(feature).enable();
+                            $$(feature).refresh();
+                        }
+                        catch(err){
+                            console.log(err);
+                        }
+                    })
+
                     var raterColor = d3.schemeCategory20[index % 20];
                     var spx = raterData[studyName]["MarkupData"][imageName]["raters"][rater]["meta"]["annotations"];
                     data.push({id: rater, tiles: spx, fill: raterColor});
                 });
-                $$("raters_list").parse(data);
+
+                featureButtons.map(function(btn){
+                    if($$(btn.id).config.badge > 0){
+                        $$(btn.id).attachEvent("onItemClick", function(id, e, node){
+                            tiles.removeOverlay();
+                            tiles.addRaterOverlays(id, data, slide.tiles);
+                        });
+                    }
+                });
             }
         }
     }
@@ -110,11 +161,12 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
             group:1
         }
 
-    var imageListDataViewHolder = {
+    /*var imageListDataViewHolder = {
         view: "layout",
         rows: [  imageListDataView]
-    }
+    }*/
 
+    /*
     var featureList = {
         view: "datatable",
         id: "feature_list",
@@ -130,9 +182,24 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 tiles.addRaterOverlays(selectedFeature, selectedRaters, slide.tiles);
             }
         }
-    };
+    };*/
 
-    var tpl = "<span style='background-color:#fill#; border-radius:4px; padding-right:10px;'>&nbsp</span>";
+    /*var featureAccordion = {
+        view: "accordion",
+        id: "feature_accordion",
+        multi: false,
+        rows: []
+    }*/
+
+    var featureAccordion = {
+        view: "form",
+        id: "feature_list",
+        height:"auto",
+        scroll: "y",
+        elements:[]
+    }
+
+    /*var tpl = "<span style='background-color:#fill#; border-radius:4px; padding-right:10px;'>&nbsp</span>";
     var userStudyList = {
         view: "datatable",
         id: "raters_list",
@@ -159,12 +226,12 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 }
             }
         }
-    };
+    };*/
 
     var studyNav = { 
         id: "study_view_tab", 
         width: 220,
-        rows:[studyList, thumbPager, imageListDataViewHolder, userStudyList, featureList]
+        rows:[studyList, thumbPager, imageListDataView, featureAccordion]
     };
 
     return {

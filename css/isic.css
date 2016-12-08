@@ -36,3 +36,17 @@ html, body{
 .webix_menu-x.menu .webix_list_item:hover{
   background: #dfdfdf;
 }
+
+.feature_button .webix_img_btn_top{
+  border: 1px solid gray;
+  background-color: lightgray;
+  font-size: 10px;
+  vertical-align: middle;
+}
+
+.feature_button .webix_img_btn_top:focus{
+  border: 1px solid gray;
+  background-color: lightblue;
+  font-size: 10px;
+  vertical-align: middle;
+}
