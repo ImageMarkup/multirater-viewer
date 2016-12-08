@@ -41,6 +41,7 @@ html, body{
   border: 1px solid gray;
   background-color: lightgray;
   font-size: 10px;
+  font-weight: bold;
   vertical-align: middle;
 }
 
@@ -48,5 +49,4 @@ html, body{
   border: 1px solid gray;
   background-color: lightblue;
   font-size: 10px;
-  vertical-align: middle;
 }
