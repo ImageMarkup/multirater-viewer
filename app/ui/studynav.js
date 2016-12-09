@@ -17,15 +17,19 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         options: Object.keys(raterData),
         on: {
             "onChange": function(id) {
-                var cols = [];
                 featureButtons = [];
+
+                //get the selected study from the combo box
                 var study = this.getPopup().getBody().getItem(id);
                 studyName = study.id;
                 var featureSetId = raterData[studyName]["FeatureSetId"];
+                var cols = [];
                 $$("imageDataViewList").clearAll();
                 $$("imageDataViewList").parse(Object.keys(raterData[study.id]["MarkupData"]))
                 
+                //get the list of features for this study using the feature set ID
                 $.get("https://isic-archive.com:443/api/v1/featureset/" + featureSetId, function(data){
+                    //for each feature create a button and bind it to the feature_list view (form)
                     $.each(data.localFeatures, function(index, feature) {
                         btn = {
                             id: feature.id,
@@ -43,6 +47,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                         featureButtons.push(btn); 
                         cols.push(btn);
 
+                        //we want to create 3 columns (a row with 3 buttons)
                         if((index+1) % 3 == 0 || index == data.localFeatures.length-1){
                             $$("feature_list").addView({cols: cols});
                             cols = [];
@@ -79,7 +84,8 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                     })
                 });
 
-                //reset the feature buttons
+                //for each feature button return the list of raters who marked that image with the given feature
+                //this will return array of objects
                 featureButtons.map(function(btn){
                     var featureRaters = raters.filter(function(raterName){
                         var annotations = raterData[studyName]["MarkupData"][imageName]["raters"][raterName]["meta"]["annotations"];
@@ -93,21 +99,23 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                         }
                     });
 
-                    console.log(featureRaters);
-
+                    //update the badge with the the number of raters
                     $$(btn.id).config.badge = featureRaters.length;
+
+                    //disable and detach click event for the buttons 
                     $$(btn.id).disable();
                     $$(btn.id).detachEvent("onItemClick");
-                    console.log(featureRaters);
-
+                    
+                    //update the onlick event handler for the button
                     if(featureRaters.length > 0){
                         $$(btn.id).enable();
-                        $$(btn.id).attachEvent("onItemClick", function(id, e, node){
+                        $$(btn.id).attachEvent("onItemClick", function(id){
                             tiles.removeOverlay();
                             tiles.addRaterOverlays(id, featureRaters, slide.tiles);
                         });
                     }
 
+                    //finally, refresh the button view
                     $$(btn.id).refresh();
                 });
             }
