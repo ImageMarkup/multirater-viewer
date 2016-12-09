@@ -11,11 +11,6 @@ define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/studynav", "ui/
                     {
                         view: "template",
                         content: "image_viewer"
-                    },
-                    {
-                        view: "template",
-                        template: "hello",
-                        height: 70
                     }
                 ]
             };

@@ -105,6 +105,7 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
         }
     };
 
+    var fillTemp = "<span style='background-color:#fill#; border-radius:4px; padding-right:10px;'>&nbsp</span>";
     var nav = {
         width: 220,
         header: "Annotations",
@@ -112,11 +113,18 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
         collapsed: true,
         body: {
             rows: [
+                {view: "datatable", 
+                 id: "raters_list",
+                 editable:true,
+                 columns:[
+                    {id: "id", header: "Rater", fillspace: true},
+                    {id: "fill", header: "Color", editor: "color", template: fillTemp, width:30}
+                 ]
+                },
                 {view: "template", template: "Single rater properties", height: 30},
                 opacitySlider,
                 strokeSlider,
                 strokeColorPicker,
-                fillColorPicker,
                 {view: "template", template: "Multi rater properties", height: 30},
                 mOpacitySlider,
                 mStrokeSlider,
@@ -129,7 +137,6 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
         $$("opacity_slider").setValue("0.1");
         $$("stroke_slider").setValue("0.001");
         $$("stroke_colorpicker").setValue("blue");
-        $$("fill_colorpicker").setValue("blue");
         $$("m_opacity_slider").setValue("0.1");
         $$("m_stroke_slider").setValue("0.001");
         $$("m_stroke_colorpicker").setValue("blue");
@@ -140,9 +147,7 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
             "opacity": $$("opacity_slider").getValue(),
             "stroke-width": $$("stroke_slider").getValue(),
             "stroke": $$("stroke_colorpicker").getValue()
-        },{
-            "fill": $$("fill_colorpicker").getValue()
-        });
+        },{});
 
         tiles.updateOverlay("multi_rater_boundary", {
             "opacity": $$("m_opacity_slider").getValue(),

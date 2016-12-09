@@ -112,6 +112,11 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                         $$(btn.id).attachEvent("onItemClick", function(id){
                             tiles.removeOverlay();
                             tiles.addRaterOverlays(id, featureRaters, slide.tiles);
+
+                            var tmp = featureRaters;
+                            tmp.push({id: "Multi Rater", fill: "red", tiles: {}});
+                            $$("raters_list").clearAll();
+                            $$("raters_list").parse(featureRaters);
                         });
                     }
 
@@ -120,16 +125,16 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 });
             }
         }
-    }
+    };
 
     thumbPager = {
-            view:"pager",
-            id: "thumbPager",
-            template: "<center>{common.prev()}{common.page()}/#limit# images{common.next()}</center>",
-            animate:true,
-            size:1,
-            group:1
-        }
+        view:"pager",
+        id: "thumbPager",
+        template: "<center>{common.prev()}{common.page()}/#limit# images{common.next()}</center>",
+        animate:true,
+        size:1,
+        group:1
+    };
 
     var featureAccordion = {
         view: "form",
@@ -137,7 +142,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         height:"auto",
         scroll: "y",
         elements:[]
-    }
+    };
 
     var studyNav = { 
         id: "study_view_tab", 

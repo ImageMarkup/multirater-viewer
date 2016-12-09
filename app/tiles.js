@@ -46,10 +46,9 @@ define("tiles", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer
                 x.push(rater.tiles[feature]);
 
                 $.each(tiles, function(i, tile) {
-                    tile.fill = rater.fill;
-
                     if (rater.tiles[feature][i] > 0) {
                         ratersPerTile[i] += 1;
+                        tile.fill = rater.fill;
                     }
                 });
             }
