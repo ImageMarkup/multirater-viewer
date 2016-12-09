@@ -58,12 +58,13 @@ define("tiles", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer
         if (x.length) {
             $.each(tiles, function(index, tile) {
                 var css = ratersPerTile[index] > 1 ? "multi_rater_boundary" : "boundaryClass";
+                var fill = ratersPerTile[index] > 1 ? "red" : tile.fill;
                 var visibility = ratersPerTile[index] > 0 ? "visible" : "hidden";
                 var opacity = ratersPerTile[index] > 1 ? 0.5 : 0.5;
 
                 d3.select(viewer.svgOverlay().node()).append("polygon")
                     .attr("points", tile.coords)
-                    .style('fill', tile.fill)
+                    .style('fill', fill)
                     .attr('opacity', opacity)
                     .attr('visibility', visibility)
                     .attr('class', css)

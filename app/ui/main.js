@@ -6,10 +6,18 @@ define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/studynav", "ui/
             filters.init();
 
             viewerPanel = {
-                rows: [toolbar.buttons, {
-                    view: "template",
-                    content: "image_viewer"
-                }]
+                rows: [
+                    toolbar.buttons, 
+                    {
+                        view: "template",
+                        content: "image_viewer"
+                    },
+                    {
+                        view: "template",
+                        template: "hello",
+                        height: 70
+                    }
+                ]
             };
 
             webix.ui(metadata.view);
@@ -36,7 +44,8 @@ define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/studynav", "ui/
                 container: "main_layout",
                 id: "app",
                 rows: [
-                    header.view, {
+                    header.view, 
+                    {
                         cols: [
                             navTabbar, {
                                 view: "resizer"

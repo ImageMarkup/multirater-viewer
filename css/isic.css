@@ -50,3 +50,7 @@ html, body{
   background-color: lightblue;
   font-size: 10px;
 }
+
+.multi_rater_boundary{
+  color: red;
+}
