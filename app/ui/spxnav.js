@@ -105,6 +105,18 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
         }
     };
 
+    webix.editors.$popup = {
+        color:{
+            view:"popup",
+            body:{ view:"colorboard", width:200, height:200, rows:20, cols:20 },
+            on:{
+                onChange: function(v){
+                    console.log(v);
+                }
+            }
+        }
+    };
+
     var fillTemp = "<span style='background-color:#fill#; border-radius:4px; padding-right:10px;'>&nbsp</span>";
     var nav = {
         width: 220,
@@ -119,7 +131,13 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
                  columns:[
                     {id: "id", header: "Rater", fillspace: true},
                     {id: "fill", header: "Color", editor: "color", template: fillTemp, width:30}
-                 ]
+                 ],
+                 on:{
+                    onChange: function(v){
+                        console.log("hello", v);
+                       pubsub.publish("UPDATE_TILES", new Date());
+                    }
+                 }
                 },
                 {view: "template", template: "Single rater properties", height: 30},
                 opacitySlider,

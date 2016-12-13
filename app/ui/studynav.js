@@ -2,12 +2,13 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
 
     var studyName = '';
     var imageName = '';
-    var slide = null;
+    //var slide = null;
     var selectedFeature = null;
     var featureButtons = [];
+    var gFeatureRaters = null;
 
     pubsub.subscribe("SLIDE", function(msg, data) {
-        slide = data;
+        //slide = data;
     });
 
     var studyList = {
@@ -18,7 +19,6 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         on: {
             "onChange": function(id) {
                 featureButtons = [];
-
                 //get the selected study from the combo box
                 var study = this.getPopup().getBody().getItem(id);
                 studyName = study.id;
@@ -26,9 +26,13 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 var cols = [];
                 $$("imageDataViewList").clearAll();
                 $$("imageDataViewList").parse(Object.keys(raterData[study.id]["MarkupData"]))
-                
+                $$('feature_list').reconstruct();
+
                 //get the list of features for this study using the feature set ID
                 $.get("https://isic-archive.com:443/api/v1/featureset/" + featureSetId, function(data){
+                    if(data.localFeatures.length == 0)
+                        $$("feature_list").addView({view: "label", label: "This study has no features!"});
+
                     //for each feature create a button and bind it to the feature_list view (form)
                     $.each(data.localFeatures, function(index, feature) {
                         btn = {
@@ -41,7 +45,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                             height:50,
                             type:"iconTop",
                             css: "feature_button",
-                            disabled: true,
+                            disabled: true
                         };
 
                         featureButtons.push(btn); 
@@ -110,6 +114,8 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                     if(featureRaters.length > 0){
                         $$(btn.id).enable();
                         $$(btn.id).attachEvent("onItemClick", function(id){
+                            selectedFeature = id;
+                            gFeatureRaters = featureRaters;
                             tiles.removeOverlay();
                             tiles.addRaterOverlays(id, featureRaters, slide.tiles);
 
