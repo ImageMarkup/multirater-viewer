@@ -9,7 +9,8 @@ define("zoomer", ["pubsub", "osd", "scalebar", "osdSVG", "d3", "jquery"], functi
         id: 'image_viewer',
         prefixUrl: "bower_components/openseadragon/built-openseadragon/openseadragon/images/",
         navigatorPosition: "BOTTOM_RIGHT",
-        showNavigator: true
+        showNavigator: true,
+        maxZoomLevel: 5
     });
 
     viewer.scalebar({
@@ -41,8 +42,7 @@ define("zoomer", ["pubsub", "osd", "scalebar", "osdSVG", "d3", "jquery"], functi
     });
 
     viewer.addHandler('tile-loaded', function(event) {
-        console.log("Tile loaded for", slide.name);
-        $$("spx_btn").enable();
+       
     });
 
     return viewer;

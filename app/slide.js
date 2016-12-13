@@ -6,8 +6,8 @@ define("slide", ["pubsub", "config", "jquery", "zoomer", "tiles"], function(pubs
         init: function(item) {
             $.extend(this, item);
             tiles.removeOverlay();
-            $$("spx_tools").collapse();
-            $$("spx_btn").disable();
+            //$$("spx_tools").collapse();
+            //$$("spx_btn").disable();
             this.viewer();
             this.keyvalue();
             this.initDataViews();
@@ -37,7 +37,6 @@ define("slide", ["pubsub", "config", "jquery", "zoomer", "tiles"], function(pubs
                     data = JSON.parse(data);
                     this.tiles = tiles.transformCoords(data, this.meta.imageWidth);
                     console.log("Loaded", data.length, "super pixels for", this.name);
-
                 }
             });
         },

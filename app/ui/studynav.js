@@ -11,6 +11,11 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         //slide = data;
     });
 
+    pubsub.subscribe("UPDATE_TILES", function(msg, data) {
+        tiles.removeOverlay();
+        tiles.addRaterOverlays(selectedFeature, gFeatureRaters, slide.tiles);
+    });
+
     var studyList = {
         view: "combo",
         placeholder: "Select Study",

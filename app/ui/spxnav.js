@@ -13,7 +13,7 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
         id: "opacity_slider",
         label: "Opacity",
         labelPosition: "top",
-        value: "0.1",
+        value: "0.2",
         step: 0.05,
         min: 0,
         max: 1,
@@ -67,7 +67,7 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
         id: "m_opacity_slider",
         label: "Opacity",
         labelPosition: "top",
-        value: "0.1",
+        value: "0.3",
         step: 0.05,
         min: 0,
         max: 1,
@@ -105,18 +105,7 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
         }
     };
 
-    webix.editors.$popup = {
-        color:{
-            view:"popup",
-            body:{ view:"colorboard", width:200, height:200, rows:20, cols:20 },
-            on:{
-                onChange: function(v){
-                    console.log(v);
-                }
-            }
-        }
-    };
-
+    //http://webix.com/snippet/cc1aa754
     var fillTemp = "<span style='background-color:#fill#; border-radius:4px; padding-right:10px;'>&nbsp</span>";
     var nav = {
         width: 220,
@@ -133,9 +122,12 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
                     {id: "fill", header: "Color", editor: "color", template: fillTemp, width:30}
                  ],
                  on:{
-                    onChange: function(v){
-                        console.log("hello", v);
-                       pubsub.publish("UPDATE_TILES", new Date());
+                    onAfterEditStop:function(state, editor){
+                        if(editor.row == "Multi Rater"){
+                            
+                        }
+
+                        pubsub.publish("UPDATE_TILES", state.value);
                     }
                  }
                 },

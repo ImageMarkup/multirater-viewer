@@ -59,7 +59,7 @@ define("tiles", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer
                 var css = ratersPerTile[index] > 1 ? "multi_rater_boundary" : "boundaryClass";
                 var fill = ratersPerTile[index] > 1 ? "red" : tile.fill;
                 var visibility = ratersPerTile[index] > 0 ? "visible" : "hidden";
-                var opacity = ratersPerTile[index] > 1 ? 0.5 : 0.5;
+                var opacity = ratersPerTile[index] > 1 ? 0.3 : 0.2;
 
                 d3.select(viewer.svgOverlay().node()).append("polygon")
                     .attr("points", tile.coords)
