@@ -49,6 +49,7 @@ define("tiles", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer
                     if (rater.tiles[feature][i] > 0) {
                         ratersPerTile[i] += 1;
                         tile.fill = rater.fill;
+                        tile.className = "tile_" + rater.id;
                     }
                 });
             }
@@ -56,7 +57,7 @@ define("tiles", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer
 
         if (x.length) {
             $.each(tiles, function(index, tile) {
-                var css = ratersPerTile[index] > 1 ? "multi_rater_boundary" : "boundaryClass";
+                var className = ratersPerTile[index] > 1 ? "multi_rater_boundary" : tile.className + " boundaryClass";
                 var fill = ratersPerTile[index] > 1 ? "red" : tile.fill;
                 var visibility = ratersPerTile[index] > 0 ? "visible" : "hidden";
                 var opacity = ratersPerTile[index] > 1 ? 0.3 : 0.2;
@@ -66,7 +67,7 @@ define("tiles", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer
                     .style('fill', fill)
                     .attr('opacity', opacity)
                     .attr('visibility', visibility)
-                    .attr('class', css)
+                    .attr('class', className)
                     .attr('id', 'boundary' + index)
                     .attr('stroke', 'blue')
                     .attr('stroke-width', 0.001);

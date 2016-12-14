@@ -2,19 +2,9 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
 
     var studyName = '';
     var imageName = '';
-    //var slide = null;
     var selectedFeature = null;
     var featureButtons = [];
     var gFeatureRaters = null;
-
-    pubsub.subscribe("SLIDE", function(msg, data) {
-        //slide = data;
-    });
-
-    pubsub.subscribe("UPDATE_TILES", function(msg, data) {
-        tiles.removeOverlay();
-        tiles.addRaterOverlays(selectedFeature, gFeatureRaters, slide.tiles);
-    });
 
     var studyList = {
         view: "combo",
@@ -79,7 +69,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         css: "thumbnail_cell",
         type: {height: 150, width: 300},
         on: {
-            "onItemClick": function(id) {
+            onItemClick: function(id) {
                 //some initialization
                 var image = this.getItem(id);
                 imageName = image.id;
@@ -110,8 +100,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
 
                     //update the badge with the the number of raters
                     $$(btn.id).config.badge = featureRaters.length;
-
-                    //disable and detach click event for the buttons 
+                    $$(btn.id).define("css", "feature_button");
                     $$(btn.id).disable();
                     $$(btn.id).detachEvent("onItemClick");
                     
@@ -134,6 +123,9 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                     //finally, refresh the button view
                     $$(btn.id).refresh();
                 });
+            },
+            onAfterScroll: function(){
+                console.log("hello", this.getScrollState());
             }
         }
     };
@@ -144,7 +136,12 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         template: "<center>{common.prev()}{common.page()}/#limit# images{common.next()}</center>",
         animate:true,
         size:1,
-        group:1
+        group:1,
+        on:{
+            onAfterScroll: function(id){
+                console.log("hello", id)
+            }
+        }
     };
 
     var featureAccordion = {

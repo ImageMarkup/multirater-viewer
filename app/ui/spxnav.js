@@ -123,11 +123,10 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
                  ],
                  on:{
                     onAfterEditStop:function(state, editor){
-                        if(editor.row == "Multi Rater"){
-                            
-                        }
-
-                        pubsub.publish("UPDATE_TILES", state.value);
+                        if(editor.row == "Multi Rater")
+                            $(".multi_rater_boundary").css("fill", state.value);
+                        else
+                            $(".tile_" + editor.row).css("fill", state.value);
                     }
                  }
                 },
