@@ -78,6 +78,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         group:1,
         on:{
 			onItemClick: function(id, event, node){
+                //http://webix.com/snippet/e00b0728
      		 	// delay is necessary for getting the needed page
       			webix.delay(function(){
         			var dview = $$("imageDataViewList");
