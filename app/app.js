@@ -1,6 +1,5 @@
-define(["routes", "ui", "webix"], function(routes, ui) {
+define(["ui", "webix"], function(ui) {
     webix.ready(function() {
         ui.init();
-        routes.init();
     });
 });

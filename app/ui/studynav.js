@@ -63,71 +63,10 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         id: "imageDataViewList",
         xCount:1,
         yCount:1,
-        select: true,
         pager: "thumbPager",
         scroll: false,
         css: "thumbnail_cell",
-        type: {height: 150, width: 300},
-        on: {
-            onItemClick: function(id) {
-                //some initialization
-                var image = this.getItem(id);
-                imageName = image.id;
-                var raters = Object.keys(raterData[studyName]["MarkupData"][image.id]["raters"]);
-                var url = config.BASE_URL + "/resource/search?mode=prefix&types=%5B%22item%22%5D&q=" + imageName + ".jpg";
-
-                //load the slide
-                $.get(url).then(function(resource){
-                    $.get(config.BASE_URL + "/folder/" + resource.item[0].folderId, function(folder){
-                        slide.init(folder);
-                    })
-                });
-
-                //for each feature button return the list of raters who marked that image with the given feature
-                //this will return array of objects
-                featureButtons.map(function(btn){
-                    var featureRaters = raters.filter(function(raterName){
-                        var annotations = raterData[studyName]["MarkupData"][imageName]["raters"][raterName]["meta"]["annotations"];
-                        if(annotations.hasOwnProperty(btn.id) && annotations[btn.id].reduce((x,y) => x+y) > 0)
-                            return true;
-                    }).map(function(rater, index){
-                        return {
-                            id:rater, 
-                            tiles: raterData[studyName]["MarkupData"][imageName]["raters"][rater]["meta"]["annotations"],
-                            fill: d3.schemeCategory20[index % 20]
-                        }
-                    });
-
-                    //update the badge with the the number of raters
-                    $$(btn.id).config.badge = featureRaters.length;
-                    $$(btn.id).define("css", "feature_button");
-                    $$(btn.id).disable();
-                    $$(btn.id).detachEvent("onItemClick");
-                    
-                    //update the onlick event handler for the button
-                    if(featureRaters.length > 0){
-                        $$(btn.id).enable();
-                        $$(btn.id).attachEvent("onItemClick", function(id){
-                            selectedFeature = id;
-                            gFeatureRaters = featureRaters;
-                            tiles.removeOverlay();
-                            tiles.addRaterOverlays(id, featureRaters, slide.tiles);
-
-                            var tmp = featureRaters;
-                            tmp.push({id: "Multi Rater", fill: "red", tiles: {}});
-                            $$("raters_list").clearAll();
-                            $$("raters_list").parse(featureRaters);
-                        });
-                    }
-
-                    //finally, refresh the button view
-                    $$(btn.id).refresh();
-                });
-            },
-            onAfterScroll: function(){
-                console.log("hello", this.getScrollState());
-            }
-        }
+        type: {height: 150, width: 300}
     };
 
     thumbPager = {
@@ -138,9 +77,71 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         size:1,
         group:1,
         on:{
-            onAfterScroll: function(id){
-                console.log("hello", id)
-            }
+			onItemClick: function(id, event, node){
+     		 	// delay is necessary for getting the needed page
+      			webix.delay(function(){
+        			var dview = $$("imageDataViewList");
+        			var page = dview.getPage();                   
+        			// page index corresponds to item index
+        			// if there's one item per page
+        			var id = dview.getIdByIndex(page);
+        			var image = dview.getItem(id);
+
+                     //some initialization
+                    //var image = this.getItem(id);
+                    imageName = image.id;
+                    var raters = Object.keys(raterData[studyName]["MarkupData"][image.id]["raters"]);
+                    var url = config.BASE_URL + "/resource/search?mode=prefix&types=%5B%22item%22%5D&q=" + imageName + ".jpg";
+
+                    //load the slide
+                    $.get(url).then(function(resource){
+                        $.get(config.BASE_URL + "/folder/" + resource.item[0].folderId, function(folder){
+                            slide.init(folder);
+                        })
+                    });
+
+                    //for each feature button return the list of raters who marked that image with the given feature
+                    //this will return array of objects
+                    featureButtons.map(function(btn){
+                        var featureRaters = raters.filter(function(raterName){
+                            var annotations = raterData[studyName]["MarkupData"][imageName]["raters"][raterName]["meta"]["annotations"];
+                            if(annotations.hasOwnProperty(btn.id) && annotations[btn.id].reduce((x,y) => x+y) > 0)
+                                return true;
+                        }).map(function(rater, index){
+                            return {
+                                id:rater, 
+                                tiles: raterData[studyName]["MarkupData"][imageName]["raters"][rater]["meta"]["annotations"],
+                                fill: d3.schemeCategory20[index % 20]
+                            }
+                        });
+
+                        //update the badge with the the number of raters
+                        $$(btn.id).config.badge = featureRaters.length;
+                        $$(btn.id).define("css", "feature_button");
+                        $$(btn.id).disable();
+                        $$(btn.id).detachEvent("onItemClick");
+                        
+                        //update the onlick event handler for the button
+                        if(featureRaters.length > 0){
+                            $$(btn.id).enable();
+                            $$(btn.id).attachEvent("onItemClick", function(id){
+                                selectedFeature = id;
+                                gFeatureRaters = featureRaters;
+                                tiles.removeOverlay();
+                                tiles.addRaterOverlays(id, featureRaters, slide.tiles);
+
+                                var tmp = featureRaters;
+                                tmp.push({id: "Multi Rater", fill: "red", tiles: {}});
+                                $$("raters_list").clearAll();
+                                $$("raters_list").parse(featureRaters);
+                            });
+                        }
+
+                        //finally, refresh the button view
+                        $$(btn.id).refresh();
+                    });
+      			})
+    		}
         }
     };
 
