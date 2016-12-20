@@ -117,9 +117,8 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
 
         //load the slide
         $.get(url).then(function(resource){
-            console.log(resource);
             $.get(config.BASE_URL + "/folder/" + resource.item[0].folderId, function(folder){
-                slide.init(folder);
+                slide.init(folder, resource.item[0]._id);
             })
         });
 

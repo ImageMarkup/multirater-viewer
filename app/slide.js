@@ -1,13 +1,10 @@
 define("slide", ["pubsub", "config", "jquery", "zoomer", "tiles"], function(pubsub, config, $, viewer, tiles) {
 
-
-
     var slide = {
-        init: function(item) {
+        init: function(item, itemId) {
             $.extend(this, item);
+            this.itemId = "582bcd90f8c2ef30f991ae8b";//itemId;
             tiles.removeOverlay();
-            //$$("spx_tools").collapse();
-            //$$("spx_btn").disable();
             this.viewer();
             this.keyvalue();
             this.initDataViews();
@@ -17,6 +14,19 @@ define("slide", ["pubsub", "config", "jquery", "zoomer", "tiles"], function(pubs
         },
 
         viewer: function() {
+            /*itemId = this.itemId;
+
+            tileSource = {
+                width: this.meta.imageHeight,
+                height: this.meta.imageWidth,
+                tileWidth: 256,
+                tileHeight: 256,
+                getTileUrl: function(level, x, y){
+                    return "http://candygram.neurology.emory.edu:8080/api/v1/tile/"+ itemId + "/" + level + "/" + x + "/" + y;
+                }
+            };*/
+
+
             var tileSource = {
                 type: 'legacy-image-pyramid',
                 levels: [{
