@@ -1,9 +1,9 @@
 define("slide", ["pubsub", "config", "jquery", "zoomer", "tiles"], function(pubsub, config, $, viewer, tiles) {
 
     var slide = {
-        init: function(item, itemId) {
+        init: function(item, largeImage) {
             $.extend(this, item);
-            this.itemId = "582bcd90f8c2ef30f991ae8b";//itemId;
+            this.largeImage = largeImage
             tiles.removeOverlay();
             this.viewer();
             this.keyvalue();
@@ -14,29 +14,24 @@ define("slide", ["pubsub", "config", "jquery", "zoomer", "tiles"], function(pubs
         },
 
         viewer: function() {
-            /*itemId = this.itemId;
+            var url = config.BASE_URL + "/item/"+ this.largeImage._id +"/tiles";
+            var itemId = this.largeImage._id;
 
-            tileSource = {
-                width: this.meta.imageHeight,
-                height: this.meta.imageWidth,
-                tileWidth: 256,
-                tileHeight: 256,
-                getTileUrl: function(level, x, y){
-                    return "http://candygram.neurology.emory.edu:8080/api/v1/tile/"+ itemId + "/" + level + "/" + x + "/" + y;
+            $.get(url).then(function(tile){
+                tileSource = {
+                    width: tile.sizeX,
+                    height: tile.sizeY,
+                    tileWidth: tile.tileWidth,
+                    tileHeight: tile.tileHeight,
+                    minLevel: 0,
+                    maxLevel: tile.levels - 1,
+                    getTileUrl: function(level, x, y){
+                        return config.BASE_URL + "/item/"+ itemId + "/tiles/zxy/" + level + "/" + x + "/" + y;
+                    }
                 }
-            };*/
 
-
-            var tileSource = {
-                type: 'legacy-image-pyramid',
-                levels: [{
-                    url: config.BASE_URL + "/file/" + this.meta.slideId + "/download?.jpg",
-                    height: this.meta.imageHeight,
-                    width: this.meta.imageWidth
-                }]
-            };
-
-            viewer.open(tileSource);
+                viewer.open(tileSource);
+            });
         },
 
         getTiles: function() {

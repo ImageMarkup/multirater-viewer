@@ -24,7 +24,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
    
     var imageListDataView = {
         view: "dataview",
-        template: "<center><div class='webix_strong'>#id#</div><img src='http://candygram.neurology.emory.edu:8080/api/v1/file/582bcd90f8c2ef30f991ae8c/download?.jpg' height='100'/></center>",
+        template: "<center><div class='webix_strong'>#name#</div><img src='http://candygram.neurology.emory.edu:8080/api/v1/item/#_id#/tiles/thumbnail?width=150'/></center>",
         id: "imageDataViewList",
         xCount:1,
         yCount:1,
@@ -48,7 +48,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
       			webix.delay(function(){
         			var page = $$("imageDataViewList").getPage();                   
         			var id = $$("imageDataViewList").getIdByIndex(page);
-        			imageName = $$("imageDataViewList").getItem(id).id;
+        			imageName = $$("imageDataViewList").getItem(id).name.replace(".jpg", "");
                     selectImage(studyName, imageName);
       			})
     		}
@@ -73,8 +73,24 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         featureButtons = [];
         var featureSetId = raterData[study]["FeatureSetId"];
         var cols = [];
+        var requests = [];
+        var thumbnails = [];
         $$("imageDataViewList").clearAll();
-        $$("imageDataViewList").parse(Object.keys(raterData[study]["MarkupData"]));
+
+        $.each(Object.keys(raterData[study]["MarkupData"]), function(index, image){
+            var url = config.BASE_URL + "/resource/search?mode=prefix&types=%5B%22item%22%5D&q=" + image + ".jpg";
+            requests.push(
+                $.get(url, function(resource){
+                    thumbnails.push(resource.item[1]);
+                })
+            );
+        });
+        
+        $.when.apply(null, requests).done(function(){
+            $$("imageDataViewList").parse(thumbnails);
+        });
+
+        //load the slide
         $$('feature_list').reconstruct();
 
         //get the list of features for this study using the feature set ID
@@ -118,7 +134,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         //load the slide
         $.get(url).then(function(resource){
             $.get(config.BASE_URL + "/folder/" + resource.item[0].folderId, function(folder){
-                slide.init(folder, resource.item[0]._id);
+                slide.init(folder, resource.item[1]);
             })
         });
 
