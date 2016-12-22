@@ -28,22 +28,5 @@ define("zoomer", ["pubsub", "osd", "scalebar", "osdSVG", "d3", "jquery"], functi
         barThickness: 2
     });
 
-    //set viewer zoom level if the slide has this property
-    viewer.addHandler("open", function() {
-
-    });
-
-    viewer.addHandler('zoom', function(event) {
-
-    });
-
-    viewer.addHandler('pan', function(event) {
-
-    });
-
-    viewer.addHandler('tile-loaded', function(event) {
-       
-    });
-
     return viewer;
 });

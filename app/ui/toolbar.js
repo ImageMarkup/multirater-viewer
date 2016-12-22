@@ -19,20 +19,8 @@ define("ui/toolbar", ["pubsub", "tiles"], function(pubsub, tiles) {
                 view: "button",
                 click: ("$$('metadata_window').show();")
             }
-            /*, {
-                id: "spx_btn",
-                label: "SPX",
-                view: "button",
-                disabled: true,
-                click: loadSPX
-            }*/
         ]
     };
-
-    /*function loadSPX() {
-        spxOn = !spxOn;
-        spxOn ? tiles.addOverlay(slide.tiles) : tiles.removeOverlay();
-    };*/
 
     return {
         buttons: buttons

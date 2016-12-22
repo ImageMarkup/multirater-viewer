@@ -69,6 +69,9 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         rows:[studyList, thumbPager, imageListDataView, featureAccordion]
     };
 
+    /*
+    initImageSlider: initialize the image thumbnail panel when a new study is selected
+     */
     function initImageSlider(study){
         featureButtons = [];
         var featureSetId = raterData[study]["FeatureSetId"];
@@ -77,6 +80,10 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         var thumbnails = [];
         $$("imageDataViewList").clearAll();
 
+        //get the item associated with each of the images in that study
+        //to do that we need to search girder by the image name
+        //this requires doing multiple AJAX calls that are pushed into an array (requests)
+        //and the response is pushed into an array (thumbnails)
         $.each(Object.keys(raterData[study]["MarkupData"]), function(index, image){
             var url = config.BASE_URL + "/resource/search?mode=prefix&types=%5B%22item%22%5D&q=" + image + ".jpg";
             requests.push(
@@ -86,11 +93,12 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
             );
         });
         
+        //when all the AJAX requests are done processing
+        //populate the image/thumbnail slide/view
         $.when.apply(null, requests).done(function(){
             $$("imageDataViewList").parse(thumbnails);
         });
 
-        //load the slide
         $$('feature_list').reconstruct();
 
         //get the list of features for this study using the feature set ID

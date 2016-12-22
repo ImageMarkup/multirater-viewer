@@ -47,12 +47,6 @@ define("ui/header", function() {
         }]
     };
 
-    /*view = {
-        view: "template",
-        height: 80,
-        template: "<div id='header_title'>ISIC Archive</div><div id='header_subtitle'>International Skin Imaging Collaboration: Melanoma Project</div>"
-    };*/
-
     return {
         view: view
     }
