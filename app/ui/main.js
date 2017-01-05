@@ -32,7 +32,7 @@ define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/studynav", "ui/
                     cells: [
                         studynav.view,
                         slidenav.view,
-                        studynav.statsView
+                        
                     ]
                 }]
             };

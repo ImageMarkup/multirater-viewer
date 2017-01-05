@@ -105,6 +105,15 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
         }
     };
 
+    var statNav = {
+        view: "datatable",
+        id: "stats_view_tab",
+        columns: [
+            {"id": "key", header: "Value", fillspace: true},
+            {"id": "value", header: "Count", width: 70}
+        ]
+    };
+
     //http://webix.com/snippet/cc1aa754
     var fillTemp = "<span style='background-color:#fill#; border-radius:4px; padding-right:10px;'>&nbsp</span>";
     var nav = {
@@ -137,7 +146,8 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
                 {view: "template", template: "Multi rater properties", height: 30},
                 mOpacitySlider,
                 mStrokeSlider,
-                mColorPicker, {}
+                mColorPicker, 
+                statNav
             ]
         }
     };

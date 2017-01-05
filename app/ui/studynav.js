@@ -229,18 +229,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         $$("stats_view_tab").parse(stats);
     }
 
-    var statNav = {
-        width: 300,
-        view: "datatable",
-        id: "stats_view_tab",
-        columns: [
-            {"id": "key", header: "Value", fillspace: true},
-            {"id": "value", header: "Count", width: 70}
-        ]
-    };
-
     return {
-        view: studyNav,
-        statsView: statNav
+        view: studyNav
     }
 });
