@@ -24,13 +24,15 @@ define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/studynav", "ui/
                     value: 'formView',
                     multiview: true,
                     options: [
-                        { value: 'study View', id: 'study_view_tab' },
-                        { value: 'slide View', id: 'slide_view_tab' },
+                        { value: 'Study View', id: 'study_view_tab' },
+                        { value: 'Slide View', id: 'slide_view_tab' },
+                        { value: 'Stats', id: 'stats_view_tab' },
                     ]
                 }, {
                     cells: [
                         studynav.view,
-                        slidenav.view
+                        slidenav.view,
+                        studynav.statsView
                     ]
                 }]
             };

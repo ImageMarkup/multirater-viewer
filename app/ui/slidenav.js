@@ -58,7 +58,7 @@ define("ui/slidenav", ["config", "zoomer", "slide", "jquery","raterData"], funct
     };
 
     var slideNav = {
-        width: 220,
+        width: 300,
         id: "slide_view_tab",
             rows: [
                 setDropdown,

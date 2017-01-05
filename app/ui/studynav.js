@@ -14,11 +14,11 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 studyName = this.getPopup().getBody().getItem(id).id;
                 initImageSlider(studyName);
             },
-            onAfterRender: function(){
+            onAfterRender: webix.once(function(){
                 studyName = this.getPopup().getBody().getFirstId();
                 imageName = Object.keys(raterData[studyName]["MarkupData"])[0];
                 initImageSlider(studyName);
-            }
+            })
         }
     };
    
@@ -136,6 +136,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
     }
 
     function selectImage(study, image){
+        computeStats();
         var raters = Object.keys(raterData[study]["MarkupData"][image]["raters"]);
         var url = config.BASE_URL + "/resource/search?mode=prefix&types=%5B%22item%22%5D&q=" + imageName + ".jpg";
 
@@ -188,7 +189,58 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         });
     }
 
+    function computeStats(){
+        if(studyName == '' || imageName == '')
+            return;
+
+        $$("stats_view_tab").clearAll();
+        raters = Object.keys(raterData[studyName]["MarkupData"][imageName]["raters"]);
+        features = []
+        pixels = []
+
+        raters.map(function(raterName){
+            return $.merge(features, Object.keys(raterData[studyName]["MarkupData"][imageName]["raters"][raterName]["meta"]["annotations"]));
+        });
+
+        raters.map(function(raterName){
+            annotations = raterData[studyName]["MarkupData"][imageName]["raters"][raterName]["meta"]["annotations"];
+            $.each(annotations, function(featureName, raterPixels){
+                if(Array.isArray(raterPixels))
+                    pixels.push(raterPixels);
+            });   
+        });
+
+
+       var annotatedPixels = pixels.reduce(function(a, b){
+           return a.map(function(v,i){
+               return v+b[i];
+           });
+        }).filter(function(x){
+            return x;
+        });
+
+        stats = [
+            {key: "Slide count", value: Object.keys(raterData[studyName]["MarkupData"]).length},
+            {key: "Num raters", value: raters.length},
+            {key: "Num features", value: $.unique(features).length},
+            {key: "Coverage", value: Math.round(annotatedPixels.length/pixels[0].length * 100) + "%"}
+        ];
+
+        $$("stats_view_tab").parse(stats);
+    }
+
+    var statNav = {
+        width: 300,
+        view: "datatable",
+        id: "stats_view_tab",
+        columns: [
+            {"id": "key", header: "Value", fillspace: true},
+            {"id": "value", header: "Count", width: 70}
+        ]
+    };
+
     return {
-        view: studyNav
+        view: studyNav,
+        statsView: statNav
     }
 });
