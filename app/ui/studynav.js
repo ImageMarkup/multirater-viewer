@@ -4,6 +4,13 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
     var imageName = '';
     var featureButtons = [];
 
+    var filter = {
+        view: "search",
+        id: "thumbnail_search",
+        placeholder: "Search",
+        on: {"onChange": filterSlides}
+    };
+
     var studyList = {
         view: "combo",
         placeholder: "Select Study",
@@ -12,29 +19,30 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         on: {
             onChange: function(id) {
                 studyName = this.getPopup().getBody().getItem(id).id;
-                initImageSlider(studyName);
+                imageName = Object.keys(raterData[studyName]["MarkupData"])[0];
+                initImageSlider();
             },
             onAfterRender: webix.once(function(){
                 studyName = this.getPopup().getBody().getFirstId();
                 imageName = Object.keys(raterData[studyName]["MarkupData"])[0];
-                initImageSlider(studyName);
+                initImageSlider();
             })
         }
     };
    
     var imageListDataView = {
         view: "dataview",
-        template: "<center><div class='webix_strong'>#name#</div><img src='http://candygram.neurology.emory.edu:8080/api/v1/item/#_id#/tiles/thumbnail?width=150'/></center>",
+        template: "<center><div class='webix_strong'>#name#</div><img src='http://candygram.neurology.emory.edu:8080/api/v1/item/#_id#/tiles/thumbnail?width=150'/><br/>(#numRaters# raters total)</center>",
         id: "imageDataViewList",
         xCount:1,
         yCount:1,
         pager: "thumbPager",
         scroll: false,
         css: "thumbnail_cell",
-        type: {height: 150, width: 300}
+        type: {height: 180, width: 300}
     };
 
-    thumbPager = {
+    var thumbPager = {
         view:"pager",
         id: "thumbPager",
         template: "<center>{common.prev()}{common.page()}/#limit# images{common.next()}</center>",
@@ -49,7 +57,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         			var page = $$("imageDataViewList").getPage();                   
         			var id = $$("imageDataViewList").getIdByIndex(page);
         			imageName = $$("imageDataViewList").getItem(id).name.replace(".jpg", "");
-                    selectImage(studyName, imageName);
+                    selectImage(imageName);
       			})
     		}
         }
@@ -63,32 +71,37 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         elements:[]
     };
 
-    var studyNav = { 
+    var studyNav = {
         id: "study_view_tab", 
         width: 300,
-        rows:[studyList, thumbPager, imageListDataView, featureAccordion]
+        rows:[studyList, filter, thumbPager, imageListDataView, featureAccordion]
     };
 
     /*
     initImageSlider: initialize the image thumbnail panel when a new study is selected
      */
-    function initImageSlider(study){
+    function initImageSlider(){
         featureButtons = [];
-        var featureSetId = raterData[study]["FeatureSetId"];
+        var featureSetId = raterData[studyName]["FeatureSetId"];
         var cols = [];
         var requests = [];
         var thumbnails = [];
         $$("imageDataViewList").clearAll();
+        $$("thumbPager").select(0);
 
         //get the item associated with each of the images in that study
         //to do that we need to search girder by the image name
         //this requires doing multiple AJAX calls that are pushed into an array (requests)
         //and the response is pushed into an array (thumbnails)
-        $.each(Object.keys(raterData[study]["MarkupData"]), function(index, image){
+        $.each(Object.keys(raterData[studyName]["MarkupData"]), function(index, image){
             var url = config.BASE_URL + "/resource/search?mode=prefix&types=%5B%22item%22%5D&q=" + image + ".jpg";
             requests.push(
                 $.get(url, function(resource){
-                    thumbnails.push(resource.item[1]);
+                    var numRaters = Object.keys(raterData[studyName]["MarkupData"][image]["raters"]).length;
+                    if(resource.item.length > 0){
+                        resource.item[0].numRaters = numRaters;
+                        thumbnails.push(resource.item[0]);
+                    }
                 })
             );
         });
@@ -96,6 +109,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         //when all the AJAX requests are done processing
         //populate the image/thumbnail slide/view
         $.when.apply(null, requests).done(function(){
+            selectImage(thumbnails[0]["name"].replace(".jpg",""));
             $$("imageDataViewList").parse(thumbnails);
         });
 
@@ -131,19 +145,19 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 }
             });
 
-            selectImage(study, imageName);
+            //selectImage(imageName);
         });
     }
 
-    function selectImage(study, image){
+    function selectImage(image){
         computeStats();
-        var raters = Object.keys(raterData[study]["MarkupData"][image]["raters"]);
-        var url = config.BASE_URL + "/resource/search?mode=prefix&types=%5B%22item%22%5D&q=" + imageName + ".jpg";
+        var raters = Object.keys(raterData[studyName]["MarkupData"][image]["raters"]);
+        var url = config.BASE_URL + "/resource/search?mode=prefix&types=%5B%22item%22%5D&q=" + image + ".jpg";
 
         //load the slide
         $.get(url).then(function(resource){
             $.get(config.BASE_URL + "/folder/" + resource.item[0].folderId, function(folder){
-                slide.init(folder, resource.item[1]);
+                slide.init(folder, resource.item[0]);
             })
         });
 
@@ -152,14 +166,14 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         featureButtons.map(function(btn){
             var featureRaters = raters.filter(
                 function(raterName){
-                    var annotations = raterData[study]["MarkupData"][image]["raters"][raterName]["meta"]["annotations"];
+                    var annotations = raterData[studyName]["MarkupData"][image]["raters"][raterName]["meta"]["annotations"];
                     if(annotations.hasOwnProperty(btn.id) && annotations[btn.id].reduce((x,y) => x+y) > 0)
                         return true;
                 }).map(
                 function(rater, index){
                     return {
                         id:rater, 
-                        tiles: raterData[study]["MarkupData"][image]["raters"][rater]["meta"]["annotations"],
+                        tiles: raterData[studyName]["MarkupData"][image]["raters"][rater]["meta"]["annotations"],
                         fill: d3.schemeCategory20[index % 20]
                     }
                 });
@@ -178,9 +192,10 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                     tiles.addRaterOverlays(id, featureRaters, slide.tiles);
 
                     var tmp = featureRaters;
-                    tmp.push({id: "Multi Rater", fill: "red", tiles: {}});
+                    tmp.push({id: "> 1 rater", fill: "red", tiles: {}});
                     $$("raters_list").clearAll();
                     $$("raters_list").parse(featureRaters);
+                    computeStats(id);
                 });
             }
 
@@ -189,14 +204,66 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         });
     }
 
-    function computeStats(){
+    function raterAgreement(feature){
+        var pixels = [];
+
+        $.each(raterData[studyName]["MarkupData"][imageName]["raters"], function(rater, meta){
+            var annotations = meta["meta"]["annotations"];
+
+            if(annotations[feature] != undefined && Array.isArray(annotations[feature])){
+                pixels.push(annotations[feature]);
+            }
+        });
+        
+        if(pixels.length > 1){
+            var annotatedPixels = pixels.reduce(function(a, b){
+                return a.map(function(v,i){
+                    return v+b[i];
+                });
+            })
+
+            var allMarked = annotatedPixels.filter(function(x){
+                return x > 0;
+            });
+
+            var allAgreed = annotatedPixels.filter(function(x){
+                return x == pixels.length;
+            });
+
+            return {
+                total: allMarked.length,
+                agreed: allAgreed.length,
+                percentage: Math.round(allAgreed.length/allMarked.length * 100) + "%"
+            }
+        } 
+        else{
+            return{
+                total: "NA",
+                agreed: "NA",
+                percentage: "100%"
+            }
+        }  
+    }
+
+    function filterSlides(keyword = null){
+        url = config.BASE_URL + "/resource/search?q=" + keyword + "&mode=prefix&types=%5B%22item%22%5D";
+
+        webix.ajax(url, function(data){
+            data = JSON.parse(data);
+            var thumbs = $$("imageDataViewList");
+            thumbs.clearAll();
+            thumbs.parse(data["item"]);
+        });
+    }
+
+    function computeStats(feature = null){
         if(studyName == '' || imageName == '')
             return;
 
         $$("stats_view_tab").clearAll();
         raters = Object.keys(raterData[studyName]["MarkupData"][imageName]["raters"]);
-        features = []
-        pixels = []
+        features = [];
+        pixels = [];
 
         raters.map(function(raterName){
             return $.merge(features, Object.keys(raterData[studyName]["MarkupData"][imageName]["raters"][raterName]["meta"]["annotations"]));
@@ -210,23 +277,29 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
             });   
         });
 
+       if(pixels.length){
+            var annotatedPixels = pixels.reduce(function(a, b){
+               return a.map(function(v,i){
+                    return v+b[i];
+               });
+            }).filter(function(x){
+                    return x;
+            });
+        
+            stats = [
+                {key: "Num raters", value: raters.length},
+                {key: "Num features", value: $.unique(features).length},
+                {key: "Coverage", value: Math.round(annotatedPixels.length/pixels[0].length * 100) + "%"}
+            ];
 
-       var annotatedPixels = pixels.reduce(function(a, b){
-           return a.map(function(v,i){
-               return v+b[i];
-           });
-        }).filter(function(x){
-            return x;
-        });
+            if(feature != null){
+                agreement = raterAgreement(feature);
+                console.log(agreement);
+                stats.push({key: "Agreement", value: agreement.percentage});
+            }
 
-        stats = [
-            {key: "Slide count", value: Object.keys(raterData[studyName]["MarkupData"]).length},
-            {key: "Num raters", value: raters.length},
-            {key: "Num features", value: $.unique(features).length},
-            {key: "Coverage", value: Math.round(annotatedPixels.length/pixels[0].length * 100) + "%"}
-        ];
-
-        $$("stats_view_tab").parse(stats);
+            $$("stats_view_tab").parse(stats);
+        }
     }
 
     return {

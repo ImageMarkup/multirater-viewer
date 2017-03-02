@@ -108,6 +108,8 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
     var statNav = {
         view: "datatable",
         id: "stats_view_tab",
+        height: 180,
+        scroll: false,
         columns: [
             {"id": "key", header: "Value", fillspace: true},
             {"id": "value", header: "Count", width: 70}
@@ -123,6 +125,7 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
         collapsed: true,
         body: {
             rows: [
+                statNav,
                 {view: "datatable", 
                  id: "raters_list",
                  editable:true,
@@ -132,10 +135,11 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
                  ],
                  on:{
                     onAfterEditStop:function(state, editor){
-                        if(editor.row == "Multi Rater")
+                        console.log(editor)
+                        if(editor.row == "> 1 rater")
                             $(".multi_rater_boundary").css("fill", state.value);
                         else
-                            $(".tile_" + editor.row).css("fill", state.value);
+                            $(".tile_" + editor.row.replace(" ","")).css("fill", state.value);
                     }
                  }
                 },
@@ -146,8 +150,7 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
                 {view: "template", template: "Multi rater properties", height: 30},
                 mOpacitySlider,
                 mStrokeSlider,
-                mColorPicker, 
-                statNav
+                mColorPicker
             ]
         }
     };

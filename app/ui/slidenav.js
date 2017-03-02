@@ -20,7 +20,7 @@ define("ui/slidenav", ["config", "zoomer", "slide", "jquery","raterData"], funct
             "onChange": function(id) {
                 var item = this.getPopup().getBody().getItem(id);
                 var thumbs = $$("thumbnails_panel");
-                var url = config.BASE_URL + "/folder?parentType=folder&parentId=" + item._id
+                var url = config.BASE_URL + "/folder?parentType=folder&parentId=" + item._id;
                 thumbs.clearAll();
                 thumbs.load(url);
             },
@@ -39,7 +39,7 @@ define("ui/slidenav", ["config", "zoomer", "slide", "jquery","raterData"], funct
         view: "dataview",
         id: "thumbnails_panel",
         select: true,
-        template: "<div class='webix_strong'>#name#</div><img src='" + config.BASE_URL + "/file/#meta.thumbNailId#/download?.jpg'/>",
+        template: "<div class='webix_strong'>#name#</div><img src='" + config.BASE_URL + "/item/#meta.thumbnailId#/tiles/thumbnail'/>",
         datatype: "json",
         type: {
             height: 170,

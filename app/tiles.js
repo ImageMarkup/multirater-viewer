@@ -49,7 +49,7 @@ define("tiles", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer
                     if (rater.tiles[feature][i] > 0) {
                         ratersPerTile[i] += 1;
                         tile.fill = rater.fill;
-                        tile.className = "tile_" + rater.id;
+                        tile.className = "tile_" + rater.id.replace(" ","");
                     }
                 });
             }
