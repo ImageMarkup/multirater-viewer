@@ -137,8 +137,9 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
             $$("imageDataViewList").parse(thumbnails);
         });*/
 
-        selectImage(thumbnails[0].name);
+        
         $$("imageDataViewList").parse(thumbnails);
+        imageName = thumbnails[0]["name"];
 
         $$('feature_list').reconstruct();
 
@@ -171,11 +172,12 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                     cols = [];
                 }
             });
+
+            selectImage(imageName);
         });
     }
 
     function selectImage(image){
-        console.log(image)
         computeStats();
         var raters = Object.keys(raterData[studyName]["MarkupData"][image]["raters"]);
         var url = config.BASE_URL + "/resource/search?mode=prefix&types=%5B%22item%22%5D&q=" + image + ".jpg";
@@ -190,6 +192,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         //for each feature button return the list of raters who marked that image with the given feature
         //this will return array of objects
         featureButtons.map(function(btn){
+            //console.log("selectImage()", image, btn)
             var featureRaters = raters.filter(
                 function(raterName){
                     var annotations = raterData[studyName]["MarkupData"][image]["raters"][raterName]["meta"]["annotations"];

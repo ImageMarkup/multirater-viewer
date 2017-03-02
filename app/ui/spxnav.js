@@ -175,7 +175,19 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
             "stroke": $$("stroke_colorpicker").getValue()
         },{});
 
-        tiles.updateOverlay("multi_rater_boundary", {
+        tiles.updateOverlay("multi_rater_2_boundary", {
+            "opacity": $$("m_opacity_slider").getValue(),
+            "stroke-width": $$("m_stroke_slider").getValue(),
+            "stroke": $$("m_stroke_colorpicker").getValue()
+        }, {});
+
+        tiles.updateOverlay("multi_rater_3_boundary", {
+            "opacity": $$("m_opacity_slider").getValue(),
+            "stroke-width": $$("m_stroke_slider").getValue(),
+            "stroke": $$("m_stroke_colorpicker").getValue()
+        }, {});
+
+        tiles.updateOverlay("multi_rater_4_boundary", {
             "opacity": $$("m_opacity_slider").getValue(),
             "stroke-width": $$("m_stroke_slider").getValue(),
             "stroke": $$("m_stroke_colorpicker").getValue()
