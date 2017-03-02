@@ -3,6 +3,20 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
     var studyName = '';
     var imageName = '';
     var featureButtons = [];
+    var tilesOn = true;
+
+    webix.UIManager.addHotKey("Ctrl+T", function() { 
+        if(tilesOn){
+            $$("opacity_slider").setValue("0");
+            $$("m_opacity_slider").setValue("0");
+            tilesOn = false;
+        }
+        else{
+            $$("opacity_slider").setValue("0.5");
+            $$("m_opacity_slider").setValue("0.7");
+            tilesOn = true;
+        }
+    });
 
     var filter = {
         view: "search",
@@ -94,6 +108,15 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         //this requires doing multiple AJAX calls that are pushed into an array (requests)
         //and the response is pushed into an array (thumbnails)
         $.each(Object.keys(raterData[studyName]["MarkupData"]), function(index, image){
+            var numRaters = Object.keys(raterData[studyName]["MarkupData"][image]["raters"]).length;
+
+            thumbnails.push({
+                "_id": raterData[studyName]["MarkupData"][image]["largeImageId"],
+                "name": image,
+                "numRaters": numRaters
+            });
+        });
+        /*
             var url = config.BASE_URL + "/resource/search?mode=prefix&types=%5B%22item%22%5D&q=" + image + ".jpg";
             requests.push(
                 $.get(url, function(resource){
@@ -112,7 +135,10 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
             imageName = thumbnails[0]["name"].replace(".jpg","");
             selectImage(imageName);
             $$("imageDataViewList").parse(thumbnails);
-        });
+        });*/
+
+        selectImage(thumbnails[0].name);
+        $$("imageDataViewList").parse(thumbnails);
 
         $$('feature_list').reconstruct();
 
@@ -192,7 +218,9 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                     tiles.addRaterOverlays(id, featureRaters, slide.tiles);
 
                     var tmp = featureRaters;
-                    tmp.push({id: "> 1 rater", fill: "red", tiles: {}});
+                    tmp.push({id: "2 raters", fill: "yellow", tiles: {}});
+                    tmp.push({id: "3 raters", fill: "orange", tiles: {}});
+                    tmp.push({id: "4+ raters", fill: "red", tiles: {}});
                     $$("raters_list").clearAll();
                     $$("raters_list").parse(featureRaters);
                     console.log(id);
@@ -228,21 +256,29 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 return x > 0;
             });
 
-            var allAgreed = annotatedPixels.filter(function(x){
-                return x == pixels.length;
+            var agreed2 = annotatedPixels.filter(function(x){
+                return x > 1;
+            });
+
+            var agreed3 = annotatedPixels.filter(function(x){
+                return x > 2;
+            });
+
+            var agreed4 = annotatedPixels.filter(function(x){
+                return x > 3;
             });
 
             return {
-                total: allMarked.length,
-                agreed: allAgreed.length,
-                percentage: Math.round(allAgreed.length/allMarked.length * 100) + "%"
+                percentage2: Math.round(agreed2.length/allMarked.length * 100) + "%",
+                percentage3: Math.round(agreed3.length/allMarked.length * 100) + "%",
+                percentage4: Math.round(agreed4.length/allMarked.length * 100) + "%"
             }
         } 
         else{
             return{
-                total: "NA",
-                agreed: "NA",
-                percentage: "100%"
+                percentage2: "100%",
+                percentage3: "100%",
+                percentage4: "100%"
             }
         }  
     }
@@ -297,7 +333,9 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
             if(feature != null){
                 agreement = raterAgreement(feature);
                 console.log(agreement);
-                stats.push({key: "Agreement", value: agreement.percentage});
+                stats.push({key: "2 rater agreement", value: agreement.percentage2});
+                stats.push({key: "3 rater agreement", value: agreement.percentage3});
+                stats.push({key: "4+ rater agreement", value: agreement.percentage4});
             }
 
             $$("stats_view_tab").parse(stats);

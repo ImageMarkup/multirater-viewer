@@ -57,10 +57,28 @@ define("tiles", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer
 
         if (x.length) {
             $.each(tiles, function(index, tile) {
-                var className = ratersPerTile[index] > 1 ? "multi_rater_boundary" : tile.className + " boundaryClass";
-                var fill = ratersPerTile[index] > 1 ? "red" : tile.fill;
+                var className = ""; //ratersPerTile[index] > 1 ? "multi_rater_boundary" : tile.className + " boundaryClass";
+                var fill = ""; //ratersPerTile[index] > 1 ? "red" : tile.fill;
                 var visibility = ratersPerTile[index] > 0 ? "visible" : "hidden";
-                var opacity = ratersPerTile[index] > 1 ? 0.3 : 0.2;
+                var opacity = ratersPerTile[index] > 1 ? 0.7 : 0.5;
+
+                if(ratersPerTile[index] == 1) {
+                    className = tile.className + " boundaryClass";
+                    fill = tile.fill;
+                    console.log(className);
+                }
+                else if(ratersPerTile[index] == 2) {
+                    className = "multi_rater_2_boundary";
+                    fill = "yellow";
+                }
+                else if(ratersPerTile[index] == 3) {
+                    className = "multi_rater_3_boundary";
+                    fill = "orange";
+                }
+                else if(ratersPerTile[index] > 3){
+                    className = "multi_rater_4_boundary";
+                    fill = "red";
+                }
 
                 d3.select(viewer.svgOverlay().node()).append("polygon")
                     .attr("points", tile.coords)
@@ -70,14 +88,16 @@ define("tiles", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer
                     .attr('class', className)
                     .attr('id', 'boundary' + index)
                     .attr('stroke', 'blue')
-                    .attr('stroke-width', 0.001);
+                    .attr('stroke-width', 0.0005);
             });
         }
     }
 
     function removeOverlay() {
         $(".boundaryClass").remove();
-        $(".multi_rater_boundary").remove();
+        $(".multi_rater_2_boundary").remove();
+        $(".multi_rater_3_boundary").remove();
+        $(".multi_rater_4_boundary").remove();
     }
 
     function updateOverlay(className, attributes, styles) {

@@ -108,8 +108,8 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
     var statNav = {
         view: "datatable",
         id: "stats_view_tab",
-        height: 180,
-        scroll: false,
+        height: 220,
+        scroll: true,
         columns: [
             {"id": "key", header: "Value", fillspace: true},
             {"id": "value", header: "Count", width: 70}
@@ -136,8 +136,12 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
                  on:{
                     onAfterEditStop:function(state, editor){
                         console.log(editor)
-                        if(editor.row == "> 1 rater")
-                            $(".multi_rater_boundary").css("fill", state.value);
+                        if(editor.row == "2 raters")
+                            $(".multi_rater_2_boundary").css("fill", state.value);
+                        else if(editor.row == "3 raters")
+                            $(".multi_rater_3_boundary").css("fill", state.value);
+                        else if(editor.row == "4+ raters")
+                            $(".multi_rater_4_boundary").css("fill", state.value);
                         else
                             $(".tile_" + editor.row.replace(" ","")).css("fill", state.value);
                     }
@@ -156,11 +160,11 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
     };
 
     function resetControls(){
-        $$("opacity_slider").setValue("0.1");
-        $$("stroke_slider").setValue("0.001");
+        $$("opacity_slider").setValue("0.5");
+        $$("stroke_slider").setValue("0.0005");
         $$("stroke_colorpicker").setValue("blue");
-        $$("m_opacity_slider").setValue("0.1");
-        $$("m_stroke_slider").setValue("0.001");
+        $$("m_opacity_slider").setValue("0.7");
+        $$("m_stroke_slider").setValue("0.0005");
         $$("m_stroke_colorpicker").setValue("blue");
     }
 
