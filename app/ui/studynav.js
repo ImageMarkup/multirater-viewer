@@ -109,7 +109,8 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         //when all the AJAX requests are done processing
         //populate the image/thumbnail slide/view
         $.when.apply(null, requests).done(function(){
-            selectImage(thumbnails[0]["name"].replace(".jpg",""));
+            imageName = thumbnails[0]["name"].replace(".jpg","");
+            selectImage(imageName);
             $$("imageDataViewList").parse(thumbnails);
         });
 
@@ -144,12 +145,11 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                     cols = [];
                 }
             });
-
-            //selectImage(imageName);
         });
     }
 
     function selectImage(image){
+        console.log(image)
         computeStats();
         var raters = Object.keys(raterData[studyName]["MarkupData"][image]["raters"]);
         var url = config.BASE_URL + "/resource/search?mode=prefix&types=%5B%22item%22%5D&q=" + image + ".jpg";
@@ -195,6 +195,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                     tmp.push({id: "> 1 rater", fill: "red", tiles: {}});
                     $$("raters_list").clearAll();
                     $$("raters_list").parse(featureRaters);
+                    console.log(id);
                     computeStats(id);
                 });
             }
@@ -205,6 +206,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
     }
 
     function raterAgreement(feature){
+        console.log("AGREEMENT DATA", studyName, imageName, feature)
         var pixels = [];
 
         $.each(raterData[studyName]["MarkupData"][imageName]["raters"], function(rater, meta){
@@ -214,7 +216,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 pixels.push(annotations[feature]);
             }
         });
-        
+    
         if(pixels.length > 1){
             var annotatedPixels = pixels.reduce(function(a, b){
                 return a.map(function(v,i){
