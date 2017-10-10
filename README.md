@@ -1,4 +1,4 @@
-#First Clone the repo locally
+# First Clone the repo locally
 
 git clone https://github.com/ImageMarkup/multirater-viewer.git
 
