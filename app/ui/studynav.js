@@ -131,11 +131,11 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
 
 
         //get the list of features for this study using the feature set ID
-            if(data.localFeatures.length == 0)
+            if(featureSetData.localFeatures.length == 0)
                 $$("feature_list").addView({view: "label", label: "This study has no features!"});
 
             //for each feature create a button and bind it to the feature_list view (form)
-            $.each(data.localFeatures, function(index, feature) {
+            $.each(featureSetData.localFeatures, function(index, feature) {
                 btn = {
                     id: feature.id,
                     view:"button", 
@@ -153,7 +153,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 cols.push(btn);
 
                 //we want to create 3 columns (a row with 3 buttons)
-                if((index+1) % 3 == 0 || index == data.localFeatures.length-1){
+                if((index+1) % 3 == 0 || index == featureSetData.localFeatures.length-1){
                     $$("feature_list").addView({cols: cols});
                     cols = [];
                 }
