@@ -5,7 +5,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
     var featureButtons = [];
     var tilesOn = true;
 
-    webix.UIManager.addHotKey("Ctrl+T", function() { 
+    webix.UIManager.addHotKey("Alt+T", function() { 
         if(tilesOn){
             $$("opacity_slider").setValue("0");
             $$("m_opacity_slider").setValue("0");
@@ -46,7 +46,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
    
     var imageListDataView = {
         view: "dataview",
-        template: "<center><div class='webix_strong'>#name#</div><img src='http://candygram.neurology.emory.edu:8080/api/v1/item/#_id#/tiles/thumbnail?width=150'/><br/>(#numRaters# raters total)</center>",
+        template: "<center><div class='webix_strong'>#name#</div><img src='http://dermannotator.org:8080/api/v1/item/#_id#/tiles/thumbnail?width=150'/><br/>(#numRaters# raters total)</center>",
         id: "imageDataViewList",
         xCount:1,
         yCount:1,
@@ -100,6 +100,9 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         var cols = [];
         var requests = [];
         var thumbnails = [];
+        var featureSetData = raterData[studyName]["fullFeatureSet"]; //DG Edits
+
+
         $$("imageDataViewList").clearAll();
         $$("thumbPager").select(0);
 
@@ -116,35 +119,18 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 "numRaters": numRaters
             });
         });
-        /*
-            var url = config.BASE_URL + "/resource/search?mode=prefix&types=%5B%22item%22%5D&q=" + image + ".jpg";
-            requests.push(
-                $.get(url, function(resource){
-                    var numRaters = Object.keys(raterData[studyName]["MarkupData"][image]["raters"]).length;
-                    if(resource.item.length > 0){
-                        resource.item[0].numRaters = numRaters;
-                        thumbnails.push(resource.item[0]);
-                    }
-                })
-            );
-        });
-        
-        //when all the AJAX requests are done processing
-        //populate the image/thumbnail slide/view
-        $.when.apply(null, requests).done(function(){
-            imageName = thumbnails[0]["name"].replace(".jpg","");
-            selectImage(imageName);
-            $$("imageDataViewList").parse(thumbnails);
-        });*/
 
         
         $$("imageDataViewList").parse(thumbnails);
         imageName = thumbnails[0]["name"];
 
         $$('feature_list').reconstruct();
+	
+	   if (featureSetData.length == 0)
+                {webix.message("Blank Feature Set"); }
+
 
         //get the list of features for this study using the feature set ID
-        $.get("https://isic-archive.com:443/api/v1/featureset/" + featureSetId, function(data){
             if(data.localFeatures.length == 0)
                 $$("feature_list").addView({view: "label", label: "This study has no features!"});
 
@@ -174,7 +160,6 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
             });
 
             selectImage(imageName);
-        });
     }
 
     function selectImage(image){
