@@ -31,7 +31,7 @@ define("ui/featurenav", ["config", "zoomer", "slide", "jquery","raterData"], fun
         scroll: "y",
         elements:[]
     };
-    
+
     var featureNav = {
         width: 300,
         height: "100%",
@@ -44,8 +44,8 @@ define("ui/featurenav", ["config", "zoomer", "slide", "jquery","raterData"], fun
 
     var thumbnailsPanel = {
         header: "Thumbnails",
-        collapsed: true,
-        disabled: true,
+        collapsed: false,
+        disabled: false,
         id: "feature_thumbnails",
         body:{
             view: "dataview",

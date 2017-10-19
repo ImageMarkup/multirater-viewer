@@ -1,5 +1,5 @@
-define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/studynav", "ui/toolbar", "ui/metadata", "ui/spxnav", "ui/featurenav", "webix"],
-    function(filters, header, slidenav, studynav, toolbar, metadata, spxnav, featurenav) {
+define("ui/main", ["ui/filters", "ui/header",  "ui/studynav", "ui/toolbar", "ui/metadata", "ui/spxnav",  "webix"],
+    function(filters, header, studynav, toolbar, metadata, spxnav) {
 
         function init() {
             filters.init();
@@ -34,8 +34,6 @@ define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/studynav", "ui/
                             if(id=="study_view_tab"){
                                 $$("slide_viewer").enable();
                                 $$("slide_viewer").expand();
-//                                $$("feature_thumbnails").collapse();
-//                                $$("feature_thumbnails").disable();
                                 $$("spx_tools").enable();
                             }
                         }
@@ -43,8 +41,6 @@ define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/studynav", "ui/
                 }, {
                     cells: [
                         studynav.view,
-//                        slidenav.view,
-//                        featurenav.view
                     ]
                 }]
             };
@@ -56,15 +52,8 @@ define("ui/main", ["ui/filters", "ui/header", "ui/slidenav", "ui/studynav", "ui/
                     header.view, 
                     {
                         cols: [
-                            navTabbar, {
-                                view: "resizer"
-                            },
-                            viewerPanel, {
-                                view: "resizer"
-                            },
-                            featurenav.accordion, {
-                                view: "resizer"
-                            },
+                            navTabbar,
+                            viewerPanel,
                             spxnav.view,
                             { gravity:0.0001 }
                         ]
