@@ -40,10 +40,11 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 studyName = this.getPopup().getBody().getFirstId();
                 imageName = Object.keys(raterData[studyName]["MarkupData"])[0];
                 initImageSlider();
+		this.setValue(studyName);
             })
         }
     };
-   
+
     var imageListDataView = {
         view: "dataview",
         template: "<center><div class='webix_strong'>#name#</div><img src='http://dermannotator.org:8080/api/v1/item/#_id#/tiles/thumbnail?width=150'/><br/>(#numRaters# raters total)</center>",
@@ -68,7 +69,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 //http://webix.com/snippet/e00b0728
      		 	// delay is necessary for getting the needed page
       			webix.delay(function(){
-        			var page = $$("imageDataViewList").getPage();                   
+        			var page = $$("imageDataViewList").getPage();
         			var id = $$("imageDataViewList").getIdByIndex(page);
         			imageName = $$("imageDataViewList").getItem(id).name.replace(".jpg", "");
                     selectImage(imageName);
@@ -86,7 +87,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
     };
 
     var studyNav = {
-        id: "study_view_tab", 
+        id: "study_view_tab",
         width: 300,
         rows:[studyList, filter, thumbPager, imageListDataView, featureAccordion]
     };
@@ -120,12 +121,10 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
             });
         });
 
-        
         $$("imageDataViewList").parse(thumbnails);
         imageName = thumbnails[0]["name"];
 
         $$('feature_list').reconstruct();
-	
 	   if (featureSetData.length == 0)
                 {webix.message("Blank Feature Set"); }
 
@@ -138,9 +137,9 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
             $.each(featureSetData.localFeatures, function(index, feature) {
                 btn = {
                     id: feature.id,
-                    view:"button", 
-                    width:110, 
-                    badge:0, 
+                    view:"button",
+                    width:110,
+                    badge:0,
                     label: feature.id.replace(new RegExp("[_|/]", 'g'), " "),
                     width:90,
                     height:50,
@@ -149,7 +148,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                     disabled: true
                 };
 
-                featureButtons.push(btn); 
+                featureButtons.push(btn);
                 cols.push(btn);
 
                 //we want to create 3 columns (a row with 3 buttons)
