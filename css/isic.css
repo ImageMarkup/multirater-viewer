@@ -1,3 +1,21 @@
+.feature_button .webix_img_btn_top {
+overflow: hidden;
+}
+.feature_button .webix_el_box .webix_img_btn_text {
+    bottom: 0;
+    top: 21px;
+}
+.feature_button .webix_el_box.webix_disabled_box .webix_img_btn_text {
+position: static;
+padding: 2px;
+-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+box-sizing: border-box;
+}
+ 
+
+
+
 html, body{
     height: 100%;
     padding: 0px;
