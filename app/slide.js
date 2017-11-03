@@ -43,7 +43,7 @@ define("slide", ["pubsub", "config", "jquery", "zoomer", "tiles"], function(pubs
                     minLevel: 0,
                     maxLevel: tile.levels - 1,
                     getTileUrl: function(level, x, y){
-                        return config.BASE_URL + "/item/"+ itemId + "/tiles/zxy/" + level + "/" + x + "/" + y;
+                        return config.BASE_URL + "/item/"+ itemId + "/tiles/zxy/" + level + "/" + x + "/" + y + "?edge=crop";
                     }
                 }
 
