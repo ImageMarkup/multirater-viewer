@@ -1,6 +1,6 @@
 require = {
     urlArgs: "bust" + (+new Date),
-
+    waitSeconds: 20,
     paths: {
         "pubsub": "bower_components/PubSubJS/src/pubsub",
         "osd": "bower_components/openseadragon/built-openseadragon/openseadragon/openseadragon.min",

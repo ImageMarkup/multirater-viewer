@@ -83,6 +83,8 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         id: "feature_list",
         height:"auto",
         scroll: "y",
+        margin: -2,
+        paddingX: 6,
         elements:[]
     };
 
