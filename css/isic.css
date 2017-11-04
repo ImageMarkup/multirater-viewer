@@ -17,6 +17,10 @@ overflow: hidden;
    text-decoration: none;
 }
 
+.webix_accordionitem_header .webix_accordionitem_button {
+   visibility: hidden;
+}
+
 .feature_button .webix_el_box.webix_disabled_box .webix_img_btn_text {
 position: static;
 color: #666;
@@ -29,6 +33,7 @@ border-radius: 0px;
 
 .webix_accordionitem_header {
   background: #0288d1;
+  pointer-events: none;
 }
 
 .webix_view.webix_layout_accordion {

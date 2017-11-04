@@ -108,13 +108,62 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
     var statNav = {
         view: "datatable",
         id: "stats_view_tab",
-        height: 220,
-        scroll: true,
+        height: 320,
+        scroll: false,
         columns: [
             {"id": "key", header: "Value", fillspace: true},
             {"id": "value", header: "Count", width: 70}
         ]
     };
+
+   var single_properties = webix.ui({
+view: "window",
+        head: {
+            view: "toolbar",
+            margin: -4,
+            cols: [{
+                view: "label",
+                label: "Single Rater Properties"
+            }, {
+                view: "icon",
+                icon: "times-circle",
+                click: "$$('single_properties').hide();"
+            }]
+        },
+                 id: "single_properties",
+                 position: "center",
+                 move: true,
+                 body: {rows: [
+
+                opacitySlider,
+                strokeSlider,
+                strokeColorPicker ]}
+   });
+
+   var multi_properties = webix.ui({
+view: "window",
+        head: {
+            view: "toolbar",
+            margin: -4,
+            cols: [{
+                view: "label",
+                label: "Multi Rater Properties"
+            }, {
+                view: "icon",
+                icon: "times-circle",
+                click: "$$('multi_properties').hide();"
+            }]
+        },
+                 id: "multi_properties",
+                 position: "center",
+                 move: true,
+                 body: {rows: [
+
+                mOpacitySlider,
+                mStrokeSlider,
+                mColorPicker ]}
+   });
+
 
     //http://webix.com/snippet/cc1aa754
     var fillTemp = "<span style='background-color:#fill#; border-radius:4px; padding-right:10px;'>&nbsp</span>";
@@ -130,9 +179,10 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
                 {view: "datatable", 
                  id: "raters_list",
                  editable:true,
+		 scroll: false,
                  columns:[
                     {id: "id", header: "Rater", fillspace: true},
-                    {id: "fill", header: "Color", editor: "color", template: fillTemp, width:30}
+                    {id: "fill", header: "Color", editor: "color", template: fillTemp, width:70}
                  ],
                  on:{
                     onAfterEditStop:function(state, editor){
@@ -148,14 +198,8 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
                     }
                  }
                 },
-                {view: "template", template: "Single rater properties", height: 30},
-                opacitySlider,
-                strokeSlider,
-                strokeColorPicker,
-                {view: "template", template: "Multi rater properties", height: 30},
-                mOpacitySlider,
-                mStrokeSlider,
-                mColorPicker
+                {view: "button", click:("$$('single_properties').show();"), label: "Single rater properties"},
+                {view: "button", click: ("$$('multi_properties').show();"),  label: "Multi rater properties"}
             ]
         }
     };
