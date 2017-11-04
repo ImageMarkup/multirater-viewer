@@ -238,13 +238,13 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                     var tmp = featureRaters.slice(0, featureRaters.length);
 
                     if (raterslist.length > 1) {
-                        tmp.push({id: "2 rater agreement", fill: "yellow", tiles: {}});
+                        tmp.push({id: "2 Rater Agreement", fill: "yellow", tiles: {}});
                     }
                     if (raterslist.length > 2) {
-                        tmp.push({id: "3 rater agreement", fill: "orange", tiles: {}});
+                        tmp.push({id: "3 Rater Agreement", fill: "orange", tiles: {}});
                     }
                     if (raterslist.length > 3) {
-                        tmp.push({id: "4+ rater agreement", fill: "red", tiles: {}});
+                        tmp.push({id: "4+ Rater Agreement", fill: "red", tiles: {}});
                     }
                     $$("raters_list").clearAll();
                     $$("raters_list").parse(tmp);
@@ -350,29 +350,29 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
             });
         
             stats = [
-                {key: "Num raters", value: raters.length},
-                {key: "Num features", value: $.unique(features).length},
-                {key: "Coverage", value: Math.round(annotatedPixels.length/pixels[0].length * 100) + "%"}
+                {key: "Total Raters", value: raters.length},
+                {key: "Total Features", value: $.unique(features).length},
+                {key: "Markup Coverage", value: Math.round(annotatedPixels.length/pixels[0].length * 100) + "%"}
             ];
 
             nraters = $$("raters_list").serialize()
             nraters = nraters.map(function(value) {
                 return value.id;
             });
-            nraters = nraters.filter(/./.test.bind(new RegExp('Rater ')));
+            nraters = nraters.filter(/./.test.bind(new RegExp('Rater [00-99]')));
             nraters = nraters.length;
 
             if(feature != null){
                 agreement = raterAgreement(feature);
                 //console.log(agreement);
                 if (nraters > 1) {
-                    stats.push({key: "2 rater agreement", value: agreement.percentage2});
+                    stats.push({key: "2 Rater Agreement", value: agreement.percentage2});
                 }
                 if (nraters > 2) {
-                    stats.push({key: "3 rater agreement", value: agreement.percentage3});
+                    stats.push({key: "3 Rater Agreement", value: agreement.percentage3});
                 }
                 if (nraters > 3) {
-                    stats.push({key: "4+ rater agreement", value: agreement.percentage4});
+                    stats.push({key: "4+ Rater Agreement", value: agreement.percentage4});
                 }
             }
 
