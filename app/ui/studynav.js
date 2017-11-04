@@ -41,27 +41,38 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 imageName = Object.keys(raterData[studyName]["MarkupData"])[0];
                 initImageSlider();
 		this.setValue(studyName);
+		//document.getElementById('1509771405631').value = "MSK Practice Study"; //temp
             })
         }
     };
 
     var imageListDataView = {
         view: "dataview",
-        template: "<center><div class='webix_strong'>#name#</div><img src='http://dermannotator.org:8080/api/v1/item/#_id#/tiles/thumbnail?width=150'/><br/>(#numRaters# raters total)</center>",
+        template: "<center><div class='webix_strong'>#name#</div><img src='http://dermannotator.org:8080/api/v1/item/#_id#/tiles/thumbnail?width=150'/><br/>[#numRaters# Raters Annotated This Image]</center>",
         id: "imageDataViewList",
         xCount:1,
         yCount:1,
         pager: "thumbPager",
         scroll: false,
         css: "thumbnail_cell",
-        type: {height: 180, width: 300}
+        type: {height: 180, width: 300},
+	on:{
+		onChange: function() { webix.delay(function(){
+			var f = document.getElementsByClassName('webix_view webix_pager')[0].innerText;
+                        var match = /\d+/.exec(f); console.log('a');
+                        document.getElementsByClassName('webix_strong')[0].innerHTML = 'Image '+match[0];
+			document.getElementsByClassName('webix_strong')[0].innerHTML = 'Image '+match[0];
+			})},
+		//onAfterRender: function(){webix.delay(function(){document.getElementById('1509771405631').value = "MSK Practice Study";})
+		//}
+	   }
     };
 
     var thumbPager = {
         view:"pager",
         id: "thumbPager",
         template: "<center>{common.prev()}{common.page()}/#limit# images{common.next()}</center>",
-        animate:true,
+        animate:false,
         size:1,
         group:1,
         on:{
@@ -72,9 +83,16 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
         			var page = $$("imageDataViewList").getPage();
         			var id = $$("imageDataViewList").getIdByIndex(page);
         			imageName = $$("imageDataViewList").getItem(id).name.replace(".jpg", "");
-                    selectImage(imageName);
-      			})
-    		}
+                                selectImage(imageName);
+      				})},
+		        onAfterPageChange: function() {
+			webix.delay(function(){
+                        var f = document.getElementsByClassName('webix_view webix_pager')[0].innerText;
+                        var match = /\d+/.exec(f); console.log(match);
+                        document.getElementsByClassName('webix_strong')[0].innerHTML = 'Image '+match[0];
+			}, delay=1)
+			 },
+
         }
     };
 
@@ -91,7 +109,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
     var studyNav = {
         id: "study_view_tab",
         width: 300,
-        rows:[studyList, filter, thumbPager, imageListDataView, featureAccordion]
+        rows:[studyList, thumbPager, imageListDataView, featureAccordion] //filter removed
     };
 
     /*
@@ -206,13 +224,31 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                     tiles.removeOverlay();
                     tiles.addRaterOverlays(id, featureRaters, slide.tiles);
 
-                    var tmp = featureRaters;
-                    tmp.push({id: "2 raters", fill: "yellow", tiles: {}});
-                    tmp.push({id: "3 raters", fill: "orange", tiles: {}});
-                    tmp.push({id: "4+ raters", fill: "red", tiles: {}});
+                    raterslist = featureRaters.map(function(value) {
+                      return value.id;
+                    });
+
+                    for (i=0; i<featureRaters.length; i++) {
+                        x = raterslist.indexOf(featureRaters[i].id); 
+                        if(x > -1) {
+                            featureRaters[i].id = 'Rater '+(x+1);
+                        }
+                    }
+
+                    var tmp = featureRaters.slice(0, featureRaters.length);
+
+                    if (raterslist.length > 1) {
+                        tmp.push({id: "2 rater agreement", fill: "yellow", tiles: {}});
+                    }
+                    if (raterslist.length > 2) {
+                        tmp.push({id: "3 rater agreement", fill: "orange", tiles: {}});
+                    }
+                    if (raterslist.length > 3) {
+                        tmp.push({id: "4+ rater agreement", fill: "red", tiles: {}});
+                    }
                     $$("raters_list").clearAll();
-                    $$("raters_list").parse(featureRaters);
-                    console.log(id);
+                    $$("raters_list").parse(tmp);
+                   // console.log(id);
                     computeStats(id);
                 });
             }
@@ -223,7 +259,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
     }
 
     function raterAgreement(feature){
-        console.log("AGREEMENT DATA", studyName, imageName, feature)
+        //console.log("AGREEMENT DATA", studyName, imageName, feature)
         var pixels = [];
 
         $.each(raterData[studyName]["MarkupData"][imageName]["raters"], function(rater, meta){
@@ -262,14 +298,14 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 percentage3: Math.round(agreed3.length/allMarked.length * 100) + "%",
                 percentage4: Math.round(agreed4.length/allMarked.length * 100) + "%"
             }
-        } 
+        }
         else{
             return{
                 percentage2: "100%",
                 percentage3: "100%",
                 percentage4: "100%"
             }
-        }  
+        }
     }
 
     function filterSlides(keyword = null){
@@ -301,7 +337,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
             $.each(annotations, function(featureName, raterPixels){
                 if(Array.isArray(raterPixels))
                     pixels.push(raterPixels);
-            });   
+            });
         });
 
        if(pixels.length){
@@ -319,12 +355,25 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                 {key: "Coverage", value: Math.round(annotatedPixels.length/pixels[0].length * 100) + "%"}
             ];
 
+            nraters = $$("raters_list").serialize()
+            nraters = nraters.map(function(value) {
+                return value.id;
+            });
+            nraters = nraters.filter(/./.test.bind(new RegExp('Rater ')));
+            nraters = nraters.length;
+
             if(feature != null){
                 agreement = raterAgreement(feature);
                 console.log(agreement);
-                stats.push({key: "2 rater agreement", value: agreement.percentage2});
-                stats.push({key: "3 rater agreement", value: agreement.percentage3});
-                stats.push({key: "4+ rater agreement", value: agreement.percentage4});
+                if (nraters > 1) {
+                    stats.push({key: "2 rater agreement", value: agreement.percentage2});
+                }
+                if (nraters > 2) {
+                    stats.push({key: "3 rater agreement", value: agreement.percentage3});
+                }
+                if (nraters > 3) {
+                    stats.push({key: "4+ rater agreement", value: agreement.percentage4});
+                }
             }
 
             $$("stats_view_tab").parse(stats);

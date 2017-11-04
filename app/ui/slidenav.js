@@ -30,6 +30,7 @@ define("ui/slidenav", ["config", "zoomer", "slide", "jquery","raterData"], funct
                     foldersMenu.clearAll();
                     foldersMenu.parse(folders);
                     $$("slideset_list").setValue(folders[0].id);
+		   // $$("slideset_list").setValue("MSK Practice Study");
                 });
             }
         }
@@ -38,7 +39,7 @@ define("ui/slidenav", ["config", "zoomer", "slide", "jquery","raterData"], funct
     var thumbnailsPanel = {
         view: "dataview",
         id: "thumbnails_panel",
-        select: true,
+        select: true,//next line normally uses #name#
         template: "<div class='webix_strong'>#name#</div><img src='" + config.BASE_URL + "/item/#meta.thumbnailId#/tiles/thumbnail'/>",
         datatype: "json",
         type: {

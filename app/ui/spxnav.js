@@ -118,11 +118,12 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
 
     //http://webix.com/snippet/cc1aa754
     var fillTemp = "<span style='background-color:#fill#; border-radius:4px; padding-right:10px;'>&nbsp</span>";
+    console.log(fillTemp);
     var nav = {
         width: 220,
         header: "Annotations",
         id: "spx_tools",
-        collapsed: true,
+        collapsed: false,
         body: {
             rows: [
                 statNav,
@@ -135,7 +136,7 @@ define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], 
                  ],
                  on:{
                     onAfterEditStop:function(state, editor){
-                        console.log(editor)
+                        console.log('editor', editor); console.log('state value ', state.value);
                         if(editor.row == "2 raters")
                             $(".multi_rater_2_boundary").css("fill", state.value);
                         else if(editor.row == "3 raters")

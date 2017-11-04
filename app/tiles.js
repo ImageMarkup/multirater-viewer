@@ -10,15 +10,14 @@ define("tiles", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer
                 y = coords[1] * scaleFactor;
                 tileCoords.push(x + "," + y);
             });
-            
+
             index = parseInt(tile.properties.labelindex);
             index = index > tiles.length ? 0 : index;
-            
             coordinates[index] = {
                 index: index,
                 coords: tileCoords.join(" ")
             };
-        }); 
+        });
 
         return coordinates;
     }
@@ -65,7 +64,7 @@ define("tiles", ["pubsub", "jquery", "zoomer", "d3"], function(pubsub, $, viewer
                 if(ratersPerTile[index] == 1) {
                     className = tile.className + " boundaryClass";
                     fill = tile.fill;
-                    console.log(className);
+                    //console.log(className);
                 }
                 else if(ratersPerTile[index] == 2) {
                     className = "multi_rater_2_boundary";

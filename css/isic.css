@@ -4,15 +4,87 @@ overflow: hidden;
 .feature_button .webix_el_box .webix_img_btn_text {
     bottom: 0;
     top: 21px;
+    color: white;
+    border-radius: 0px;
 }
+
+.webix_el_box {
+   padding: 2px 1px;
+}
+
 .feature_button .webix_el_box.webix_disabled_box .webix_img_btn_text {
 position: static;
+color: #666;
 padding: 2px;
 -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
 box-sizing: border-box;
+border-radius: 0px;
 }
 
+.webix_accordionitem_header {
+  background: #0288d1;
+}
+
+.webix_view.webix_layout_accordion {
+  background: #444;
+}
+
+.webix_view.webix_control.webix_el_tabbar {
+  height: 41px;
+
+}
+
+.webix_after_all_tabs {
+  height: 0px !important;
+}
+
+.webixtype_base {
+  background: #0288d1;
+}
+
+.webix_view .webix_pager_item {
+  border-radius: 0px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.webix_el_combo {
+  border-radius: 0px;
+}
+
+.webix_el_button button {
+  border-radius: 0px;
+}
+
+.webix_badge {
+  background-color: #ff5800;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 14px;
+  height: 14px;
+  min-width: 14px;
+  padding: 0 3px;
+  text-align: center;
+  line-height: 14px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-family: sans-serif;
+}
+
+.webix_item_tab {
+  background: #0288d1;
+}
+
+.feature_button .webix_el_box .webix_img_btn_text {
+  line-height: 11px;
+  top: 14px;
+}
+
+.webix_img_btn_top button {
+  line-height: 14px;
+}
 
 html, body{
     height: 100%;
@@ -27,7 +99,7 @@ html, body{
 
 #header_title{
 	padding-top: 10px;
-	color: blue;
+	color: #555;
 	font-size: 24px;
 	font-weight: bold;
 }
@@ -55,16 +127,18 @@ html, body{
 
 .feature_button .webix_img_btn_top{
   border: 1px solid gray;
-  background-color: lightgray;
+  background-color: #555;
   font-size: 11px;
   font-weight: bold;
+  color: white !important;
   vertical-align: middle;
+  border-radius: 0px;
 }
 
 .feature_button .webix_img_btn_top:focus{
   border: 1px solid gray;
-  background-color: lightblue;
-  font-size: 10px;
+  background-color: #0288d1;
+  font-size: 11px;
 }
 
 .multi_rater_boundary{
