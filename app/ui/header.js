@@ -24,7 +24,7 @@ define("ui/header", function() {
             cols: [{
                     view: "template",
                     borderless: true,
-                    template: "<div id='header_title'>ISIC Archive Annotation Viewer</div><div id='header_subtitle'>International Skin Imaging Collaboration: Melanoma Project</div>",
+                    template: "<div id='header_title'><a href='https://isic-archive.com/#'>ISIC Archive Annotation Viewer</a></div><div id='header_subtitle'>International Skin Imaging Collaboration: Melanoma Project</div>",
                 }, {},
                 menu
             ]

@@ -59,7 +59,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
 	on:{
 		onChange: function() { webix.delay(function(){
 			var f = document.getElementsByClassName('webix_view webix_pager')[0].innerText;
-                        var match = /\d+/.exec(f); console.log('a');
+                        var match = /\d+/.exec(f); //console.log('a');
                         document.getElementsByClassName('webix_strong')[0].innerHTML = 'Image '+match[0];
 			document.getElementsByClassName('webix_strong')[0].innerHTML = 'Image '+match[0];
 			})},
@@ -88,7 +88,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
 		        onAfterPageChange: function() {
 			webix.delay(function(){
                         var f = document.getElementsByClassName('webix_view webix_pager')[0].innerText;
-                        var match = /\d+/.exec(f); console.log(match);
+                        var match = /\d+/.exec(f); //console.log(match);
                         document.getElementsByClassName('webix_strong')[0].innerHTML = 'Image '+match[0];
 			}, delay=1)
 			 },
@@ -364,7 +364,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
 
             if(feature != null){
                 agreement = raterAgreement(feature);
-                console.log(agreement);
+                //console.log(agreement);
                 if (nraters > 1) {
                     stats.push({key: "2 rater agreement", value: agreement.percentage2});
                 }

@@ -12,6 +12,11 @@ overflow: hidden;
    padding: 2px 1px;
 }
 
+#header_title a {
+   color: #444;
+   text-decoration: none;
+}
+
 .feature_button .webix_el_box.webix_disabled_box .webix_img_btn_text {
 position: static;
 color: #666;
