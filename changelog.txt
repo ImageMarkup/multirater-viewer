@@ -1,0 +1,16 @@
+changelog: 
+
+(Nov 4 2017)
+​-​webix base colors replaced to match colors for redesigned isic
+​-​feature box shape changed to have sharper edges
+​-​bug fixed where feature box font changes when selected
+​-​sanitized rater names
+​-​changed website title
+​-​changed navigation buttons to single 'Home' button
+​-​number of raters in Rater panel now matches actual number of raters (i.e. '4+ raters' no longer shows up if there are only 2 raters)
+​-​agreements in Agreement panel now match actual number of raters (i.e. '4 rater agreement' no ​longer shows up if there are only 2 raters)
+​-​text re-centered for feature buttons so full feature name can be visible within button
+​--​required feature number badge to be made smaller
+​-​Single Rater Properties and Multi Rater Properties now have a button-window type schema
+​-​sanitized isic ids
+​-​statistics box and rater list box increased in height and changed to have inter-box column width consistency
