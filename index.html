@@ -8,7 +8,15 @@
     <link rel="stylesheet" type="text/css" href="css/isic.css">
     <script type="text/javascript" src="main.js"></script>
     <script type="text/javascript" src="bower_components/requirejs/require.js"></script>
-    <script>   
+    <script type="text/javascript" src="lib/jquery.js"></script>
+    <script src="https://cdn.rawgit.com/Gmousse/dataframe-js/master/dist/dataframe-min.js"></script>
+    <script>     var DataFrame = dfjs.DataFrame;
+       		 var isChrome = !!window.chrome && !!window.chrome.webstore;
+		 var isFirefox = typeof InstallTrigger !== 'undefined';
+		 var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;		 
+       		 if (!isChrome && !isFirefox && !isOpera) {
+           		 alert('This website is designed for Google Chrome or Mozilla Firefox. Please switch browsers.')
+       		 }
 		requirejs.onResourceLoad = function(context, map, depArray) {
     		console.log(map.id, "loaded");
 		}

@@ -1,4 +1,4 @@
-define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles"], function(config, zoomer, slide, $, pubsub, tiles) {
+define("ui/spxnav", ["config", "zoomer", "slide", "jquery", "pubsub", "tiles", "webix"], function(config, zoomer, slide, $, pubsub, tiles) {
 
     var slide = null;
     var spxOn = false;

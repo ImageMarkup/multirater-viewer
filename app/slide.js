@@ -2,7 +2,10 @@ define("slide", ["pubsub", "config", "jquery", "zoomer", "tiles"], function(pubs
 
     var slide = {
         init: function(item, largeImage) {
+	    //console.log(item);
+	    //console.log(largeImage);
             $.extend(this, item);
+	    //console.log('this', this);
             this.largeImage = largeImage
             tiles.removeOverlay();
             this.viewer();
