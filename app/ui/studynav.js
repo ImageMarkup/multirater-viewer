@@ -1,4 +1,4 @@
-define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles", "d3", "pubsub"], function(config, zoomer, slide, $, raterData, tiles, d3, pubsub) {
+define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles", "d3", "pubsub","webix"], function(config, zoomer, slide, $, raterData, tiles, d3, pubsub,webix) {
 
     var studyName = '';
     var imageName = '';
@@ -189,7 +189,7 @@ define("ui/studynav", ["config", "zoomer", "slide", "jquery","raterData", "tiles
                     return {
                         id:rater, 
                         tiles: raterData[studyName]["MarkupData"][image]["raters"][rater]["meta"]["annotations"],
-                        fill: d3.schemeCategory20[index % 20]
+                        fill:    d3.schemeCategory10[index % 10]
                     }
                 });
 

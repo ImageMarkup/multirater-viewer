@@ -1,4 +1,4 @@
-define("ui/filters", ["webix"], function() {
+define("ui/filters", ["webix"], function(webix) {
 
     //Window for slide filters
     var contrastSlider = {

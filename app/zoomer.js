@@ -7,7 +7,7 @@ define("zoomer", ["pubsub", "osd", "scalebar", "osdSVG", "d3", "jquery"], functi
 
     var viewer = osd({
         id: 'image_viewer',
-        prefixUrl: "bower_components/openseadragon/built-openseadragon/openseadragon/images/",
+        prefixUrl: "node_modules/openseadragon/build/openseadragon/images/",
         navigatorPosition: "BOTTOM_RIGHT",
         showNavigator: true,
         maxZoomLevel: 5

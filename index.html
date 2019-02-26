@@ -4,10 +4,11 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset = UTF-8">
     <title>ISIC</title>
-    <link rel="stylesheet" type="text/css" href="bower_components/webix/codebase/webix.css">
+
+    <link rel="stylesheet" type="text/css" href="node_modules/webix/webix.css">
     <link rel="stylesheet" type="text/css" href="css/isic.css">
     <script type="text/javascript" src="main.js"></script>
-    <script type="text/javascript" src="bower_components/requirejs/require.js"></script>
+    <script type="text/javascript" src="node_modules/requirejs/require.js"></script>
     <script>   
 		requirejs.onResourceLoad = function(context, map, depArray) {
     		console.log(map.id, "loaded");

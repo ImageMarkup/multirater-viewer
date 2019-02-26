@@ -1,5 +1,5 @@
 define("ui/main", ["ui/filters", "ui/header",  "ui/studynav", "ui/toolbar", "ui/metadata", "ui/spxnav",  "webix"],
-    function(filters, header, studynav, toolbar, metadata, spxnav) {
+    function(filters, header, studynav, toolbar, metadata, spxnav,webix) {
 
         function init() {
             filters.init();
