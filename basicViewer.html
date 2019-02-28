@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset = UTF-8">
+    <title>ISIC</title>
+
+
+    <style>
+
+    .rater1 {
+        fill: #ff0000 !important;
+    }
+
+
+    .rater2 {
+        fill: #00ff00;
+
+    }
+
+
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="node_modules/webix/webix.css">
+    <link rel="stylesheet" type="text/css" href="css/isic.css">
+    <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript" src="node_modules/requirejs/require.js"></script>
+    <script>   
+		requirejs.onResourceLoad = function(context, map, depArray) {
+    		console.log(map.id, "loaded");
+		}
+        requirejs(['app/appSimple.js']);
+	</script>
+</head>
+
+<body>
+     <div id="main_layout" style="height:100%"></div>
+    <div id="image_viewer" style="width:100%; height:100%"></div>
+</body>
+</html>
