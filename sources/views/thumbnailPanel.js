@@ -37,7 +37,7 @@ export default class multiRaterThumbPanel extends JetView {
                 },
                 {
                     view: "pager",
-                    template: "{common.prev()}{common.next()} #count# #limit# <div class='paging_text1'> Page {common.page()} from #limit#</div>",
+                    template: "{common.prev()}{common.next()} Total: #count#  <div class='paging_text1'> Page {common.page()} from #limit#</div>",
 
 
                     localid: "thumbnailPager",
