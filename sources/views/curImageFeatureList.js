@@ -4,37 +4,37 @@ const webix = require("webix");
 const $ = require("jquery");
 
 export default class curImageFeatureList extends JetView {
-  config() {
-    const featureAccordion = {
-      view: "form",
-      id: "curImgFeatureList",
-      gravity: 0.5,
-      elements: [],
-    };
+    config() {
+        const featureAccordion = {
+            view: "form",
+            id: "curImgFeatureList",
+            gravity: 0.5,
+            elements: [],
+        };
 
-    const curPixelInfo = {
-      gravity: 0.1,
-      view: "template",
-      id: "curPixelInfo",
-      template: "#curPixelId# #ratersForSpx# <br>#featuresSeen#",
-      data: { curPixelId: "", ratersForSpx: "", featuresSeen: "" },
-    };
+        const curPixelInfo = {
+            gravity: 0.1,
+            view: "template",
+            id: "curPixelInfo",
+            template: "#curPixelId# #ratersForSpx# <br>#featuresSeen#",
+            data: { curPixelId: "", ratersForSpx: "", featuresSeen: "" },
+        };
 
-    const curImageFeatureList = {
-      rows: [
-        {
-          view: "template",
-          type: "header",
-          template: "Features Present In Image",
-        },
-        featureAccordion
-      ],
-    };
+        const curImageFeatureList = {
+            rows: [{
+                    view: "template",
+                    type: "header",
+                    template: "Features Present In Image",
+                },
+                featureAccordion
+            ],
+            gravity: 0.5
+        };
 
-    return {
-      name: "curImageFeatureList",
-      width: 400,
-      rows: [curImageFeatureList, curPixelInfo]
-    };
-  }
+        return {
+            name: "curImageFeatureList",
+            width: 400,
+            rows: [curImageFeatureList, curPixelInfo]
+        };
+    }
 }

@@ -45,7 +45,6 @@ export default class ThumbnailPanelService {
 			  imageData.push(i.meta);
 			});
 			console.log(imageData);
-	
 			this._dataview.parse(imageData);
 		  })
 		  .finally(() => { view.hideProgress() });
