@@ -2,9 +2,11 @@ import { JetView } from "webix-jet";
 import $ from "jquery";
 import state from "models/state";
 import ThumbnailPanelService from "services/thumbnailPanel/thumbnailPanelService";
+import constants from "../constants"
 
-console.log(HOST_API_URL)
-var HOST_API_URL = "http://dermannotator.org:8080/api/v1";
+
+// // console.log(HOST_API_URL)
+// var HOST_API_URL = "http://dermannotator.org:8080/api/v1";
 
 function changeMainImage(imageData) {
     $(".raterClass").remove();
@@ -13,7 +15,7 @@ function changeMainImage(imageData) {
     //Eventually load this from a remoet source..
     $$("slide_viewer").viewer.open({
         width: imageData.baseImageWidth,
-        tileSource: HOST_API_URL + "/item/" + imageData.mainImage._id + "/tiles/dzi.dzi",
+        tileSource: constants.HOST_API_URL + "/item/" + imageData.mainImage._id + "/tiles/dzi.dzi",
     });
 }
 
