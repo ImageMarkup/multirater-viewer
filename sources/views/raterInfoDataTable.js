@@ -7,15 +7,17 @@ export default class raterInfoDataTable extends JetView {
     config() {
         var cSt =
             "<span style='background-color:#raterColor#; border-radius:4px; padding-right:10px;'>&nbsp</span>";
-
         /* Need to add a raterClass name that gets rid of periods and blank spaces as it breaks the JS model */
         // I need to remove spaces from the raterClass or it breaks everything!
 
         var raterInfoDataTable = {
             view: "datatable",
             id: "raterInfoDataTable",
+            //   gravity: 6,
+            minHeight: 400,
+            height: 100,
             yCount: 7,
-            // height: 150, //TO FIX.. this shuold not be fixed height
+            // height: 700, //TO FIX.. this shuold not be fixed height
             columns: [
                 { id: "raterName", header: "Rater Name", width: 50, hidden: true },
                 { id: "raterClassName", width: 100, header: "Rater" },
@@ -30,17 +32,18 @@ export default class raterInfoDataTable extends JetView {
                     id: "raterTotalFeaturesSeen",
                     header: [{ text: "# Features Seen", css: "multiline" }],
                     width: 100,
+                    hidden: true
                 },
                 {
                     id: "spxMarkedForCurrentFeature",
-                    header: "# Spxs Marked",
+                    header: [{ text: "# Spxs Marked", css: "multiline" }],
                     tooltip: "# of superpixels the rater selected",
-                    width: 180,
+                    width: 100,
                 },
                 {
                     id: "showRaterMarkupCheckbox",
                     width: 180,
-                    header: "DisplayMarkup",
+                    header: [{ text: "Display Markup", css: "multiline" }],
                     checkValue: "on",
                     uncheckValue: "off",
                     value: "on",
@@ -48,7 +51,7 @@ export default class raterInfoDataTable extends JetView {
                 },
             ],
             editable: true,
-            gravity: 1,
+
             tooltip: true,
             $scheme: {
                 $change: function(obj) {

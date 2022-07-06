@@ -95,7 +95,7 @@ webix.protoUI({
                         });
 
                         $$("raterInfoDataTable").clearAll();
-                        //console.log(curImageRaterDataList);
+                        console.log(curImageRaterDataList);
                         $$("raterInfoDataTable").parse(curImageRaterDataList);
 
                     });

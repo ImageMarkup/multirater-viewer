@@ -6,10 +6,10 @@ import curImageFeatureList from "./curImageFeatureList";
 import raterInfoDataTable from "./raterInfoDataTable";
 
 export default {
-  cols: [
-    multiRaterThumbPanel,
-    {
-      cols: [osdMaskView, {view:"resizer"},{ rows: [ curImageFeatureList, raterInfoDataTable] }],
-    },
-  ],
+    cols: [
+        multiRaterThumbPanel,
+        {
+            cols: [osdMaskView, { view: "resizer" }, { rows: [curImageFeatureList, { view: "resizer" }, raterInfoDataTable] }],
+        },
+    ],
 };
