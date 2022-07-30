@@ -107,38 +107,7 @@ export function createFeatureButtons(featureSetData) {
                     var twoRaters = [];
                     var threeRaters = [];
                     var allRaters = [];
-                    // $.each(spxMarkupCountDict, function (spxId, raterCount) {
-                    //   if (raterCount > 1) {
-                    //     twoRaters.push(spxId);
-                    //   }
-                    //   if (raterCount > 2) {
-                    //     threeRaters.push(spxId);
-                    //   }
-                    //   if (raterCount > 3) {
-                    //     allRaters.push(spxId);
-                    //   }
-                    // });
-                    //add two clasess one identifying the specific layer name and a second that lets me know it's a multiRater composite
-                    // tileInfo.addRaterOverlay(
-                    //   state.curImgTileData,
-                    //   twoRaters,
-                    //   "#ffff00",
-                    //   "twoRaters multiRater raterClass"
-                    // );
-                    // tileInfo.addRaterOverlay(
-                    //   state.curImgTileData,
-                    //   threeRaters,
-                    //   "#ff700e",
-                    //   "threeRaters multiRater raterClass"
-                    // );
-
-                    // tileInfo.addRaterOverlay(
-                    //   state.curImgTileData,
-                    //   allRaters,
-                    //   "#ff0000",
-                    //   "allRaters multiRater raterClass"
-                    // );
-
+                  
                     $$("raterInfoDataTable").updateItem(raterDataDict[rtr].id, {
                         raterTotalFeaturesSeen: state.curImageMetaData.markupData[id][rtr].length,
                     });

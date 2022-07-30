@@ -2,7 +2,7 @@ const $ = require("jquery");
 const d3 = require("d3");
 
 //Green  Green 
-const heatMapColors = ["#00ff00","#00ff00","#ffff00","#ff6700", "#ff0000","#f000ff"];
+const heatMapColors = ["#00ff00","#00ff00","#ff0000","#ff6700", "#ff0000","#f000ff"];
 
 export function transformCoords(tiles, imageWidth) {
   coordinates = new Array(tiles.length);
@@ -57,14 +57,21 @@ export function generateRaterAgreements(tiles, allRaterData) {
 
 /* I now have a diciontary where the keys are the number of people who observed the feature at the coordinate, and the value are the coordinates */
   $.each(spxMarkupMap, function (raterCount, spxList) {
+    //GUTMAN EDIT 7/30/2022..
+    
+    if (raterCount < 4) {
+
     addRaterOverlay(
       tiles,
       spxList,
       heatMapColors[raterCount],
-      "twoRaters multiRater raterClass" + " raterCount"+raterCount
-    );
+      "multiRater raterClass" + " moreThan"+raterCount
+    );}
       //Probably want to add it twice.. one without the fill.. one with???
   })
+
+  console.log(allRaterData)
+
 }
 
 export function addRaterOverlay(tiles, spxIdsToLabel, raterColor, className) {
