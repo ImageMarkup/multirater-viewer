@@ -41,10 +41,10 @@ export function createFeatureButtons(featureSetData) {
                     //so I only needto update this in one spot
                     /* To discuss with Konstantinos...*/
 
-                    $$("raterInfoDataTable").eachRow(function(row) {
-                        var itm = this.getItem(row);
-                        this.updateItem(row, { raterTotalFeaturesSeen: "" });
-                    });
+                    // $$("raterInfoDataTable").eachRow(function(row) {
+                    //     var itm = this.getItem(row);
+                    //     this.updateItem(row, { raterTotalFeaturesSeen: "" });
+                    // });
 
                     /* Grab the most recent raterData Information so I can use the right color scheme */
                     var raterDataDict = {};
@@ -60,36 +60,28 @@ export function createFeatureButtons(featureSetData) {
                         $$("raterInfoDataTable").updateItem(raterDataDict[rtr].id, {
 
                             spxMarkedForCurrentFeature: "",
-                            raterTotalFeaturesSeen: ""
+                            raterTotalFeaturesSeen: "",
+                            spxMarkedForCurrentFeatureCount: ""
                         });
 
 
                     })
-
-
-
 
                     //While adding the raters, create the compsite version as well
                     var spxMarkupCountDict = new Object();
                     var rtr = {};
                     for (rtr in state.curImageMetaData.markupData[id]) {
                         $.each(state.curImageMetaData.markupData[id][rtr], function(idx, spx) {
-
                             (!spxMarkupCountDict.hasOwnProperty(spx)) ? (spxMarkupCountDict[spx] = 1) : (spxMarkupCountDict[spx]++);
-
                         });
 
-
                         console.log(state.curImageMetaData.markupData);
-
 
                         //Crap have to first blanken EVERY column for all raters, then fill in the gaps..
                         //    update the data table to show the count for the currently displayed feature
                         $$("raterInfoDataTable").updateItem(raterDataDict[rtr].id, {
-
-                            spxMarkedForCurrentFeature:
-
-                                state.curImageMetaData.markupData[id][rtr].length,
+                            spxMarkedForCurrentFeatureCount: state.curImageMetaData.markupData[id][rtr].length,
+                            spxMarkedForCurrentFeature: state.curImageMetaData.markupData[id][rtr],
                             raterTotalFeaturesSeen: ""
                         });
 
@@ -102,46 +94,10 @@ export function createFeatureButtons(featureSetData) {
                         );
 
                     }
-                    //console.log(spxMarkupCountDict);
-                    //Now add in data for a composite rater...
-                    var twoRaters = [];
-                    var threeRaters = [];
-                    var allRaters = [];
-                    // $.each(spxMarkupCountDict, function (spxId, raterCount) {
-                    //   if (raterCount > 1) {
-                    //     twoRaters.push(spxId);
-                    //   }
-                    //   if (raterCount > 2) {
-                    //     threeRaters.push(spxId);
-                    //   }
-                    //   if (raterCount > 3) {
-                    //     allRaters.push(spxId);
-                    //   }
+
+                    // $$("raterInfoDataTable").updateItem(raterDataDict[rtr].id, {
+                    //     raterTotalFeaturesSeen: state.curImageMetaData.markupData[id][rtr].length,
                     // });
-                    //add two clasess one identifying the specific layer name and a second that lets me know it's a multiRater composite
-                    // tileInfo.addRaterOverlay(
-                    //   state.curImgTileData,
-                    //   twoRaters,
-                    //   "#ffff00",
-                    //   "twoRaters multiRater raterClass"
-                    // );
-                    // tileInfo.addRaterOverlay(
-                    //   state.curImgTileData,
-                    //   threeRaters,
-                    //   "#ff700e",
-                    //   "threeRaters multiRater raterClass"
-                    // );
-
-                    // tileInfo.addRaterOverlay(
-                    //   state.curImgTileData,
-                    //   allRaters,
-                    //   "#ff0000",
-                    //   "allRaters multiRater raterClass"
-                    // );
-
-                    $$("raterInfoDataTable").updateItem(raterDataDict[rtr].id, {
-                        raterTotalFeaturesSeen: state.curImageMetaData.markupData[id][rtr].length,
-                    });
 
                     // /  console.log(raterDataDict);
 
@@ -152,7 +108,6 @@ export function createFeatureButtons(featureSetData) {
                     $.each(raterDataDict, function(rtrName, raterData) {
                         //Get the opacity from thne multiraterOpacity..
                         var mrOpacity = $$("multirater_opacity_slider").getValue();
-
                         // console.log(raterData);  //TO FIX-- I am loading thie data 8 times I think... need to fix the loop
 
                         var raterOpacity =
@@ -172,3 +127,37 @@ export function createFeatureButtons(featureSetData) {
         }
     });
 }
+
+//console.log(spxMarkupCountDict);
+//Now add in data for a composite rater...
+// $.each(spxMarkupCountDict, function (spxId, raterCount) {
+//   if (raterCount > 1) {
+//     twoRaters.push(spxId);
+//   }
+//   if (raterCount > 2) {
+//     threeRaters.push(spxId);
+//   }
+//   if (raterCount > 3) {
+//     allRaters.push(spxId);
+//   }
+// });
+//add two clasess one identifying the specific layer name and a second that lets me know it's a multiRater composite
+// tileInfo.addRaterOverlay(
+//   state.curImgTileData,
+//   twoRaters,
+//   "#ffff00",
+//   "twoRaters multiRater raterClass"
+// );
+// tileInfo.addRaterOverlay(
+//   state.curImgTileData,
+//   threeRaters,
+//   "#ff700e",
+//   "threeRaters multiRater raterClass"
+// );
+
+// tileInfo.addRaterOverlay(
+//   state.curImgTileData,
+//   allRaters,
+//   "#ff0000",
+//   "allRaters multiRater raterClass"
+// );

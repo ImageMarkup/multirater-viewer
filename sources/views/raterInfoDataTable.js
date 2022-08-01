@@ -13,7 +13,6 @@ export default class raterInfoDataTable extends JetView {
         var raterInfoDataTable = {
             view: "datatable",
             id: "raterInfoDataTable",
-            //   gravity: 6,
             minHeight: 400,
             height: 100,
             yCount: 7,
@@ -36,6 +35,12 @@ export default class raterInfoDataTable extends JetView {
                 },
                 {
                     id: "spxMarkedForCurrentFeature",
+                    // header: [{ text: "# Spxs Marked", css: "multiline" }],
+                    tooltip: "SPX for for feature",
+                    width: 100,
+                },
+                {
+                    id: "spxMarkedForCurrentFeatureCount",
                     header: [{ text: "# Spxs Marked", css: "multiline" }],
                     tooltip: "# of superpixels the rater selected",
                     width: 100,
@@ -48,7 +53,7 @@ export default class raterInfoDataTable extends JetView {
                     uncheckValue: "off",
                     value: "on",
                     template: "{common.checkbox()}",
-                },
+                }
             ],
             editable: true,
 
@@ -64,8 +69,12 @@ export default class raterInfoDataTable extends JetView {
                     var curItem = $$("raterInfoDataTable").getItem(rowId);
                     console.log(curItem);
 
+                    //GEt the set opacity..
+
+                    var mrOpacity = $$("multirater_opacity_slider").getValue();
+
                     if (curItem.showRaterMarkupCheckbox == "on") {
-                        $("." + curItem.raterClassName).css("opacity", 0.6);
+                        $("." + curItem.raterClassName).css("opacity", mrOpacity);
                     } else {
                         $("." + curItem.raterClassName).css("opacity", 0);
                     }
@@ -77,6 +86,13 @@ export default class raterInfoDataTable extends JetView {
                         //webix.message("color changed to" + state.value);
                         $("." + rowInfo.raterClassName).css("fill", state.value);
                     }
+
+                    webix.message("Grid Changed...")
+
+                },
+                "data->onParse": function(driver, data) {
+                    //webix.message("Datatable updated..")
+
                 },
             },
         };
