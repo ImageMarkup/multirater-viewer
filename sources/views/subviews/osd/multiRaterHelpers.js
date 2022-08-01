@@ -95,9 +95,9 @@ export function createFeatureButtons(featureSetData) {
 
                     }
 
-                    // $$("raterInfoDataTable").updateItem(raterDataDict[rtr].id, {
-                    //     raterTotalFeaturesSeen: state.curImageMetaData.markupData[id][rtr].length,
-                    // });
+                    $$("raterInfoDataTable").updateItem(raterDataDict[rtr].id, {
+                        raterTotalFeaturesSeen: state.curImageMetaData.markupData[id][rtr].length,
+                    });
 
                     // /  console.log(raterDataDict);
 
