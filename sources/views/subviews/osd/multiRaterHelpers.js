@@ -3,6 +3,9 @@ import $ from "jquery";
 import state from "../../../models/state";
 import * as tileInfo from "./tileHelperFunctions";
 
+//var dataglobal = {};
+
+
 export function handleMouseOver(d, i) {
     // self.deselectCell(d3.select(overlay.node()).selectAll('.boundaryClass'));
     // self.selectCell(d3.select(overlay.node()).select('#' + this.id));
@@ -19,7 +22,7 @@ export function createFeatureButtons(featureSetData) {
 
     //  console.log(featureSetData);
     //for each feature create a button and bind it to the curImgFeatureList view (form)
-    $.each(featureSetData, function(index, feature) {
+    $.each(featureSetData, function (index, feature) {
         //console.log(index, feature);
         var btn = {
             id: feature.featureName,
@@ -32,7 +35,7 @@ export function createFeatureButtons(featureSetData) {
             type: "iconTop",
             css: "feature_button",
             on: {
-                onItemClick: function(id) {
+                onItemClick: function (id) {
                     //perhaps a cleaner way to do this.. but this resets the # of spx marked for the current feature
                     $(".boundaryClass").css("opacity", 0);
                     $(".raterClass").remove(); //remove all the previously marked up rater
@@ -40,11 +43,6 @@ export function createFeatureButtons(featureSetData) {
                     //Sergey--- what's the cleanest way to bind the spxMask Opacity to this function
                     //so I only needto update this in one spot
                     /* To discuss with Konstantinos...*/
-
-                    // $$("raterInfoDataTable").eachRow(function(row) {
-                    //     var itm = this.getItem(row);
-                    //     this.updateItem(row, { raterTotalFeaturesSeen: "" });
-                    // });
 
                     /* Grab the most recent raterData Information so I can use the right color scheme */
                     var raterDataDict = {};
@@ -56,23 +54,24 @@ export function createFeatureButtons(featureSetData) {
 
                     /* First blank out all the data for all raters... */
                     Object.keys(raterDataDict).forEach(rtr => {
-
                         $$("raterInfoDataTable").updateItem(raterDataDict[rtr].id, {
-
                             spxMarkedForCurrentFeature: "",
                             raterTotalFeaturesSeen: "",
                             spxMarkedForCurrentFeatureCount: ""
                         });
-
-
                     })
+
+                    
 
                     //While adding the raters, create the compsite version as well
                     var spxMarkupCountDict = new Object();
                     var rtr = {};
                     for (rtr in state.curImageMetaData.markupData[id]) {
-                        $.each(state.curImageMetaData.markupData[id][rtr], function(idx, spx) {
-                            (!spxMarkupCountDict.hasOwnProperty(spx)) ? (spxMarkupCountDict[spx] = 1) : (spxMarkupCountDict[spx]++);
+                        $.each(state.curImageMetaData.markupData[id][rtr], function (idx, spx) {
+
+                            
+
+                            (!spxMarkupCountDict.hasOwnProperty(parseInt(spx))) ? (spxMarkupCountDict[parseInt(spx)] = 1) : (spxMarkupCountDict[parseInt(spx)]++);
                         });
 
                         console.log(state.curImageMetaData.markupData);
@@ -86,12 +85,13 @@ export function createFeatureButtons(featureSetData) {
                         });
 
                         //this adds the overlay for a single rater
-                        tileInfo.addRaterOverlay(
-                            state.curImgTileData,
-                            state.curImageMetaData.markupData[id][rtr],
-                            raterDataDict[rtr]["raterColor"],
-                            raterDataDict[rtr]["raterClassName"]
-                        );
+                        //This will all be run from the data table...
+                        // tileInfo.addRaterOverlay(
+                        //     state.curImgTileData,
+                        //     state.curImageMetaData.markupData[id][rtr],
+                        //     raterDataDict[rtr]["raterColor"],
+                        //     raterDataDict[rtr]["raterClassName"]
+                        // );
 
                     }
 
@@ -105,15 +105,11 @@ export function createFeatureButtons(featureSetData) {
 
 
                     //now that I have added all of the layers, let's quickly make sure everything is toggled on / off appropriately
-                    $.each(raterDataDict, function(rtrName, raterData) {
-                        //Get the opacity from thne multiraterOpacity..
-                        var mrOpacity = $$("multirater_opacity_slider").getValue();
-                        // console.log(raterData);  //TO FIX-- I am loading thie data 8 times I think... need to fix the loop
+                    $.each(raterDataDict, function (rtrName, raterData) {
 
-                        var raterOpacity =
-                            raterData.showRaterMarkupCheckbox == "on" ? mrOpacity : 0;
+                        var mrOpacity = $$("multirater_opacity_slider").getValue(); //Get the opacity from thne multiraterOpacity..
+                        var raterOpacity = raterData.showRaterMarkupCheckbox == "on" ? mrOpacity : 0;
                         $("." + raterData.raterClassName).css("opacity", raterOpacity);
-
                     });
                 },
             },
@@ -127,37 +123,3 @@ export function createFeatureButtons(featureSetData) {
         }
     });
 }
-
-//console.log(spxMarkupCountDict);
-//Now add in data for a composite rater...
-// $.each(spxMarkupCountDict, function (spxId, raterCount) {
-//   if (raterCount > 1) {
-//     twoRaters.push(spxId);
-//   }
-//   if (raterCount > 2) {
-//     threeRaters.push(spxId);
-//   }
-//   if (raterCount > 3) {
-//     allRaters.push(spxId);
-//   }
-// });
-//add two clasess one identifying the specific layer name and a second that lets me know it's a multiRater composite
-// tileInfo.addRaterOverlay(
-//   state.curImgTileData,
-//   twoRaters,
-//   "#ffff00",
-//   "twoRaters multiRater raterClass"
-// );
-// tileInfo.addRaterOverlay(
-//   state.curImgTileData,
-//   threeRaters,
-//   "#ff700e",
-//   "threeRaters multiRater raterClass"
-// );
-
-// tileInfo.addRaterOverlay(
-//   state.curImgTileData,
-//   allRaters,
-//   "#ff0000",
-//   "allRaters multiRater raterClass"
-// );

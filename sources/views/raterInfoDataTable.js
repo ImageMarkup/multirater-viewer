@@ -86,13 +86,9 @@ export default class raterInfoDataTable extends JetView {
                         //webix.message("color changed to" + state.value);
                         $("." + rowInfo.raterClassName).css("fill", state.value);
                     }
-
-                    webix.message("Grid Changed...")
-
                 },
                 "data->onParse": function(driver, data) {
                     //webix.message("Datatable updated..")
-
                 },
             },
         };

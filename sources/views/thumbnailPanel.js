@@ -4,8 +4,6 @@ import state from "models/state";
 import ThumbnailPanelService from "services/thumbnailPanel/thumbnailPanelService";
 import constants from "../constants"
 
-
-// // console.log(HOST_API_URL)
 // var HOST_API_URL = "http://dermannotator.org:8080/api/v1";
 
 function changeMainImage(imageData) {
