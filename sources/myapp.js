@@ -4,6 +4,8 @@ import "./styles/app.css";
 import "./utils/pollyfils";
 import state from "./models/state";
 
+console.log(state)
+
 export default class MyApp extends JetApp{
 	constructor(config){
 		const defaults = {

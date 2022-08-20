@@ -7,9 +7,9 @@ const heatMapColors = ["#ffff00", "#ff700e", "#ff0000", "#ff6700", "#ff0000", "#
 export function transformCoords(tiles, imageWidth) {
     coordinates = new Array(tiles.length);
     scaleFactor = 1 / imageWidth;
-    $.each(tiles, function (index, tile) {
+    $.each(tiles, function(index, tile) {
         var tileCoords = new Array();
-        $.each(tile.geometry.coordinates, function (junk, coords) {
+        $.each(tile.geometry.coordinates, function(junk, coords) {
             x = coords[0] * scaleFactor;
             y = coords[1] * scaleFactor;
             tileCoords.push(x + "," + y);
@@ -28,7 +28,7 @@ export function transformCoords(tiles, imageWidth) {
 }
 
 export function addOverlay(tiles) {
-    $.each(tiles, function (index, tile) {
+    $.each(tiles, function(index, tile) {
         var fillColor = d3.schemeCategory10[tile.index % 20];
         d3.select(viewer.svgOverlay().node())
             .append("polygon")
@@ -45,21 +45,22 @@ export function addOverlay(tiles) {
 export function generateRaterAgreements(tiles, allRaterData) {
     /* This will take the data for all the raters and generate an overlay... need to figure out if I can generate one shape
     and then filter that.. instead of drawing 5 shapes*/
+    console.log(tiles)
+
     console.log(allRaterData)
 
     /* The max number of raters is 5--- probably should compute this though instead of just hard coding it  */
     var spxMarkupCountDict = allRaterData;
     var spxMarkupMap = {};
 
-    $.each(spxMarkupCountDict, function (spxId, raterCount) {
+    $.each(spxMarkupCountDict, function(spxId, raterCount) {
         (!spxMarkupMap.hasOwnProperty(raterCount)) ? (spxMarkupMap[raterCount] = [spxId]) : (spxMarkupMap[raterCount].push(spxId));
     })
-
 
     //Goign to push all this data to a table instead.. and just render/update from the table.. this is too confusing as it was written
     for (var i = 1; i <= 3; i++) {
         var mrc = 'moreThan' + i; //#multiRaterClassName
-        var mrcId = $$("raterInfoDataTable").find(function (obj) { return obj.raterClassName == mrc }, true);
+        var mrcId = $$("raterInfoDataTable").find(function(obj) { return obj.raterClassName == mrc }, true);
 
         if (spxMarkupMap[i]) {
             $$("raterInfoDataTable").updateItem(mrcId.id, {
@@ -73,11 +74,11 @@ export function generateRaterAgreements(tiles, allRaterData) {
     /* This will take the data for all the raters and generate an overlay... need to figure out if I can generate one shape
     and then filter that.. instead of drawing 5 shapes*/
     console.log(allRaterData)
-    /* The max number of raters is 5--- probably should compute this though instead of just hard coding it  */
+        /* The max number of raters is 5--- probably should compute this though instead of just hard coding it  */
     var spxMarkupCountDict = allRaterData;
     var spxMarkupMap = {};
 
-    $.each(spxMarkupCountDict, function (spxId, raterCount) {
+    $.each(spxMarkupCountDict, function(spxId, raterCount) {
         (!spxMarkupMap.hasOwnProperty(raterCount)) ? (spxMarkupMap[raterCount] = [spxId]) : (spxMarkupMap[raterCount].push(spxId));
     })
 
@@ -114,19 +115,19 @@ function renderSpxImages(tiles, tableName) {
 
     dt.data.each(r => {
 
-        if (r.spxMarkedForCurrentFeature) {
-            //      console.log(r)
-            addRaterOverlay(
-                tiles,
-                r.spxMarkedForCurrentFeature,
-                r.raterColor,
-                r.raterClassName + " multiRater raterClass"
-            );
-        }
+            if (r.spxMarkedForCurrentFeature) {
+                //      console.log(r)
+                addRaterOverlay(
+                    tiles,
+                    r.spxMarkedForCurrentFeature,
+                    r.raterColor,
+                    r.raterClassName + " multiRater raterClass"
+                );
+            }
 
 
-    })
-    /* Let's clear everything and just render the current table... */
+        })
+        /* Let's clear everything and just render the current table... */
 
 
 
@@ -141,7 +142,7 @@ export function addRaterOverlay(tiles, spxIdsToLabel, raterColor, className) {
     var overlay = $$("slide_viewer").viewer.svgOverlay();
     var mrOpacity = $$("multirater_opacity_slider").getValue();
 
-    $.each(tiles, function (index, tile) {
+    $.each(tiles, function(index, tile) {
         if (spxIntIds.includes(parseInt(tile.properties.labelindex))) {
             d3.select(overlay.node())
                 .append("polygon")
@@ -164,11 +165,11 @@ function removeOverlay() {
 }
 
 export function updateOverlay(className, attributes, styles) {
-    $.each(attributes, function (attribute, value) {
+    $.each(attributes, function(attribute, value) {
         $("." + className).attr(attribute, value);
     });
 
-    $.each(styles, function (style, value) {
+    $.each(styles, function(style, value) {
         $("." + className).css(style, value);
     });
 }

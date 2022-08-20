@@ -27,7 +27,7 @@ export default {
     MOUSE_LEFT_DOUBLE_CLICK: "mouseLeftDouble",
 
     HOST_API_URL: "https://api.dermannotator.org/api/v1",
-    STUDY_FOLDER: "5fac5180887370bb7c8b8a11",
+    STUDY_FOLDER: "630007d850f8bdebecde91fd",
     COLOR_PALLETE: [
         "#1f77b4",
         "#ff7f0e",

@@ -38,7 +38,6 @@ webix.protoUI(
     afterLoadedHandler: function()
     {   
       this.viewer.addHandler('open', function(event) {
-      console.log("Hello gulliver");
         var tiledImage = event.item;
       tiledImage.addHandler('fully-loaded-change', function() {
         var newFullyLoaded = areAllFullyLoaded();

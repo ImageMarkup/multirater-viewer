@@ -13,7 +13,7 @@ function changeMainImage(imageData) {
     //Eventually load this from a remoet source..
     $$("slide_viewer").viewer.open({
         width: imageData.baseImageWidth,
-        tileSource: constants.HOST_API_URL + "/item/" + imageData.mainImage._id + "/tiles/dzi.dzi",
+        tileSource: constants.HOST_API_URL + "/item/" + imageData.mainImageId + "/tiles/dzi.dzi",
     });
 }
 
