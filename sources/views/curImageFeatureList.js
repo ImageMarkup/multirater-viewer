@@ -35,7 +35,7 @@ export default class curImageFeatureList extends JetView {
             name: "curImageFeatureList",
             width: 400,
             gravity: 1,
-            height: 200,
+            minHeight: 300,
             rows: [curImageFeatureList, curPixelInfo]
         };
     }
